@@ -1,0 +1,2 @@
+org.yss.dao.DaoImpl
+org.yss.metier.MetierImpl
