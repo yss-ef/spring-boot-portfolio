@@ -18,6 +18,7 @@ public class MetierImpl implements IMetier {
 
     @Autowired
     public MetierImpl(@Qualifier("dao_web") IDao dao) {
+        /*On va utiliser @Qualifier("${dao.implementation.active}") a utiliser pour le rendre vraiment dynamyque avec le .properties*/
         this.dao = dao;
     }
 
