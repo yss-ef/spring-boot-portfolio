@@ -1,7 +1,9 @@
 package org.yss.ext;
 
+import org.springframework.stereotype.Component;
 import org.yss.dao.IDao;
 
+@Component("dao_web")
 public class DaoImpl2 implements IDao {
     @Override
     public double getData() {

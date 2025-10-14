@@ -1,23 +1,23 @@
 package org.yss.metier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.yss.dao.IDao;
 
 @Component
 public class MetierImpl implements IMetier {
     //Initialiser un objet de type IDao, sa valeur sera null
-    @Autowired
     IDao dao;
-
+/*
     //Constructeur sans paramètre
     public MetierImpl() {
     }
-
+*/
     //Constructeur avec paramètre
 
-
-    public MetierImpl(IDao dao) {
+    @Autowired
+    public MetierImpl(@Qualifier("dao_web") IDao dao) {
         this.dao = dao;
     }
 
@@ -34,8 +34,9 @@ public class MetierImpl implements IMetier {
     1. constructeur avec paramètre (méthode conseillé)
     2. getters
      */
-
+/*
     public void setDao(IDao dao) {
         this.dao = dao;
     }
+ */
 }
