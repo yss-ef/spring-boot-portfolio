@@ -9,11 +9,11 @@ import org.yss.dao.IDao;
 public class MetierImpl implements IMetier {
     //Initialiser un objet de type IDao, sa valeur sera null
     IDao dao;
-/*
+
     //Constructeur sans paramètre
     public MetierImpl() {
     }
-*/
+
     //Constructeur avec paramètre
 
     @Autowired
@@ -35,9 +35,8 @@ public class MetierImpl implements IMetier {
     1. constructeur avec paramètre (méthode conseillé)
     2. getters
      */
-/*
+
     public void setDao(IDao dao) {
         this.dao = dao;
     }
- */
 }
