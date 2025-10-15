@@ -5,7 +5,7 @@ import org.yss.dao.DaoImpl;
 import org.yss.metier.IMetier;
 import org.yss.metier.MetierImpl;
 
-public class Pres {
+public class PresDepForte {
     public static void main(String[] args) {
         IDao dao = new DaoImpl();
         IMetier metier = new MetierImpl(dao);

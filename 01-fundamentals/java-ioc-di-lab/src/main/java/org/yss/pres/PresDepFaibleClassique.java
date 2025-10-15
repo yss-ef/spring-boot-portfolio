@@ -6,7 +6,7 @@ import org.yss.metier.IMetier;
 import java.io.File;
 import java.util.Scanner;
 
-public class Pres2 {
+public class PresDepFaibleClassique {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(new File("config.txt"));
 
