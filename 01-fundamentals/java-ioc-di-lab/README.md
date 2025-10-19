@@ -252,3 +252,8 @@ Ce travail pratique a permis de mettre en évidence l'importance du principe de 
 Nous avons vu que l'injection de dépendances est le mécanisme qui permet de mettre en œuvre l'IoC. En passant de l'instanciation statique à l'instanciation dynamique, puis au framework Spring, nous avons gagné en flexibilité et en maintenabilité.
 
 L'utilisation d'un framework comme Spring est aujourd'hui un standard, car il automatise entièrement la gestion du cycle de vie des objets et de leurs dépendances, permettant au développeur de se concentrer sur la logique métier. La version par annotations est particulièrement appréciée pour sa simplicité et sa clarté.
+
+---
+## 5. Notes Personnelles
+
+La principale difficulté rencontrée durant ce TP a été de bien saisir les mécanismes de l'injection de dépendances manuelle, notamment l'approche dynamique via la réflexivité. Cette étape, bien que fondamentale pour la compréhension du principe, met en lumière toute la puissance et l'utilité d'un framework comme Spring.
