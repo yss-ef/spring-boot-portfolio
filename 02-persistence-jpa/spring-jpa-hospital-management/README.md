@@ -1,4 +1,4 @@
-# Architecture JEE - JPA, Hibernate et Spring Data : Exemple Pratique 👨‍💻
+# Architecture JEE - JPA, Hibernate et Spring Data : Exemple Pratique
 
 Ce projet est une application Spring Boot illustrant les concepts fondamentaux de la **Persistance de Données** avec **JPA (Java Persistence API)**, l'implémentation **Hibernate**, et la couche d'accès aux données simplifiée par **Spring Data JPA**.
 
