@@ -26,14 +26,12 @@ public class ExemplePatientApplication {
     }
 
     @Bean
-    CommandLineRunner start(HospitalService hospitalService) {
         return args -> {
             List.of("Pat1", "Pat2", "Pat3", "Pat4", "Pat5", "Pat6", "Pat7").forEach(pat -> {
                 Patient patient = new Patient();
                 patient.setName(pat);
                 patient.setSick(true);
                 patient.setBirthDate(new Date());
-                hospitalService.savePatient(patient);
                 System.out.println(patient.toString());
             });
 
@@ -43,11 +41,8 @@ public class ExemplePatientApplication {
                 doctor.setEmail(doc+"@gmail.com");
                 doctor.setSpecialty("Doctor");
                 doctor.setStatus(true);
-                hospitalService.saveDoctor(doctor);
             });
 
-            List<Patient> patients = hospitalService.findAllPatient();
-            List<Doctor> doctors = hospitalService.findAllDoctor();
 
             patients.forEach(patient -> {
                 doctors.forEach(doctor -> {
@@ -56,18 +51,15 @@ public class ExemplePatientApplication {
                     rendezVous.setPatient(patient);
                     rendezVous.setDoctor(doctor);
                     rendezVous.setDone(false);
-                    hospitalService.saveRendezVous(rendezVous);
                 });
             });
 
-            List<RendezVous>  rendezVouses = hospitalService.findAllRendezVous();
 
             rendezVouses.forEach(rendezVous -> {
                 Consultation consultation = new Consultation();
                 consultation.setDate(rendezVous.getDateRdv());
                 consultation.setReport("Report consultation" + consultation.getId());
                 consultation.setRendezVous(rendezVous);
-                hospitalService.saveConsultation(consultation);
             });
 
             List<Consultation> consultations = hospitalService.findAllConsultation();
