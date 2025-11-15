@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:layout="www.ultraq.net.nz/tymeleaf/layout"
+      layout:decorate="layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+</head>
+<body>
+<div class="p-3" layout:fragment="content">
+    <div class="p-3">
+        <a class="btn btn-light" th:href="@{/newProduct}">New Product</a>
+    </div>
+    <table class="table">
+        <thead>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </thead>
+        <tbody>
+            <tr th:each="p:${productList}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.name}"></td>
+                <td th:text="${p.quantity}"></td>
+                <td th:text="${p.price}"></td>
+                <td>
+                    <a class="btn btn-danger" onclick="return confirm('are you sure ?')" th:href="@{/delete(id=${p.id})}">Delete</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger" th:href="@{/updateProduct(id=${p.id})}">update</a>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
