@@ -35,12 +35,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .formLogin(Customizer.withDefaults())// .formLogin(Customizer.withDefaults(fl->fl.loginPage()
+                //.formLogin(Customizer.withDefaults())
+                .formLogin(fl->fl.loginPage("/login").permitAll())
                 // L'ordre ici est important.
                 .authorizeHttpRequests(ar->ar.requestMatchers("/user/**").hasRole("USER")) // Les utilisateurs peuvent visionner la liste des produits
                 .authorizeHttpRequests(ar->ar.requestMatchers("/admin/**").hasRole("ADMIN")) // Les administrateurs peuvent
-                .authorizeHttpRequests(ar->ar.requestMatchers("/public/**").permitAll()) // ressources publique
+                .authorizeHttpRequests(ar->ar.requestMatchers("/webjars/** ","/public/**").permitAll()) // ressources publique
                 .authorizeHttpRequests(ar->ar.anyRequest().authenticated()) // Appliquer par default
+                .exceptionHandling(eh->eh.accessDeniedPage("/notAuthorized"))
                 .build();
     }
 }
