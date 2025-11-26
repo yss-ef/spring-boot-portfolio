@@ -1,152 +1,213 @@
-Ce projet est une application web simple développée avec Spring Boot. Elle a pour but de démontrer la mise en place de l'authentification et de l'autorisation basées sur les rôles avec Spring Security.
+# Compte Rendu du TP 3 : Application Web avec Spring Boot, Spring Security et JPA
 
-## Fonctionnalités
-
-*   **Frameworks** : Spring Boot, Spring Web, Spring Security
-*   **Moteur de template** : Thymeleaf avec le dialecte de layout pour la gestion des templates.
-*   **Style** : Bootstrap 5 pour l'interface utilisateur.
-*   **Authentification** : Authentification en mémoire (In-Memory) avec plusieurs utilisateurs et rôles.
-*   **Autorisation** : Contrôle d'accès basé sur les rôles (`USER`, `ADMIN`) pour différentes sections de l'application.
-*   **Sécurité** : Page de connexion personnalisée, fonctionnalité de déconnexion et page d'accès refusé.
-
-## Prérequis
-
-*   Java JDK 17 ou supérieur
-*   Maven 3.x ou supérieur
-
-## Comment lancer le projet
-
-1.  Clonez le dépôt sur votre machine locale.
-2.  Ouvrez un terminal et naviguez jusqu'à la racine du projet.
-3.  Exécutez la commande Maven suivante pour lancer l'application :
-    ```bash
-    mvn spring-boot:run
-    ```
-4.  L'application sera accessible à l'adresse http://localhost:8080.
-
-## Informations de connexion
-
-Les utilisateurs suivants sont configurés en mémoire pour les tests :
-
-| Nom d'utilisateur | Mot de passe | Rôles         |
-|------------------|--------------|---------------|
-| `admin`          | `123`        | `ADMIN`, `USER` |
-| `user1`          | `123`        | `USER`          |
-| `user2`          | `123`        | `USER`          |
-
-## Endpoints de l'application
-
-*   `/login` : Page de connexion personnalisée. Accessible à tous.
-*   `/logout` : Déconnecte l'utilisateur.
-*   `/user/**` : Pages accessibles aux utilisateurs ayant le rôle `USER`.
-    *   Exemple : `/user/products`
-*   `/admin/**` : Pages accessibles aux utilisateurs ayant le rôle `ADMIN`.
-*   `/webjars/**` : Ressources statiques (Bootstrap). Accessibles à tous.
-*   `/notAuthorized` : Page affichée lorsqu'un utilisateur authentifié tente d'accéder à une ressource pour laquelle il n'a pas les droits.
-
-Après une connexion réussie, l'utilisateur est redirigé par défaut vers `/user/products`.
+Ce document est le rapport du troisième travail pratique, axé sur le développement d'une application web complète de gestion de produits. L'objectif était de mettre en œuvre une architecture multicouche en utilisant **Spring Boot**, avec une persistance des données gérée par **Spring Data JPA** et une sécurisation des accès via **Spring Security**.
 
 ---
 
-## Analyse détaillée de la configuration de sécurité
+## 1. Fonctionnalités de l'Application
 
-Le cœur de la sécurité de l'application est géré dans le fichier `SecurityConfig.java`. Voici une explication de son fonctionnement.
+L'application permet de réaliser les opérations CRUD (Create, Read, Update, Delete) sur une entité "Produit". Les accès sont restreints par rôles, démontrant une gestion des autorisations simple mais efficace :
 
-### Annotations principales
-*   `@Configuration` : Indique à Spring que cette classe contient des définitions de beans qui seront gérés par le conteneur Spring.
-*   `@EnableWebSecurity` : Active la prise en charge de la sécurité web par Spring Security et fournit l'intégration avec Spring MVC.
+*   **Utilisateurs (rôle `USER`) :** Peuvent consulter la liste des produits.
+*   **Administrateurs (rôle `ADMIN`) :** Disposent des droits complets et peuvent consulter, ajouter, modifier et supprimer des produits.
+*   Une page de connexion standard fournie par Spring Security permet aux utilisateurs de s'authentifier.
 
-### 1. Hachage des mots de passe (`passwordEncoder`)
+---
+
+## 2. Technologies Utilisées
+
+Le projet s'appuie sur l'écosystème Spring et d'autres technologies standards du développement web Java :
+
+*   **Backend :** Spring Boot, Spring MVC, Spring Data JPA, Spring Security
+*   **Frontend :** Thymeleaf, Thymeleaf Layout Dialect, Bootstrap 5
+*   **Base de données :** H2 (base de données en mémoire pour le développement)
+*   **Build Tool :** Maven
+*   **Serveur d'application :** Tomcat (embarqué par défaut dans Spring Boot)
+
+---
+
+## 3. Détails de l'Implémentation
+
+L'architecture de l'application est divisée en plusieurs couches logiques : entités, repositories, services, et contrôleurs.
+
+### Couche de Persistance (JPA)
+
+#### Entité `Product.java`
+La classe `Product` représente les données des produits qui seront stockées en base de données. Elle utilise des annotations de validation (`@NotEmpty`, `@Min`) pour assurer l'intégrité des données.
 
 ```java
-@Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+package com.youssef.springweb.entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor
+public class Product {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotEmpty
+    @Size(min = 3, max = 50)
+    private String name;
+    @Min(1)
+    private double price;
+    private int quantity;
 }
 ```
 
-Pour des raisons de sécurité, les mots de passe ne doivent jamais être stockés en clair.
-*   **`PasswordEncoder`** : C'est une interface Spring Security pour le hachage des mots de passe.
-*   **`BCryptPasswordEncoder`** : C'est l'implémentation recommandée, utilisant l'algorithme de hachage robuste BCrypt. Il génère un "sel" (salt) aléatoire pour chaque mot de passe, garantissant que deux mots de passe identiques n'auront pas le même hash.
-*   **`@Bean`** : Expose cet encodeur comme un bean pour qu'il puisse être injecté et utilisé ailleurs dans la configuration.
-
-### 2. Gestion des utilisateurs (`inMemoryUserDetailsManager`)
+#### Repository `ProductRepository.java`
+L'interface `ProductRepository`, qui étend `JpaRepository`, permet de bénéficier sans effort des opérations CRUD et de requêtes plus complexes.
 
 ```java
-@Bean
-public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-    return new InMemoryUserDetailsManager(
-        User.withUsername("admin").password(passwordEncoder().encode("123")).roles("ADMIN","USER").build(),
-        // ... autres utilisateurs
-    );
+package com.youssef.springweb.reposetories;
+
+import com.youssef.springweb.entities.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
 ```
 
-Spring Security a besoin de savoir où trouver les informations des utilisateurs (nom, mot de passe, rôles).
-*   **`InMemoryUserDetailsManager`** : C'est une implémentation simple de `UserDetailsService` qui stocke les utilisateurs en mémoire. Idéal pour les tests et les démonstrations. Pour une application de production, on utiliserait une base de données.
-*   **`User.withUsername(...)`** : Un *builder* pratique pour créer des objets `UserDetails`.
-*   **`.password(passwordEncoder().encode("123"))`** : Le mot de passe est haché avec le `passwordEncoder` avant d'être stocké.
-*   **`.roles("ADMIN", "USER")`** : Assigne les rôles. Spring Security ajoute automatiquement le préfixe `ROLE_`. Ainsi, le rôle `"ADMIN"` devient l'autorité `ROLE_ADMIN`.
+### Couche Web (Controller)
 
-### 3. Chaîne de filtres de sécurité (`securityFilterChain`)
-
-C'est la méthode centrale qui définit les règles de sécurité pour les requêtes HTTP.
+Le `ProductController` gère les requêtes HTTP, interagit avec la couche service pour manipuler les données, et retourne les vues Thymeleaf appropriées.
 
 ```java
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-            .formLogin(fl->fl.loginPage("/login").defaultSuccessUrl("/user/products",true).permitAll())
-            .authorizeHttpRequests(ar -> ar
-                    .requestMatchers("/webjars/**", "/public/**").permitAll()
-                    .requestMatchers("/user/**").hasRole("USER")
+package com.youssef.springweb.web;
+
+@Controller
+@AllArgsConstructor
+public class ProductController {
+    private ProductService productService;
+
+    @GetMapping("/user/products")
+    public String index(Model model) {
+        List<Product> products = productService.findAll();
+        model.addAttribute("productList", products);
+        return "products";
+    }
+
+    @GetMapping("/admin/delete")
+    public String deleteProduct(@RequestParam(name = "id") Long id) {
+        productService.deleteById(id);
+        return "redirect:/user/products";
+    }
+
+    @PostMapping("/admin/saveProduct")
+    public String saveProduct(@Valid Product product, BindingResult result) {
+        if (result.hasErrors()) {
+            return "new-product";
+        }
+        productService.addProduct(product);
+        return "redirect:/user/products";
+    }
+    // ... autres méthodes pour la mise à jour
+}
+```
+
+### Configuration de la Sécurité
+
+Le fichier `SecurityConfig.java` définit les règles d'authentification et d'autorisation. Pour ce TP, une authentification en mémoire (`InMemoryUserDetailsManager`) a été utilisée pour définir des utilisateurs et leurs rôles.
+
+```java
+package com.youssef.springweb.security;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+        return new InMemoryUserDetailsManager(
+                User.withUsername("admin").password(passwordEncoder().encode("123")).roles("ADMIN", "USER").build(),
+                User.withUsername("user1").password(passwordEncoder().encode("123")).roles("USER").build(),
+                User.withUsername("user2").password(passwordEncoder().encode("123")).roles("USER").build()
+        );
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .formLogin(Customizer.withDefaults())
+                .authorizeHttpRequests(ar -> ar
                     .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/user/**").hasRole("USER")
                     .anyRequest().authenticated()
-            )
-            .exceptionHandling(eh->eh.accessDeniedPage("/notAuthorized"))
-            .build();
+                )
+                .build();
+    }
 }
 ```
 
-La configuration est une chaîne d'appels fluides :
+### Vues avec Thymeleaf et Bootstrap
 
-1.  **`.formLogin(...)`** : Active l'authentification par formulaire.
-    *   `.loginPage("/login")` : Spécifie l'URL de notre page de connexion personnalisée.
-    *   `.defaultSuccessUrl("/user/products", true)` : Redirige **toujours** l'utilisateur vers `/user/products` après une connexion réussie.
-    *   `.permitAll()` : Autorise tout le monde à accéder à la page de connexion.
+Un template de base `layout.html` a été créé pour unifier l'apparence des pages. Il inclut Bootstrap pour le style.
 
-2.  **`.authorizeHttpRequests(...)`** : Définit les permissions pour les URLs. **L'ordre des règles est crucial**.
-    *   `.requestMatchers("/webjars/**", ...).permitAll()` : Autorise l'accès public aux ressources statiques (CSS, JS) pour que la page de connexion s'affiche correctement.
-    *   `.requestMatchers("/user/**").hasRole("USER")` : Exige le rôle `USER` pour accéder à toute URL sous `/user/`.
-    *   `.requestMatchers("/admin/**").hasRole("ADMIN")` : Exige le rôle `ADMIN` pour accéder à toute URL sous `/admin/`.
-    *   `.anyRequest().authenticated()` : Règle finale. Toute autre requête non couverte par les règles précédentes nécessite que l'utilisateur soit authentifié.
-
-3.  **`.exceptionHandling(...)`** : Gère les exceptions de sécurité.
-    *   `.accessDeniedPage("/notAuthorized")` : Si un utilisateur authentifié tente d'accéder à une ressource sans avoir le bon rôle, il est redirigé vers `/notAuthorized`.
+**Fichier `layout.html` :**
+```html
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}">
+</head>
+<body>
+    <!-- ... Navbar ... -->
+    <div layout:fragment="content">
+        <!-- Le contenu de chaque page sera inséré ici -->
+    </div>
+</body>
+</html>
+```
 
 ---
 
-## Architecture Web et Interface Utilisateur
+## 4. Configuration de la Base de Données
 
-Au-delà de la sécurité, le projet s'appuie sur Spring MVC et Thymeleaf pour construire l'interface web.
+Initialement, le projet a été configuré pour utiliser une base de données MySQL. Cependant, pour simplifier le développement et assurer la portabilité, la configuration a été basculée vers **H2**, une base de données en mémoire.
 
-### 1. Le Modèle-Vue-Contrôleur (MVC)
+**Fichier `application.properties` :**
+```properties
+spring.datasource.url=jdbc:h2:mem:product-db
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
-L'application suit le design pattern **MVC** grâce à **Spring Web**.
-*   **Modèle** : Représente les données de l'application (par exemple, une liste de produits). Il est souvent passé du contrôleur à la vue.
-*   **Vue** : La couche de présentation, gérée par **Thymeleaf**. Elle affiche les données du modèle dans des fichiers HTML.
-*   **Contrôleur** : Des classes annotées avec `@Controller` qui reçoivent les requêtes HTTP, traitent les actions de l'utilisateur, préparent le modèle et retournent le nom de la vue à afficher.
+# Activer la console H2 pour le débogage
+spring.h2.console.enabled=true
 
-### 2. Vues avec Thymeleaf et Layouts
+# Stratégie de génération du schéma (update pour ne pas perdre les données à chaque redémarrage)
+spring.jpa.hibernate.ddl-auto=update
+```
+La console H2 est accessible à l'adresse `http://localhost:8080/h2-console` pour inspecter la base de données en cours d'exécution.
 
-**Thymeleaf** est le moteur de template utilisé pour générer le HTML dynamiquement.
-*   Les fichiers de vue (comme `login.html`) sont situés dans `src/main/resources/templates`.
-*   Il utilise des attributs spéciaux (ex: `th:action`, `th:text`) pour insérer des données ou exécuter de la logique dans le HTML.
-*   Le projet utilise le **Thymeleaf Layout Dialect** (`xmlns:layout`). Cela permet de créer un template principal (par exemple, `template.html`) contenant les éléments communs (header, footer, menu). Les autres pages (comme `products.html`) peuvent alors simplement définir le contenu spécifique à insérer dans ce layout, évitant ainsi la duplication de code HTML.
+---
 
-### 3. Gestion des Ressources Statiques (Bootstrap)
+## 5. Difficultés Rencontrées et Solutions
 
-L'interface utilisateur est stylisée avec le framework CSS **Bootstrap**.
-*   La configuration de sécurité (`SecurityConfig`) autorise l'accès public au dossier `/webjars/**`. C'est une méthode courante pour gérer les dépendances front-end (comme Bootstrap ou jQuery) via Maven/Gradle.
-*   Dans `login.html`, Bootstrap est inclus via un **CDN**. C'est une alternative simple et rapide qui ne nécessite pas de gérer les fichiers localement.
-*   Les classes Bootstrap (`form-control`, `btn-light`, `p-3`, etc.) sont utilisées directement dans le code HTML pour appliquer le style prédéfini.
+1.  **Erreur de Connexion à la Base de Données :** Au démarrage, l'application échouait avec une erreur `Communications link failure`. Ce problème était lié à la connexion avec le serveur MySQL local (XAMPP).
+    *   **Solution :** Pour contourner ce problème et se concentrer sur la logique applicative, la base de données a été remplacée par **H2**, ce qui a immédiatement résolu le problème de démarrage.
+
+2.  **Problème de Style Bootstrap :** Les styles CSS de Bootstrap ne s'appliquaient pas correctement lors de la navigation vers des URL imbriquées comme `/user/products`. La cause était l'utilisation de chemins relatifs pour les fichiers CSS dans le template Thymeleaf.
+    *   **Solution :** Les chemins ont été corrigés en utilisant la syntaxe `@{/...}` de Thymeleaf (`th:href="@{/webjars/...}"`). Cette syntaxe génère des URL absolues par rapport au contexte de l'application, assurant que les ressources sont toujours trouvées.
+
+---
+
+## 6. Conclusion
+
+Ce TP a permis de consolider les compétences sur l'écosystème Spring en construisant une application web fonctionnelle de A à Z. Les points clés abordés sont :
+
+*   La mise en place rapide d'une application web robuste avec **Spring Boot**.
+*   La gestion de la persistance des données de manière efficace avec **Spring Data JPA**.
+*   La sécurisation des routes web avec **Spring Security**, en gérant l'authentification et les autorisations par rôles.
+*   La création de vues dynamiques et modulaires avec **Thymeleaf** et l'intégration d'un framework frontend comme **Bootstrap**.
+*   Le débogage de problèmes courants liés à la configuration de la base de données et à la gestion des ressources statiques dans une application web.
