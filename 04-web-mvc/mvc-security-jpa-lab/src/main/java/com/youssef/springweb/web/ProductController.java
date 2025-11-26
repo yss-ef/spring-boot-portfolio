@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +21,6 @@ public class ProductController {
 
     //@GetMapping("/products")
     @GetMapping("/user/products")
-
     public String index(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("productList", products); //ou va etre stocke la liste de produits pour l'utiliser a l'html

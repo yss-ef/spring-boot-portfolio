@@ -32,7 +32,7 @@
             </form>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <span sec:authentication="name"></span>
+                    <span sec:authentication="name" class="nav-link active"></span>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-primary" th:href="@{/logout}">Logout</a>

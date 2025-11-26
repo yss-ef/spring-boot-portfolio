@@ -36,11 +36,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 //.formLogin(Customizer.withDefaults())
-                .formLogin(fl->fl.loginPage("/login").permitAll())
+                .formLogin(fl->fl.loginPage("/login").defaultSuccessUrl("/user/products",true).permitAll())
                 // L'ordre ici est important.
+                .authorizeHttpRequests(ar->ar.requestMatchers("/webjars/** ","/public/**").permitAll()) // ressources publique
                 .authorizeHttpRequests(ar->ar.requestMatchers("/user/**").hasRole("USER")) // Les utilisateurs peuvent visionner la liste des produits
                 .authorizeHttpRequests(ar->ar.requestMatchers("/admin/**").hasRole("ADMIN")) // Les administrateurs peuvent
-                .authorizeHttpRequests(ar->ar.requestMatchers("/webjars/** ","/public/**").permitAll()) // ressources publique
                 .authorizeHttpRequests(ar->ar.anyRequest().authenticated()) // Appliquer par default
                 .exceptionHandling(eh->eh.accessDeniedPage("/notAuthorized"))
                 .build();
