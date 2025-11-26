@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="www.thymeleaf.org"
-      xmlns:layout="www.ultraq.net.nz/tymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
@@ -12,13 +12,18 @@
 <body>
 <div>
     <div class="p-3">
-        <form method="post" class="login-form" th:action="@{/login}">
-            <label class="form-label">Username</label>
-            <input class="form-control" type="text" name="username">
-            <label class="form-label">Password</label>
-            <input class="form-control" type="password" name="password">
-            <input class="btn-light" type="submit" value="Connect">
-        </form>
+        <div class="form-control">
+            <form method="post" class="login-form" th:action="@{/login}">
+                <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                    Invalid username or password.
+                </div>
+                <label class="form-label">Username</label>
+                <input class="form-control" type="text" name="username">
+                <label class="form-label">Password</label>
+                <input class="form-control" type="password" name="password">
+                <button class="btn btn-primary mt-2" type="submit">Connect</button>
+            </form>
+        </div>
     </div>
 </div>
 </body>

@@ -2,7 +2,6 @@ package com.youssef.springweb.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -35,11 +34,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                //.formLogin(Customizer.withDefaults())
-                .formLogin(fl->fl.loginPage("/login").defaultSuccessUrl("/user/products",true).permitAll())
+                .formLogin(fl->fl
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/user/products",true)
+                        .failureUrl("/login?error=true") // Redirect back to login on failure
+                        .permitAll()
+                )
                 // L'ordre des règles d'autorisation est important.
                 .authorizeHttpRequests(ar -> ar
-                        .requestMatchers("/webjars/**", "/public/**").permitAll() // ressources publiques
+                        .requestMatchers("/webjars/**", "/public/**", "/login").permitAll() // ressources publiques
                         .requestMatchers("/user/**").hasRole("USER") // Nécessite le rôle USER
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Nécessite le rôle ADMIN
                         .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
