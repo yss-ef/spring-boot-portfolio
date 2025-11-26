@@ -5,6 +5,7 @@ import com.youssef.springweb.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ public class ProductController {
     private ProductService productService;
 
     //@GetMapping("/products")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/user/products")
     public String index(Model model) {
         List<Product> products = productService.findAll();
@@ -29,7 +31,8 @@ public class ProductController {
 
     //@GetMapping("/delete")
     //@GetMapping("/admin/delete")
-    @PostMapping("/admin/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/delete") // Suppression de l'annotation @GetMapping superflue
     public String deleteProduct(@RequestParam(name = "id") Long id){
         productService.deleteById(id);
         //return "redirect:/products";
@@ -37,6 +40,7 @@ public class ProductController {
     }
 
     //@GetMapping("/newProduct")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/newProduct")
 
     public  String newProduct(Model model){
@@ -45,6 +49,7 @@ public class ProductController {
     }
 
     //@PostMapping("/saveProduct")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/saveProduct")
     public String saveProduct(@Valid Product product, BindingResult result){
         if(result.hasErrors()){
@@ -57,14 +62,16 @@ public class ProductController {
     }
 
     //@GetMapping("/updateProduct")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/updateProduct")
-    public String updateProduct(Long id, Model model){
+    public String updateProduct(@RequestParam("id") Long id, Model model){ // Ajout de @RequestParam pour la clarté
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         return "update-product";
     }
 
     //@PostMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/update")
     public String update(@Valid Product product, BindingResult result){
         if(result.hasErrors()){
@@ -82,12 +89,6 @@ public class ProductController {
 
     @GetMapping("/login")
     public String login(){
-        return "/login";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession httpSession){
-        httpSession.invalidate();
         return "/login";
     }
 }

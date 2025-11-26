@@ -4,7 +4,29 @@ Ce document est le rapport du troisième travail pratique, axé sur le développ
 
 ---
 
-## 1. Fonctionnalités de l'Application
+## 1. Captures d'Écran de l'Application
+
+Voici un aperçu des différentes pages de l'application.
+
+### Page de Connexion
+*La page de login permet aux utilisateurs de s'authentifier pour accéder à l'application.*
+![Page de Connexion](/screenshots/login.png)
+
+### Page des Produits
+*Cette page affiche la liste de tous les produits. Les utilisateurs avec le rôle `ADMIN` voient également les boutons pour supprimer et modifier les produits.*
+![Page des Produits](/screenshots/products.png)
+
+### Page de Création de Produit
+*Le formulaire pour ajouter un nouveau produit à la base de données.*
+![Page de Création](/screenshots/new.png)
+
+### Page de Mise à Jour de Produit
+*Le formulaire de modification, pré-rempli avec les informations du produit sélectionné.*
+![Page de Mise à Jour](/screenshots/update.png)
+
+---
+
+## 2. Fonctionnalités de l'Application
 
 L'application permet de réaliser les opérations CRUD (Create, Read, Update, Delete) sur une entité "Produit". Les accès sont restreints par rôles, démontrant une gestion des autorisations simple mais efficace :
 
@@ -14,7 +36,7 @@ L'application permet de réaliser les opérations CRUD (Create, Read, Update, De
 
 ---
 
-## 2. Technologies Utilisées
+## 3. Technologies Utilisées
 
 Le projet s'appuie sur l'écosystème Spring et d'autres technologies standards du développement web Java :
 
@@ -26,7 +48,7 @@ Le projet s'appuie sur l'écosystème Spring et d'autres technologies standards 
 
 ---
 
-## 3. Détails de l'Implémentation
+## 4. Détails de l'Implémentation
 
 L'architecture de l'application est divisée en plusieurs couches logiques : entités, repositories, services, et contrôleurs.
 
@@ -170,7 +192,7 @@ Un template de base `layout.html` a été créé pour unifier l'apparence des pa
 
 ---
 
-## 4. Configuration de la Base de Données
+## 5. Configuration de la Base de Données
 
 Initialement, le projet a été configuré pour utiliser une base de données MySQL. Cependant, pour simplifier le développement et assurer la portabilité, la configuration a été basculée vers **H2**, une base de données en mémoire.
 
@@ -192,7 +214,7 @@ La console H2 est accessible à l'adresse `http://localhost:8080/h2-console` pou
 
 ---
 
-## 5. Difficultés Rencontrées et Solutions
+## 6. Difficultés Rencontrées et Solutions
 
 1.  **Erreur de Connexion à la Base de Données :** Au démarrage, l'application échouait avec une erreur `Communications link failure`. Ce problème était lié à la connexion avec le serveur MySQL local (XAMPP).
     *   **Solution :** Pour contourner ce problème et se concentrer sur la logique applicative, la base de données a été remplacée par **H2**, ce qui a immédiatement résolu le problème de démarrage.
@@ -202,7 +224,7 @@ La console H2 est accessible à l'adresse `http://localhost:8080/h2-console` pou
 
 ---
 
-## 6. Conclusion
+## 7. Conclusion
 
 Ce TP a permis de consolider les compétences sur l'écosystème Spring en construisant une application web fonctionnelle de A à Z. Les points clés abordés sont :
 

@@ -43,11 +43,15 @@ public class SecurityConfig {
                 // L'ordre des règles d'autorisation est important.
                 .authorizeHttpRequests(ar -> ar
                         .requestMatchers("/webjars/**", "/public/**", "/login").permitAll() // ressources publiques
-                        .requestMatchers("/user/**").hasRole("USER") // Nécessite le rôle USER
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Nécessite le rôle ADMIN
+                        //.requestMatchers("/user/**").hasRole("USER") // Nécessite le rôle USER
+                        //.requestMatchers("/admin/**").hasRole("ADMIN") // Nécessite le rôle ADMIN
                         .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 )
                 .exceptionHandling(eh->eh.accessDeniedPage("/notAuthorized"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // URL qui déclenche la déconnexion
+                        .logoutSuccessUrl("/login?logout") // URL de redirection après déconnexion
+                        .permitAll())
                 .build();
     }
 }
