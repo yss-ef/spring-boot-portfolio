@@ -23,7 +23,7 @@ public class ProductController {
     @GetMapping("/user/products")
     public String index(Model model) {
         List<Product> products = productService.findAll();
-        model.addAttribute("productList", products); //ou va etre stocke la liste de produits pour l'utiliser a l'html
+        model.addAttribute("productList", products); //ou va être stocke la liste de produits pour l'utiliser à html
         return "products"; // retourne le nom du fichier html
     }
 

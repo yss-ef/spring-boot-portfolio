@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .formLogin(fl->fl
                         .loginPage("/login")
                         .defaultSuccessUrl("/user/products",true)
-                        .failureUrl("/login?error=true") // Redirect back to login on failure
+                        .failureUrl("/login?error=true") // Renvoie vers login mais avec un message d'erreur dans l'url
                         .permitAll()
                 )
                 // L'ordre des règles d'autorisation est important.
