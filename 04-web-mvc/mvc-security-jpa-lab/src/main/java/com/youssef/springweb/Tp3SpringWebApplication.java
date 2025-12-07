@@ -20,12 +20,12 @@ public class Tp3SpringWebApplication {
     @Bean
     CommandLineRunner init(ProductService productService) {
         return args -> {
-            productService.addProduct(new Product(null, "ordinateur", 5000, 12 ));
-            productService.addProduct(new Product(null, "telephone", 2500, 5 ));
-            productService.addProduct(new Product(null, "tablette", 3000, 10 ));
-            productService.addProduct(new Product(null, "souris", 250, 50 ));
-            productService.addProduct(new Product(null, "clavier", 500, 36 ));
-            productService.addProduct(new Product(null, "chargeur", 600, 25 ));
+            productService.addProduct(new Product(null, "ordinateur", 5000, 12, true ));
+            productService.addProduct(new Product(null, "telephone", 2500, 5, true ));
+            productService.addProduct(new Product(null, "tablette", 3000, 10, false ));
+            productService.addProduct(new Product(null, "souris", 250, 50, true ));
+            productService.addProduct(new Product(null, "clavier", 500, 36, false ));
+            productService.addProduct(new Product(null, "chargeur", 600, 25, true ));
         };
     }
 
