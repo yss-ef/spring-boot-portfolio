@@ -1,14 +1,15 @@
 package com.youssef.backend.dtos;
 
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-@Getter @Setter
-@NoArgsConstructor
-public class CustomerRequestDTO {
+@Service
+@Getter
+@Setter
+public class CustomerDTO {
+    private String id;
     private String name;
     private String email;
 }
