@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
-    @Id
-    private String id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String email;
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY) // l'appeler dans le DTOs mais utiliser BankAccountDTO qui lui ne renvoi pas le client

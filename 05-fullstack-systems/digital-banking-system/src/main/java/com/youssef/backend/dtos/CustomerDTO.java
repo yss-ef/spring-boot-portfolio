@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 public class CustomerDTO {
-    private String id;
+    private Long id;
     private String name;
     private String email;
 }

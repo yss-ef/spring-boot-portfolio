@@ -17,4 +17,5 @@ public abstract class BankAccountDTO {
     private AccountStatus accountStatus;
     private String currency;
     private CustomerDTO customerDTO;
+    private String type;
 }
