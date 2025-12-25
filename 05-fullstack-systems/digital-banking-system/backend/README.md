@@ -49,23 +49,25 @@ spring.jpa.hibernate.ddl-auto=create
 Voici les principaux points de terminaison (Endpoints) disponibles :
 
 ### Clients (`/customers`)
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| GET | `/customers/` | Liste tous les clients |
+| Méthode | Endpoint          | Description |
+| :--- |:------------------| :--- |
+| GET | `/customers`      | Liste tous les clients |
 | GET | `/customers/{id}` | Récupère un client par son ID |
-| POST | `/customers/` | Crée un nouveau client |
+| POST | `/customers/`     | Crée un nouveau client |
 | PATCH | `/customers/{id}` | Met à jour un client |
 | DELETE | `/customers/{id}` | Supprime un client |
 
 ### Comptes (`/accounts`)
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| GET | `/accounts/` | Liste tous les comptes |
-| GET | `/accounts/{id}` | Récupère un compte par son ID |
+| Méthode | Endpoint                  | Description |
+| :--- |:--------------------------| :--- |
+| GET | `/accounts`               | Liste tous les comptes |
+| GET | `/accounts/{id}`          | Récupère un compte par son ID |
 | GET | `/accounts/customer/{id}` | Liste les comptes d'un client |
-| POST | `/accounts/current` | Crée un compte courant |
-| POST | `/accounts/saving` | Crée un compte épargne |
-| PUT | `/accounts/{id}` | Met à jour un compte |
+| POST | `/accounts/current`       | Crée un compte courant |
+| POST | `/accounts/saving`        | Crée un compte épargne |
+| PUT | `/accounts/{id}`          | Met à jour un compte |
+| DELETE | `/accounts/{id}`         | Supprime un compte |
+
 
 ### Opérations (`/accounts`)
 | Méthode | Endpoint | Description |
