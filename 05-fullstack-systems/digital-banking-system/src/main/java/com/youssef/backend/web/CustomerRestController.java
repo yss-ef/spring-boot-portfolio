@@ -23,7 +23,7 @@ public class CustomerRestController {
      * Récupère tous les clients.
      * @return Liste des clients
      */
-    @GetMapping("/")
+    @GetMapping("")
     public List<CustomerDTO> getAllCustomers() {
         return customerService.listCustomers();
     }
@@ -44,7 +44,7 @@ public class CustomerRestController {
      * @param request Les données du client
      * @return Le client créé
      */
-    @PostMapping("/")
+    @PostMapping("")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO request){
         return customerService.saveCustomer(request);
     }

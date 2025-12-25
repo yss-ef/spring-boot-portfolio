@@ -26,7 +26,7 @@ public class BankAccountRestController {
      * Récupère tous les comptes bancaires.
      * @return Liste des comptes
      */
-    @GetMapping("/")
+    @GetMapping("")
     public List<BankAccountDTO> getAllBankAccounts(){
         return bankAccountService.listBankAccounts();
     }
