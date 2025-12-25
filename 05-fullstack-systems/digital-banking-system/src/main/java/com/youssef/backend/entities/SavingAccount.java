@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entité JPA représentant un compte épargne.
+ * Hérite de BankAccount et ajoute le taux d'intérêt (interestRate).
+ * Identifié par la valeur "SAV" dans la colonne discriminante.
+ */
 @Entity
 @Getter
 @Setter

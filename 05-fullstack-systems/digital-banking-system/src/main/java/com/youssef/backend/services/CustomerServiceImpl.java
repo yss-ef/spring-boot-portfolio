@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implémentation du service de gestion des clients.
+ * Utilise CustomerRepository pour l'accès aux données et BankAccountMapper pour la conversion DTO/Entité.
+ */
 @Slf4j
 @Service
 @Transactional
@@ -67,4 +71,5 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
         log.info("Customer deleted successfully");
     }
+
 }

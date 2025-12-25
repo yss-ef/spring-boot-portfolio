@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entité JPA représentant un compte courant.
+ * Hérite de BankAccount et ajoute la propriété de découvert (overDraft).
+ * Identifié par la valeur "CUR" dans la colonne discriminante.
+ */
 @Entity
 @Getter
 @Setter

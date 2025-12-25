@@ -8,6 +8,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Entité JPA représentant un client (Customer).
+ * Mappée à la table "Customer" dans la base de données.
+ */
 @Entity
 @Getter
 @Setter
@@ -18,6 +22,11 @@ public class Customer {
     private Long id;
     private String name;
     private String email;
+    
+    /**
+     * Liste des comptes bancaires associés à ce client.
+     * Relation One-to-Many avec BankAccount.
+     */
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY) // l'appeler dans le DTOs mais utiliser BankAccountDTO qui lui ne renvoi pas le client
     private List<BankAccount> bankAccounts;
 }

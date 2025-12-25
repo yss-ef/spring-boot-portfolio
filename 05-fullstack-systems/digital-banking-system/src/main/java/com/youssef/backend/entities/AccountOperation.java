@@ -9,6 +9,10 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * Entité JPA représentant une opération bancaire (débit ou crédit).
+ * Liée à un compte bancaire spécifique.
+ */
 @Entity
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor

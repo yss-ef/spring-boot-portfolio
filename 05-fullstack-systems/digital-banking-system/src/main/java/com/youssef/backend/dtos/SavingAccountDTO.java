@@ -1,17 +1,12 @@
 package com.youssef.backend.dtos;
 
-import com.youssef.backend.entities.BankAccount;
-import com.youssef.backend.entities.Customer;
-import com.youssef.backend.enums.AccountStatus;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
-
+/**
+ * DTO pour les comptes épargne (Saving Account).
+ * Étend BankAccountDTO et ajoute le taux d'intérêt (interestRate).
+ */
 @Getter
 @Setter
 public class SavingAccountDTO extends BankAccountDTO {
