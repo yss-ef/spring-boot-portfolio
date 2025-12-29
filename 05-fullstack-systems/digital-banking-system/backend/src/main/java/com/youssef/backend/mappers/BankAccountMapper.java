@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BankAccountMapper {
 
-    // --- Customer Mapper ---
-    
+
     /**
      * Convertit une entité Customer en CustomerDTO.
      */
@@ -32,8 +31,7 @@ public class BankAccountMapper {
         return customer;
     }
 
-    // --- CurrentAccount Mapper ---
-    
+
     /**
      * Convertit une entité CurrentAccount en CurrentAccountDTO.
      */
@@ -61,8 +59,7 @@ public class BankAccountMapper {
         return currentAccount;
     }
 
-    // --- SavingAccount Mapper ---
-    
+
     /**
      * Convertit une entité SavingAccount en SavingAccountDTO.
      */
@@ -90,8 +87,7 @@ public class BankAccountMapper {
         return savingAccount;
     }
 
-    // --- BankAccount Mapper ---
-    
+
     /**
      * Convertit une entité BankAccount (Current ou Saving) en BankAccountDTO correspondant.
      */
@@ -118,8 +114,7 @@ public class BankAccountMapper {
         return null;
     }
 
-    // --- AccountOperation Mapper ---
-    
+
     /**
      * Convertit une entité AccountOperation en AccountOperationDTO.
      */
