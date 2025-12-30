@@ -11,6 +11,10 @@ import {NewOperation} from './new-operation/new-operation';
 import {Home} from './home/home';
 import {Login} from './login/login';
 
+/**
+ * Application routes configuration.
+ * Defines the mapping between URL paths and components.
+ */
 export const routes: Routes = [
   { path : "customers", component : Customers },
   { path : "accounts", component : Accounts},

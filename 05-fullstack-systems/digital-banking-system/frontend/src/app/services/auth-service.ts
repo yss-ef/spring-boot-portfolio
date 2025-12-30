@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+/**
+ * Service responsible for authentication and authorization.
+ * Manages user login, logout, and token handling (JWT).
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +20,12 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  /**
+   * Authenticates a user with username and password.
+   * @param username The user's username.
+   * @param password The user's password.
+   * @returns An Observable containing the authentication response (usually including a token).
+   */
   public login(username: string, password: string): Observable<any> {
     // On envoie simplement les identifiants, on ne stocke rien encore ici
     return this.httpClient.post(this.backendHost + "/auth/login", {
@@ -25,6 +35,11 @@ export class AuthService {
   }
 
   // 2. La méthode CRUCIALE : Elle reçoit le token, le sauvegarde et l'analyse
+  /**
+   * Loads the user profile from the provided JWT token.
+   * Decodes the token to extract username and roles, and saves it to local storage.
+   * @param token The JWT access token.
+   */
   public loadProfile(token: string) {
     this.accessToken = token;
 
@@ -43,6 +58,10 @@ export class AuthService {
     this.isAuthenticated = true;
   }
 
+  /**
+   * Logs out the current user.
+   * Clears authentication state and removes the token from local storage.
+   */
   public logout() {
     this.isAuthenticated = false;
     this.accessToken = undefined;
@@ -51,6 +70,10 @@ export class AuthService {
     localStorage.removeItem('access-token');
   }
 
+  /**
+   * Loads the authentication token from local storage if available.
+   * If a token is found, it restores the user's session.
+   */
   public loadToken() {
     let token = localStorage.getItem('access-token');
 

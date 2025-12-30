@@ -9,6 +9,10 @@ import {
 } from '@angular/common/http';
 import { AppHttpInterceptor } from './interceptor/app-http-interceptor'; // Vérifiez bien le chemin de votre fichier
 
+/**
+ * Application configuration.
+ * Configures providers for routing, HTTP client, and interceptors.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),

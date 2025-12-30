@@ -9,6 +9,9 @@ import { CustomerService } from '../services/customer-service';
 import { AccountService } from '../services/account-service';
 import { Account } from '../model/account'; // Import de votre interface
 
+/**
+ * Component for creating a new current account.
+ */
 @Component({
   selector: 'app-new-current-account',
   standalone: true,
@@ -32,9 +35,13 @@ export class NewCurrentAccount implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * Initializes the component.
+   * Fetches the list of customers and initializes the form for creating a current account.
+   */
   ngOnInit(): void {
     // 1. On récupère les clients
-    this.customers = this.customerService.getAllCustomers().pipe(
+    this.customers = this.customerService.searchCustomers("").pipe(
       catchError(err => {
         this.errorMessage = err.message;
         return throwError(err);
@@ -51,6 +58,10 @@ export class NewCurrentAccount implements OnInit {
     });
   }
 
+  /**
+   * Handles the creation of the current account.
+   * Constructs the Account object and sends it to the service.
+   */
   protected handleSaveCurrentAccount() {
     if (this.newCurrentAccountFormGroup.invalid) return;
 

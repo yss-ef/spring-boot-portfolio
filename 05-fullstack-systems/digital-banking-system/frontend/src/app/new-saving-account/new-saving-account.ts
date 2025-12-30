@@ -9,6 +9,9 @@ import { CustomerService } from '../services/customer-service';
 import { AccountService } from '../services/account-service';
 import { Account } from '../model/account';
 
+/**
+ * Component for creating a new saving account.
+ */
 @Component({
   selector: 'app-new-saving-account',
   standalone: true,
@@ -32,9 +35,13 @@ export class NewSavingAccount implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * Initializes the component.
+   * Fetches the list of customers and initializes the form for creating a saving account.
+   */
   ngOnInit(): void {
     // 1. Récupération des clients
-    this.customers = this.customerService.getAllCustomers().pipe(
+    this.customers = this.customerService.searchCustomers("").pipe(
       catchError(err => {
         this.errorMessage = err.message;
         return throwError(err);
@@ -51,6 +58,10 @@ export class NewSavingAccount implements OnInit {
     });
   }
 
+  /**
+   * Handles the creation of the saving account.
+   * Constructs the Account object and sends it to the service.
+   */
   protected handleSaveSavingAccount() {
     if (this.newSavingAccountFormGroup.invalid) return;
 

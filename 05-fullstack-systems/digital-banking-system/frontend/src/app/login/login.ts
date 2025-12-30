@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../services/auth-service'; // Vérifie le chemin
 import { Router } from '@angular/router';
 
+/**
+ * Component representing the login page.
+ * Handles user authentication.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
@@ -19,6 +23,9 @@ export class Login implements OnInit {
     private router: Router
   ) { }
 
+  /**
+   * Initializes the login form with validation.
+   */
   ngOnInit(): void {
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
@@ -26,6 +33,10 @@ export class Login implements OnInit {
     });
   }
 
+  /**
+   * Handles the login form submission.
+   * Calls the AuthService to authenticate the user and redirects upon success.
+   */
   handleLogin() {
     let username = this.formLogin.value.username;
     let password = this.formLogin.value.password;

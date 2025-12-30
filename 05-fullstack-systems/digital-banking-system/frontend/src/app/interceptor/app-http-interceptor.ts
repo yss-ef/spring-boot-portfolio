@@ -8,11 +8,21 @@ import {
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth-service';
 
+/**
+ * HTTP Interceptor to add the Authorization header with the JWT token to outgoing requests.
+ * It intercepts all requests except the login request.
+ */
 @Injectable()
 export class AppHttpInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService) {}
 
+  /**
+   * Intercepts an outgoing HTTP request and adds the Authorization header if a token exists.
+   * @param request The outgoing HTTP request.
+   * @param next The next interceptor in the chain.
+   * @returns An Observable of the HTTP event.
+   */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
     // 1. On exclut la requête de login

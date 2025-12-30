@@ -1,37 +1,154 @@
-# Digital Banking Backend
+# 🏦 Digital Banking Backend
 
-Ce projet est une application **Backend** basée sur **Spring Boot** pour la gestion d'une banque numérique. Elle expose une API RESTful permettant de gérer des clients, des comptes bancaires (Courants et Épargne) et d'effectuer des opérations financières (Virements, Débits, Crédits).
+Bienvenue sur le projet **Digital Banking Backend**. Ce projet est une application robuste basée sur **Spring Boot** simulant un système bancaire numérique.
 
-## 🚀 Fonctionnalités
+## 🏗 Architecture Globale
 
-*   **Gestion des Clients (Customers) :**
-    *   Création, lecture, mise à jour et suppression de clients.
-    *   Recherche de clients.
-*   **Gestion des Comptes Bancaires (Bank Accounts) :**
-    *   Gestion de deux types de comptes :
-        *   **Compte Courant (Current Account) :** Avec autorisation de découvert (Overdraft).
-        *   **Compte Épargne (Saving Account) :** Avec taux d'intérêt.
-    *   Consultation du solde et de l'historique.
-    *   Activation/Suspension de comptes.
-*   **Opérations Bancaires :**
-    *   **Débit :** Retrait d'argent d'un compte.
-    *   **Crédit :** Dépôt d'argent sur un compte.
-    *   **Virement (Transfer) :** Transfert d'argent d'un compte à un autre.
-    *   Historique des opérations.
+Le projet suit une architecture **N-Tiers** classique pour assurer la séparation des responsabilités et la maintenabilité :
 
-## 🛠 Technologies Utilisées
+```
+src/main/java/com/youssef/backend
+├── 📂 web          (Contrôleurs REST : Point d'entrée de l'API)
+├── 📂 services     (Logique métier : Traitements, calculs, transactions)
+├── 📂 entities     (Modèle de données : Mappage JPA avec la BDD)
+├── 📂 security     (Configuration : JWT, Filtres, Encodeurs)
+├── 📂 repositories (Accès aux données : Interfaces Spring Data JPA)
+├── 📂 dtos         (Objets de transfert : Isolation des entités)
+└── 📂 mappers      (Conversion : Entité <-> DTO)
+```
 
-*   **Java** (JDK 17+)
-*   **Spring Boot** (Framework principal)
-*   **Spring Data JPA** (Couche d'accès aux données)
-*   **MySQL** (Base de données relationnelle)
-*   **Lombok** (Réduction du code boilerplate)
-*   **Maven** (Gestion des dépendances)
+---
 
-## ⚙️ Configuration
+## 📚 Analyse Détaillée par Couche
 
-Le fichier de configuration se trouve dans `src/main/resources/application.properties`.
+### 1️⃣ Couche de Données (JPA & Entities)
 
+Cette couche gère la persistance des données et la structure de la base de données.
+
+**La Logique :**
+Nous utilisons la stratégie d'héritage **Single Table** pour gérer les comptes bancaires.
+*   Nous avons une classe abstraite `BankAccount`.
+*   Deux classes filles : `CurrentAccount` (Compte Courant) et `SavingAccount` (Compte Épargne).
+*   Au lieu de créer plusieurs tables, JPA stocke tout dans une seule table `BankAccount` et utilise une colonne discriminante (`TYPE`) pour savoir de quel type de compte il s'agit.
+
+**Code (`entities/BankAccount.java`) :**
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Une seule table pour toute la hiérarchie
+@DiscriminatorColumn(name = "TYPE", length = 4)       // Colonne qui distingue le type (ex: "CUR", "SAV")
+public abstract class BankAccount {
+    @Id
+    private String id;
+    private double balance;
+    
+    @ManyToOne
+    private Customer customer; // Relation Many-to-One vers le client
+    
+    // ... getters et setters
+}
+```
+
+---
+
+### 2️⃣ Couche de Sécurité (Spring Security & JWT)
+
+La sécurité est gérée de manière **Stateless** (sans session serveur) en utilisant des tokens **JWT (JSON Web Tokens)**.
+
+**La Logique :**
+1.  **Configuration** : Nous configurons une chaîne de filtres (`SecurityFilterChain`) pour intercepter les requêtes HTTP.
+2.  **Stateless** : Nous désactivons les sessions HTTP classiques (`SessionCreationPolicy.STATELESS`). Chaque requête doit contenir le token.
+3.  **JWT** : Nous utilisons un encodeur et un décodeur JWT pour signer et vérifier les tokens.
+
+**Code de Configuration (`security/SecurityConfig.java`) :**
+```java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Pas de session en mémoire
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(ar -> ar
+                    .requestMatchers("/auth/login/**").permitAll() // Endpoint de login public
+                    .anyRequest().authenticated()                  // Tous les autres endpoints nécessitent une authentification
+            )
+            .oauth2ResourceServer(oa -> oa.jwt(Customizer.withDefaults())) // Active la gestion des tokens JWT
+            .build();
+}
+```
+
+**Code de Génération du Token (`web/SecurityRestController.java`) :**
+```java
+// Création des "Claims" (les informations contenues dans le token)
+JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
+        .subject(username)
+        .claim("scope", scope) // Les rôles de l'utilisateur
+        .expiresAt(Instant.now().plus(10, ChronoUnit.MINUTES)) // Expiration
+        .build();
+
+// Signature et encodage du token avec la clé secrète
+String jwt = jwtEncoder.encode(JwtEncoderParameters.from(header, jwtClaimsSet)).getTokenValue();
+```
+
+---
+
+### 3️⃣ Couche Métier (Services & Transactions)
+
+C'est le cœur de l'application, où les règles de gestion sont appliquées.
+
+**La Logique :**
+Les opérations financières (comme un virement) doivent être **atomiques**. Cela signifie que tout doit réussir, ou tout doit échouer. Si on débite le compte A mais que le crédit du compte B échoue, l'argent ne doit pas disparaître. L'annotation `@Transactional` gère cela automatiquement (Rollback en cas d'erreur).
+
+**Code (`services/AccountOperationServiceImpl.java`) :**
+```java
+@Transactional // Garantit l'intégrité des données
+public void transfer(String source, String destination, double amount) {
+    // 1. Retrait
+    debit(source, amount, "Transfer to " + destination);
+    // 2. Dépôt
+    credit(destination, amount, "Transfer from " + source);
+    // Si une erreur survient ici, le débit est annulé automatiquement.
+}
+```
+
+---
+
+### 4️⃣ Couche Web (Contrôleurs & DTOs)
+
+Cette couche expose l'API REST au monde extérieur (Frontend, Mobile, etc.).
+
+**La Logique :**
+Nous appliquons le pattern **DTO (Data Transfer Object)**.
+*   **Problème** : Les entités JPA (`Customer`, `BankAccount`) contiennent des relations bidirectionnelles qui peuvent causer des boucles infinies lors de la conversion en JSON. De plus, on ne veut pas toujours exposer toute la base de données.
+*   **Solution** : Le Contrôleur reçoit et renvoie des objets simples (DTO). Un `Mapper` s'occupe de copier les données entre les Entités et les DTOs.
+
+**Code du Mapper (`mappers/BankAccountMapper.java`) :**
+```java
+// Conversion Entité -> DTO
+public CustomerDTO fromCustomer(Customer customer){
+    CustomerDTO customerDTO = new CustomerDTO();
+    BeanUtils.copyProperties(customer, customerDTO); // Copie intelligente des propriétés
+    return customerDTO;
+}
+```
+
+**Code du Contrôleur (`web/CustomerRestController.java`) :**
+```java
+@GetMapping("/")
+public List<CustomerDTO> getAllCustomers() {
+    // Le contrôleur appelle le service, qui lui renvoie des DTOs propres
+    return customerService.listCustomers();
+}
+```
+
+---
+
+## 🚀 Installation et Démarrage
+
+### Prérequis
+*   Java 17+
+*   MySQL
+*   Maven
+
+### Configuration (`application.properties`)
 ```properties
 server.port=8085
 spring.datasource.url=jdbc:mysql://localhost:3306/BANK?createDatabaseIfNotExist=true
@@ -40,56 +157,54 @@ spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=create
 ```
 
-*   L'application tourne sur le port **8085**.
-*   Elle se connecte à une base de données MySQL nommée **BANK**.
-*   **Note :** La propriété `ddl-auto=create` recrée la base de données à chaque démarrage. Un `CommandLineRunner` est inclus pour initialiser des données de test (Clients, Comptes, Opérations) automatiquement.
+### Lancement
+1.  Clonez le projet.
+2.  Lancez : `mvn spring-boot:run`
+3.  Accédez à : `http://localhost:8085`
+4.  Données de test : Initialisées automatiquement au démarrage.
 
-## 📚 Documentation de l'API
+---
 
-Voici les principaux points de terminaison (Endpoints) disponibles :
+## 📡 Documentation de l'API
 
-### Clients (`/customers`)
-| Méthode | Endpoint          | Description |
-| :--- |:------------------| :--- |
-| GET | `/customers`      | Liste tous les clients |
-| GET | `/customers/{id}` | Récupère un client par son ID |
-| POST | `/customers/`     | Crée un nouveau client |
-| PATCH | `/customers/{id}` | Met à jour un client |
-| DELETE | `/customers/{id}` | Supprime un client |
+### 🔐 Authentification (`/auth`)
+| Méthode | Endpoint | Description | Body Requis |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/login` | Authentification utilisateur | `{"username": "...", "password": "..."}` |
+| `GET` | `/auth/profile` | Récupérer le profil connecté | *Aucun* (Token Bearer requis) |
 
-### Comptes (`/accounts`)
-| Méthode | Endpoint                  | Description |
-| :--- |:--------------------------| :--- |
-| GET | `/accounts`               | Liste tous les comptes |
-| GET | `/accounts/{id}`          | Récupère un compte par son ID |
-| GET | `/accounts/customer/{id}` | Liste les comptes d'un client |
-| POST | `/accounts/current`       | Crée un compte courant |
-| POST | `/accounts/saving`        | Crée un compte épargne |
-| PUT | `/accounts/{id}`          | Met à jour un compte |
-| DELETE | `/accounts/{id}`         | Supprime un compte |
-
-
-### Opérations (`/accounts`)
+### 👤 Clients (`/customers`)
 | Méthode | Endpoint | Description |
 | :--- | :--- | :--- |
-| GET | `/accounts/{id}/operations` | Historique des opérations d'un compte |
-| POST | `/accounts/debit` | Effectuer un débit |
-| POST | `/accounts/credit` | Effectuer un crédit |
-| POST | `/accounts/transfer` | Effectuer un virement |
+| `GET` | `/customers/` | Liste tous les clients |
+| `GET` | `/customers/{id}` | Récupère un client par son ID |
+| `POST` | `/customers/` | Crée un nouveau client |
+| `PATCH` | `/customers/{id}` | Met à jour partiellement un client |
+| `DELETE` | `/customers/{id}` | Supprime un client |
 
-## 🏗 Architecture
+### 🏦 Comptes Bancaires (`/accounts`)
+| Méthode | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/accounts/` | Liste tous les comptes |
+| `GET` | `/accounts/{id}` | Récupère un compte par son ID |
+| `GET` | `/accounts/customer/{id}` | Liste les comptes d'un client spécifique |
+| `POST` | `/accounts/current` | Crée un compte courant |
+| `POST` | `/accounts/saving` | Crée un compte épargne |
+| `PUT` | `/accounts/{id}` | Met à jour un compte |
+| `DELETE` | `/accounts/{id}` | Supprime un compte |
 
-Le projet suit une architecture en couches classique :
-1.  **Web Layer (Controllers) :** Gère les requêtes HTTP et les réponses JSON.
-2.  **Service Layer :** Contient la logique métier (Validation de solde, règles de virement, etc.).
-3.  **Data Access Layer (Repositories) :** Interfaces Spring Data JPA pour interagir avec la base de données.
-4.  **Entities :** Classes persistantes mappées à la base de données.
-5.  **DTOs (Data Transfer Objects) :** Objets utilisés pour transférer les données entre le client et le serveur, évitant d'exposer directement les entités.
+### 💸 Opérations (`/accounts`)
+| Méthode | Endpoint | Description | Body Requis |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/accounts/{id}/operations` | Historique des opérations d'un compte | - |
+| `POST` | `/accounts/debit` | Effectuer un débit | `{"accountId": "...", "amount": 100, "description": "..."}` |
+| `POST` | `/accounts/credit` | Effectuer un crédit | `{"accountId": "...", "amount": 100, "description": "..."}` |
+| `POST` | `/accounts/transfer` | Effectuer un virement | `{"accountSource": "...", "accountDestination": "...", "amount": 100}` |
 
-## ▶️ Comment lancer l'application
+---
 
-1.  Assurez-vous d'avoir **MySQL** lancé.
-2.  Clonez le dépôt.
-3.  Ouvrez le projet dans votre IDE (IntelliJ IDEA, Eclipse, VS Code).
-4.  Exécutez la classe principale `BackendApplication.java`.
-5.  L'API sera accessible à l'adresse : `http://localhost:8085`.
+## 🛠 Stack Technique
+*   **Core :** Java, Spring Boot 3
+*   **Data :** Spring Data JPA, Hibernate, MySQL
+*   **Security :** Spring Security, OAuth2 Resource Server, Nimbus JOSE + JWT
+*   **Utils :** Lombok, BeanUtils

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
+/**
+ * Component representing the home page of the application.
+ */
 @Component({
   selector: 'app-home',
   standalone: true,

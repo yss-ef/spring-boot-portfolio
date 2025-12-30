@@ -6,6 +6,10 @@ import {Customer} from '../model/customer';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 
+/**
+ * Component for managing customers.
+ * Allows searching, listing, and deleting customers.
+ */
 @Component({
   selector: 'app-customers',
   imports: [
@@ -24,6 +28,10 @@ export class Customers implements OnInit {
 
   constructor(private customerService: CustomerService, private formBuilder : FormBuilder, private router: Router) { }
 
+  /**
+   * Initializes the component and the search form.
+   * Loads the initial list of customers.
+   */
   ngOnInit() {
     this.searchformGroup=this.formBuilder.group({
       keyword : this.formBuilder.control("")
@@ -31,6 +39,9 @@ export class Customers implements OnInit {
     this.handleSearchCustomers();
   }
 
+  /**
+   * Handles the search for customers based on the keyword entered in the form.
+   */
   handleSearchCustomers() {
     let keyword=this.searchformGroup?.value.keyword;
     this.customers = this.customerService.searchCustomers(keyword).pipe(
@@ -41,12 +52,18 @@ export class Customers implements OnInit {
     );
   }
 
+  /**
+   * Handles the deletion of a customer.
+   * Asks for confirmation before deleting.
+   * @param c The Customer object to be deleted.
+   */
   handleCustomerDelete(c: Customer) {
     let conf : boolean = confirm("are you sure about that ?")
     if (conf){
       this.customerService.deleteCustomer(c).subscribe({
         next:data=>{
-          this.router.navigateByUrl("/customers");
+          // Refresh the list after deletion
+          this.handleSearchCustomers();
         },
         error:err=>{
           console.log(err)

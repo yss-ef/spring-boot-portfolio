@@ -8,6 +8,9 @@ import { AccountService } from '../services/account-service';
 import { Account } from '../model/account'; // Assurez-vous d'avoir ce modèle
 import { TransferRequest } from '../model/transfer-request';
 
+/**
+ * Component for creating a new transfer operation between accounts.
+ */
 @Component({
   selector: 'app-new-transfer',
   standalone: true,
@@ -29,6 +32,10 @@ export class NewOperation implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * Initializes the component.
+   * Loads the list of available accounts and initializes the transfer form.
+   */
   ngOnInit(): void {
     // 1. Charger la liste des comptes existants
     this.accounts = this.accountService.getAccounts();
@@ -41,6 +48,10 @@ export class NewOperation implements OnInit {
     });
   }
 
+  /**
+   * Handles the transfer operation.
+   * Validates the form and sends the transfer request to the service.
+   */
   handleTransfer() {
     if (this.transferFormGroup.invalid) return;
 

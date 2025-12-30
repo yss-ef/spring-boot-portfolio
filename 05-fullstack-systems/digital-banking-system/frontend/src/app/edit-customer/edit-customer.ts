@@ -4,6 +4,9 @@ import {ActivatedRoute, Router} from '@angular/router'; // 1. Import nécessaire
 import {CustomerService} from '../services/customer-service';
 import {CommonModule} from '@angular/common';
 
+/**
+ * Component for editing an existing customer.
+ */
 @Component({
   selector: 'app-edit-customer',
   standalone: true,
@@ -25,6 +28,10 @@ export class EditCustomer implements OnInit {
               private router: Router) {      // 3. Pour la redirection après save
   }
 
+  /**
+   * Initializes the component.
+   * Retrieves the customer ID from the route, initializes the form, and fetches the customer data.
+   */
   ngOnInit() {
     // 4. On récupère l'ID depuis l'URL
     this.customerId = this.route.snapshot.params['id'];
@@ -52,6 +59,10 @@ export class EditCustomer implements OnInit {
     });
   }
 
+  /**
+   * Handles the update of the customer.
+   * Sends the updated customer data to the service and redirects upon success.
+   */
   handlePatchCustomer() {
     let customer = this.patchCustomerFormeGroup.value;
     // Comme le champ ID est 'disabled', il n'est pas inclus dans .value

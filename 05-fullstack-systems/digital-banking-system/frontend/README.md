@@ -1,59 +1,139 @@
-# Frontend
+# Digital Banking Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+Ceci est l'application frontend pour le système de Banque Digitale, construite avec **Angular 17+**. Elle fournit une interface utilisateur robuste pour gérer les clients de la banque, les comptes et les opérations, en utilisant des pratiques de développement web modernes.
 
-## Development server
+## 🚀 Fonctionnalités
 
-To start a local development server, run:
+*   **Authentification & Sécurité**
+    *   Connexion utilisateur avec authentification JWT (JSON Web Token).
+    *   **Intercepteur :** Ajout automatique du token aux requêtes HTTP.
+    *   Déconnexion sécurisée et gestion du LocalStorage.
+    *   Contrôle d'accès basé sur les rôles (adaptation de l'interface utilisateur selon les rôles).
 
-```bash
-ng serve
+*   **Gestion des Clients**
+    *   **Recherche :** Filtrage des clients en temps réel.
+    *   **Opérations CRUD :** Créer, Lire, Mettre à jour et Supprimer des clients.
+    *   **Validation :** Validation stricte des formulaires pour l'intégrité des données.
+
+*   **Gestion des Comptes**
+    *   **Polymorphisme :** Gestion de différents types de comptes (Courant vs Épargne) avec des règles métier spécifiques.
+    *   **Vues Dynamiques :** Affichage des comptes spécifiques à un client ou listes globales.
+
+*   **Opérations (Transactions)**
+    *   **Historique :** Vue chronologique des débits et crédits.
+    *   **Virements :** Transferts de fonds sécurisés entre comptes avec validation.
+
+---
+
+## 💻 Plongée Technique & Aperçu du Code
+
+Ce projet suit l'architecture **Angular Moderne**. Voici les choix techniques clés et les détails d'implémentation :
+
+### 1. Composants Autonomes (Standalone Components)
+Nous nous sommes éloignés de l'approche traditionnelle `NgModule`. Tous les composants sont **Standalone**, rendant l'application plus légère et plus facile à tester.
+
+**Exemple (`src/app/customers/customers.ts`) :**
+```typescript
+@Component({
+  selector: 'app-customers',
+  standalone: true, // Implicite dans Angular 17+ si 'imports' est utilisé
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], // Imports directs
+  templateUrl: './customers.html',
+  styleUrl: './customers.css',
+})
+export class Customers implements OnInit { ... }
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 2. Formulaires Réactifs (Reactive Forms)
+Nous utilisons les **Reactive Forms** pour toutes les saisies de données. Cela offre une meilleure scalabilité, réutilisabilité et testabilité par rapport aux formulaires pilotés par template. La logique de validation est définie dans le code TypeScript, gardant le HTML propre.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+**Exemple (`src/app/new-customer/new-customer.ts`) :**
+```typescript
+this.newCustomerFormGroup = this.formBuilder.group({
+  name : this.formBuilder.control("", [Validators.required, Validators.minLength(4)]),
+  email : this.formBuilder.control("", [Validators.required, Validators.email]),
+});
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 3. Intercepteur HTTP & Sécurité JWT
+La sécurité est gérée de manière centralisée. Au lieu d'ajouter l'en-tête Authorization à chaque appel de service manuellement, nous utilisons un **Intercepteur HTTP**.
 
-```bash
-ng generate --help
+**Comment ça marche :**
+1.  L'intercepteur intercepte *chaque* requête HTTP sortante.
+2.  Il vérifie si un token JWT existe dans le `localStorage`.
+3.  Il clone la requête et ajoute l'en-tête `Authorization: Bearer <token>`.
+4.  Il transmet la requête.
+
+**Extrait de Code (`src/app/interceptor/app-http-interceptor.ts`) :**
+```typescript
+intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  if (!request.url.includes("/auth/login")) {
+    let token = localStorage.getItem('access-token');
+    if (token) {
+      let newRequest = request.clone({
+        headers: request.headers.set('Authorization', 'Bearer ' + token)
+      });
+      return next.handle(newRequest);
+    }
+  }
+  return next.handle(request);
+}
 ```
 
-## Building
+### 4. Modèle Service-Repository
+Toute la logique HTTP est encapsulée dans des **Services** (`src/app/services/`). Les composants ne font jamais d'appels HTTP directs ; ils s'abonnent aux Observables fournis par les services. Cela assure la séparation des préoccupations.
 
-To build the project run:
-
-```bash
-ng build
+**Exemple (`src/app/services/account-service.ts`) :**
+```typescript
+public getAccounts(): Observable<Array<Account>> {
+  return this.httpClient.get<Array<Account>>(this.backendHost + "/accounts");
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### 5. Pipe Async & Gestion des Observables
+Dans de nombreuses vues, nous utilisons le `AsyncPipe` (`| async`) dans le template HTML. Cela s'abonne automatiquement à l'Observable lorsque le composant se charge et se désabonne lorsqu'il est détruit, évitant les fuites de mémoire.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+**Exemple (`src/app/customers/customers.html`) :**
+```html
+<ng-container *ngIf="customers | async as listCustomer; else failure">
+   <!-- Les données sont disponibles dans la variable 'listCustomer' -->
+   <tr *ngFor="let c of listCustomer">...</tr>
+</ng-container>
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 🛠 Technologies Utilisées
 
-```bash
-ng e2e
-```
+*   **Framework :** [Angular](https://angular.io/) (v17+)
+*   **Langage :** TypeScript
+*   **Style :** [Bootstrap 5](https://getbootstrap.com/) & [Bootstrap Icons](https://icons.getbootstrap.com/)
+*   **Gestion d'État :** RxJS (Observables, Subjects)
+*   **Outil de Build :** Angular CLI / Vite
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 📋 Prérequis
 
-## Additional Resources
+*   **Node.js** (v18+)
+*   **Angular CLI** (`npm install -g @angular/cli`)
+*   **Backend :** Une instance en cours d'exécution du Backend Digital Banking sur le port `8085`.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## ⚙️ Installation & Lancement
+
+1.  **Installer les dépendances :**
+    ```bash
+    npm install
+    ```
+
+2.  **Démarrer l'application :**
+    ```bash
+    ng serve
+    ```
+    Naviguez vers `http://localhost:4200/`.
+
+## 🏗 Structure du Projet
+
+*   `src/app/services/` : Logique de communication API.
+*   `src/app/model/` : Interfaces TypeScript (DTOs).
+*   `src/app/interceptor/` : Logique de sécurité (JWT).
+*   `src/app/guards/` : Protection des routes.
+*   `src/app/customers/`, `src/app/accounts/` : Modules fonctionnels.

@@ -5,6 +5,9 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { AccountService } from '../services/account-service';
 import { Operation } from '../model/operation';
 
+/**
+ * Component for displaying operations (transactions) of a specific account.
+ */
 @Component({
   selector: 'app-account-operations',
   standalone: true,
@@ -20,6 +23,10 @@ export class OperationsComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private accountService: AccountService) {}
 
+  /**
+   * Initializes the component.
+   * Retrieves the account ID from the route parameters and fetches the operations for that account.
+   */
   ngOnInit(): void {
     this.accountId = this.route.snapshot.params['id'];
 

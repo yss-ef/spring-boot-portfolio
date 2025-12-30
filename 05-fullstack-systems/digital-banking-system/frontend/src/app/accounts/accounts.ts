@@ -5,6 +5,10 @@ import {AccountService} from '../services/account-service';
 import {Account} from '../model/account';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 
+/**
+ * Component for displaying a list of accounts.
+ * Can display all accounts or accounts for a specific customer.
+ */
 @Component({
   selector: 'app-accounts',
   imports: [
@@ -20,6 +24,11 @@ export class Accounts implements OnInit {
   errorMessage : string | undefined;
   constructor(private accountService: AccountService, private route: ActivatedRoute,) { }
 
+  /**
+   * Initializes the component.
+   * Checks if a customer ID is provided in the route parameters.
+   * If so, fetches accounts for that customer; otherwise, fetches all accounts.
+   */
   ngOnInit() {
     this.customerId = this.route.snapshot.params['id'];
 
