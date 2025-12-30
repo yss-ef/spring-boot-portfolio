@@ -1,0 +1,89 @@
+<div class="container mt-4">
+
+  <div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-0 text-muted">
+          <i class="bi bi-clock-history me-2"></i>Operations History
+        </h5>
+        <small class="text-muted">Account ID: <span class="font-monospace text-dark">{{ accountId }}</span></small>
+      </div>
+
+      <a routerLink="/accounts" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Back to Accounts
+      </a>
+    </div>
+
+    <div class="card-body p-0">
+
+      <ng-container *ngIf="operations | async as listOps; else failure">
+
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+              <th class="py-3 ps-3">ID</th>
+              <th>Date & Time</th>
+              <th>Description</th>
+              <th class="text-center">Type</th>
+              <th class="text-end pe-3">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let op of listOps">
+              <td class="ps-3">
+                <span class="font-monospace text-muted small">{{ op.id }}</span>
+              </td>
+
+              <td>
+                <i class="bi bi-calendar3 me-1 text-muted small"></i>
+                {{ op.date | date : 'dd-MM-yyyy HH:mm' }}
+              </td>
+
+              <td>{{ op.description }}</td>
+
+              <td class="text-center">
+                    <span class="badge rounded-pill"
+                          [ngClass]="op.type == 'DEBIT' ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success'">
+                      {{ op.type }}
+                    </span>
+              </td>
+
+              <td class="text-end pe-3 fw-bold"
+                  [ngClass]="op.type == 'DEBIT' ? 'text-danger' : 'text-success'">
+                <span *ngIf="op.type == 'DEBIT'">-</span>
+                <span *ngIf="op.type == 'CREDIT'">+</span>
+                {{ op.amount | number : '1.2-2' }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="listOps.length === 0" class="text-center py-5">
+          <i class="bi bi-inbox text-muted fs-1 opacity-50"></i>
+          <p class="text-muted mt-2">No operations found for this account.</p>
+        </div>
+
+      </ng-container>
+
+      <ng-template #failure>
+        <ng-container *ngIf="errorMessage; else loading">
+          <div class="alert alert-danger m-3 shadow-sm d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+          </div>
+        </ng-container>
+
+        <ng-template #loading>
+          <div class="d-flex justify-content-center align-items-center py-5">
+            <div class="spinner-border text-primary me-2" role="status"></div>
+            <span class="text-muted">Loading operations...</span>
+          </div>
+        </ng-template>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

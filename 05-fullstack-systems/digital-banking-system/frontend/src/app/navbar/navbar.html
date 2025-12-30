@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+
+    <div class="navbar-brand fw-bold text-primary">
+      <i class="bi bi-bank me-2"></i>BanK-Yss
+    </div>
+
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">
+            <i class="bi bi-house me-1"></i> Home
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCust" role="button" data-bs-toggle="dropdown" aria-expanded="false" routerLinkActive="active">
+            <i class="bi bi-people me-1"></i> Customers
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarDropdownCust">
+            <li>
+              <a class="dropdown-item" routerLink="/customers">
+                <i class="bi bi-list-ul me-2 text-muted"></i>List Customers
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/new-customer">
+                <i class="bi bi-person-plus me-2 text-muted"></i>New Customer
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAcc" role="button" data-bs-toggle="dropdown" aria-expanded="false" routerLinkActive="active">
+            <i class="bi bi-wallet2 me-1"></i> Accounts
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarDropdownAcc">
+            <li>
+              <a class="dropdown-item" routerLink="/accounts">
+                <i class="bi bi-list-check me-2 text-muted"></i>List Accounts
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" routerLink="/new-saving-account">
+                <i class="bi bi-piggy-bank me-2 text-success"></i>New Saving Account
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/new-current-account">
+                <i class="bi bi-cash-coin me-2 text-primary"></i>New Current Account
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/new-operation" routerLinkActive="active">
+            <i class="bi bi-arrow-left-right me-1"></i> Operations
+          </a>
+        </li>
+
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-5 align-middle me-1"></i> Admin
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>

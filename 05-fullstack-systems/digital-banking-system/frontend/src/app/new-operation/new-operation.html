@@ -1,0 +1,98 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 text-muted">
+            <i class="bi bi-arrow-left-right me-2"></i>New Transfer
+          </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+          <ng-container *ngIf="accounts | async as listAccounts; else loading">
+
+            <form [formGroup]="transferFormGroup" *ngIf="transferFormGroup" (ngSubmit)="handleTransfer()">
+
+              <div class="mb-3">
+                <label class="form-label text-muted small">From (Source Account)</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-box-arrow-up text-danger"></i> </span>
+                  <select formControlName="accountSource" class="form-select border-start-0">
+                    <option value="">Select Source Account...</option>
+                    <option *ngFor="let acc of listAccounts" [value]="acc.id">
+                      {{ acc.customerDTO.name }} - {{ acc.id }} ({{ acc.balance | number }} {{acc.currency}})
+                    </option>
+                  </select>
+                </div>
+                <small class="text-danger" *ngIf="transferFormGroup.get('accountSource')?.touched && transferFormGroup.get('accountSource')?.errors">
+                  Source account is required.
+                </small>
+              </div>
+
+              <div class="text-center my-2 text-muted opacity-25">
+                <i class="bi bi-arrow-down fs-4"></i>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-muted small">To (Destination Account)</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-box-arrow-in-down text-success"></i> </span>
+                  <select formControlName="accountDestination" class="form-select border-start-0">
+                    <option value="">Select Destination Account...</option>
+                    <option *ngFor="let acc of listAccounts" [value]="acc.id">
+                      {{ acc.customerDTO.name }} - {{ acc.id }}
+                    </option>
+                  </select>
+                </div>
+                <small class="text-danger" *ngIf="transferFormGroup.get('accountDestination')?.touched && transferFormGroup.get('accountDestination')?.errors">
+                  Destination account is required.
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-muted small">Transfer Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-cash-stack text-secondary"></i>
+                  </span>
+                  <input type="number" formControlName="amount" class="form-control border-start-0" placeholder="0.00">
+                  <span class="input-group-text bg-light">DH</span>
+                </div>
+                <small class="text-danger" *ngIf="transferFormGroup.get('amount')?.touched && transferFormGroup.get('amount')?.errors">
+                  Amount must be strictly positive.
+                </small>
+              </div>
+
+              <hr class="my-4 text-muted opacity-25">
+
+              <div class="d-flex justify-content-end gap-2">
+                <a routerLink="/accounts" class="btn btn-outline-secondary">
+                  Cancel
+                </a>
+                <button [disabled]="transferFormGroup.invalid" class="btn btn-warning text-dark fw-bold" type="submit">
+                  <i class="bi bi-send me-1"></i> Execute Transfer
+                </button>
+              </div>
+
+            </form>
+
+          </ng-container>
+
+          <ng-template #loading>
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-warning me-2" role="status"></div>
+              <span class="text-muted">Loading accounts list...</span>
+            </div>
+          </ng-template>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><div class="container mt-4">
+</div>
