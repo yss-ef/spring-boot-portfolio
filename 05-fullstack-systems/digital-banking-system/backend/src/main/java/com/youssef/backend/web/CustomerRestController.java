@@ -4,6 +4,7 @@ import com.youssef.backend.dtos.CustomerDTO;
 import com.youssef.backend.exeptions.CustomerNotFoundException;
 import com.youssef.backend.services.CustomerService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +25,22 @@ public class CustomerRestController {
      * @return Liste des clients
      */
     @GetMapping("")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> getAllCustomers() {
         return customerService.listCustomers();
     }
+
+    /**
+     * Récupère les clients avec le keyword.
+     * @param keyword Le mot-clé de recherche
+     * @return Liste des clients
+     */
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    public List<CustomerDTO> searchCustomers(@RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return customerService.searchCustomers(keyword);
+    }
+
 
     /**
      * Récupère un client par son ID.
@@ -35,6 +49,7 @@ public class CustomerRestController {
      * @throws CustomerNotFoundException Si le client n'existe pas
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public CustomerDTO getCustomer(@PathVariable(name = "id") Long id) throws CustomerNotFoundException {
         return customerService.findCustomerById(id);
     }
@@ -45,6 +60,7 @@ public class CustomerRestController {
      * @return Le client créé
      */
     @PostMapping("")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO request){
         return customerService.saveCustomer(request);
     }
@@ -57,6 +73,7 @@ public class CustomerRestController {
      * @throws CustomerNotFoundException Si le client n'existe pas
      */
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO updateCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable(name = "id") Long id) throws CustomerNotFoundException {
         return customerService.patchCustomer(customerDTO, id);
     }
@@ -66,6 +83,7 @@ public class CustomerRestController {
      * @param id L'ID du client à supprimer
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteCustomer(@PathVariable(name = "id")Long id){
         customerService.delCustomerById(id);
     }

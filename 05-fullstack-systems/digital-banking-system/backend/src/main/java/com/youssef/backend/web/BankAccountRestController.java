@@ -6,6 +6,7 @@ import com.youssef.backend.dtos.SavingAccountDTO;
 import com.youssef.backend.exeptions.BankAccountNotFoundException;
 import com.youssef.backend.services.BankAccountService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class BankAccountRestController {
      * @return Liste des comptes
      */
     @GetMapping("")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<BankAccountDTO> getAllBankAccounts(){
         return bankAccountService.listBankAccounts();
     }
@@ -38,6 +40,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException Si le compte n'existe pas
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public BankAccountDTO getBankAccountById(@PathVariable String id) throws BankAccountNotFoundException {
         return bankAccountService.bankAccountById(id);
     }
@@ -48,6 +51,7 @@ public class BankAccountRestController {
      * @return Liste des comptes du client
      */
     @GetMapping("/customer/{customerId}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<BankAccountDTO> getBankAccountsByCustomerId(@PathVariable Long customerId){
         return bankAccountService.listBankAccountsByCustomerId(customerId);
     }
@@ -58,6 +62,7 @@ public class BankAccountRestController {
      * @return Le compte courant créé
      */
     @PostMapping("/current")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CurrentAccountDTO saveCurrentAccount(@RequestBody CurrentAccountDTO currentAccountDTO){
         return bankAccountService.saveCurrentAccount(currentAccountDTO);
     }
@@ -68,6 +73,7 @@ public class BankAccountRestController {
      * @return Le compte épargne créé
      */
     @PostMapping("/saving")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public SavingAccountDTO saveSavingAccount(@RequestBody SavingAccountDTO savingAccountDTO){
         return bankAccountService.saveSavingAccount(savingAccountDTO);
     }
@@ -80,6 +86,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException Si le compte n'existe pas
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public BankAccountDTO updateBankAccount(@PathVariable String id, @RequestBody BankAccountDTO bankAccountDTO) throws BankAccountNotFoundException {
         bankAccountDTO.setId(id);
         return bankAccountService.updateBankAccount(id, bankAccountDTO);
@@ -91,6 +98,7 @@ public class BankAccountRestController {
      * @throws BankAccountNotFoundException Si le compte n'existe pas
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteBankAccount(@PathVariable String id) throws BankAccountNotFoundException {
         bankAccountService.deleteBankAccount(id);
     }

@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import { AuthService } from '../services/auth-service'; // Vérifie le chemin
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
-  imports: [
-    RouterLink,
-    RouterLinkActive
-  ],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrls: ['./navbar.css']
 })
 export class Navbar {
 
+  constructor(public authService: AuthService, private router: Router) { }
+
+  handleLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl("/login");
+  }
 }

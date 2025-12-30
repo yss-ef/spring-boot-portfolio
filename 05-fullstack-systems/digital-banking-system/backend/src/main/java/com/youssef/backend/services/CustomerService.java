@@ -15,7 +15,9 @@ public interface CustomerService {
      * @return Le client enregistré
      */
     CustomerDTO saveCustomer(CustomerDTO customerDTO);
-    
+
+    List<CustomerDTO> searchCustomers(String keyword);
+
     /**
      * Récupère la liste de tous les clients.
      * @return Liste des clients

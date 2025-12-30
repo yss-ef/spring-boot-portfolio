@@ -41,7 +41,7 @@ public abstract class BankAccount {
      * Liste des opérations effectuées sur ce compte.
      * Relation One-to-Many.
      */
-    @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<AccountOperation> accountOperations;
 
     @Column(name = "type", insertable = false, updatable = false)

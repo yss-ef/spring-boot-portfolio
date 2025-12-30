@@ -84,7 +84,7 @@ export class NewSavingAccount implements OnInit {
       },
       error: err => {
         console.error(err);
-        alert("Error: " + err.message);
+        alert(err.message);
       }
     });
   }

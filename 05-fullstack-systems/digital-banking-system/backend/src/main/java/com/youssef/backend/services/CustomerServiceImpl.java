@@ -34,6 +34,14 @@ public class CustomerServiceImpl implements CustomerService {
         return   bankAccountMapper.fromCustomer(savedCustomer);
     }
 
+
+    @Override
+    public List<CustomerDTO> searchCustomers(String keyword) {
+        List<Customer> customers = customerRepository.findByNameContainsIgnoreCase(keyword);
+        return customers.stream()
+                .map(cust -> bankAccountMapper.fromCustomer(cust)).toList();
+    }
+
     @Override
     public List<CustomerDTO> listCustomers() {
         List<Customer> customers = customerRepository.findAll();

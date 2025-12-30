@@ -9,6 +9,7 @@ import {NewSavingAccount} from './new-saving-account/new-saving-account';
 import {OperationsComponent} from './operations/operations';
 import {NewOperation} from './new-operation/new-operation';
 import {Home} from './home/home';
+import {Login} from './login/login';
 
 export const routes: Routes = [
   { path : "customers", component : Customers },
@@ -20,7 +21,9 @@ export const routes: Routes = [
   { path : "new-saving-account", component : NewSavingAccount},
   { path: 'operations/:id', component: OperationsComponent },
   { path : "new-operation", component: NewOperation},
-  { path : "home", component: Home }
+  { path : "home", component: Home },
+  { path: "login", component: Login},
+  { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({

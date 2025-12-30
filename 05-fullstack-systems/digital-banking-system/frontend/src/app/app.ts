@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // 1. Ajouter OnInit
 import { RouterOutlet } from '@angular/router';
-import {Navbar} from './navbar/navbar';
+import { Navbar } from './navbar/navbar';
+import { AuthService } from './services/auth-service'; // 2. Importer AuthService
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,14 @@ import {Navbar} from './navbar/navbar';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('frontend');
+// 3. Implémenter OnInit
+export class App implements OnInit {
+
+  // 4. Injecter le service
+  constructor(private authService: AuthService) {}
+
+  // 5. Au démarrage, on restaure la session !
+  ngOnInit(): void {
+    this.authService.loadToken();
+  }
 }

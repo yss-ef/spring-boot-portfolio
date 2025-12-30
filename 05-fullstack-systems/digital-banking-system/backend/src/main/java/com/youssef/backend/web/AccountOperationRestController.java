@@ -7,6 +7,7 @@ import com.youssef.backend.exeptions.BalanceNotSufficientException;
 import com.youssef.backend.exeptions.BankAccountNotFoundException;
 import com.youssef.backend.services.AccountOperationService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class AccountOperationRestController {
      * @return Liste des opérations du compte
      */
     @GetMapping("/{accountId}/operations")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<AccountOperationDTO> getAllOperationByAccounts(@PathVariable String accountId){
         return accountOperationService.getAccountOperationByAccountId(accountId);
     }
@@ -41,6 +43,7 @@ public class AccountOperationRestController {
      * @throws BalanceNotSufficientException Si le solde est insuffisant
      */
     @PostMapping("/debit")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public AccountOperationDTO debit(@RequestBody DebitCreditDTO request) throws BankAccountNotFoundException, BalanceNotSufficientException {
         return accountOperationService.debit(request.getAccountId(), request.getAmount(), request.getDescription());
     }
@@ -52,6 +55,7 @@ public class AccountOperationRestController {
      * @throws BankAccountNotFoundException Si le compte n'existe pas
      */
     @PostMapping("/credit")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public AccountOperationDTO credit(@RequestBody DebitCreditDTO request) throws BankAccountNotFoundException {
         return accountOperationService.credit(request.getAccountId(), request.getAmount(), request.getDescription());
     }
@@ -63,6 +67,7 @@ public class AccountOperationRestController {
      * @throws BalanceNotSufficientException Si le solde du compte source est insuffisant
      */
     @PostMapping("/transfer")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public void transfer(@RequestBody TransferRequestDTO request) throws BankAccountNotFoundException, BalanceNotSufficientException {
         accountOperationService.transfer(
                 request.getAccountSource(),

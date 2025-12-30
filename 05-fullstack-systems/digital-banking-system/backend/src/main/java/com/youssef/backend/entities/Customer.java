@@ -27,6 +27,6 @@ public class Customer {
      * Liste des comptes bancaires associés à ce client.
      * Relation One-to-Many avec BankAccount.
      */
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY) // l'appeler dans le DTOs mais utiliser BankAccountDTO qui lui ne renvoi pas le client
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // l'appeler dans le DTOs mais utiliser BankAccountDTO qui lui ne renvoi pas le client
     private List<BankAccount> bankAccounts;
 }

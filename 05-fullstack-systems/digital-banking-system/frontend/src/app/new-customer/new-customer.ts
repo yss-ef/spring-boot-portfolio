@@ -34,7 +34,7 @@ export class NewCustomer implements OnInit {
         this.router.navigateByUrl("/customers");
       },
       error: error=>{
-        console.log(error);
+        alert(error.message);
       }
     });
   }

@@ -59,7 +59,7 @@ export class NewOperation implements OnInit {
       },
       error: (err) => {
         console.log(err);
-        alert("Transfer failed: " + err.message);
+        alert(err.message);
       }
     });
   }

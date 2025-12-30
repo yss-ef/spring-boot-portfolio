@@ -79,7 +79,7 @@ export class NewCurrentAccount implements OnInit {
       },
       error: err => {
         console.error(err);
-        alert("Error: " + err.message);
+        alert(err.message);
       }
     });
   }
