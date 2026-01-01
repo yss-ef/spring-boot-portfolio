@@ -181,6 +181,8 @@ public String generateResponse(String userMessage) {
 *   Maven
 
 ### Configuration (`application.properties`)
+> **Note :** Le fichier `application.properties` est ignoré par Git pour des raisons de sécurité. Veuillez copier `src/main/resources/application.properties.example` vers `src/main/resources/application.properties` et remplir vos propres clés API.
+
 ```properties
 server.port=8085
 spring.datasource.url=jdbc:mysql://localhost:3306/BANK?createDatabaseIfNotExist=true

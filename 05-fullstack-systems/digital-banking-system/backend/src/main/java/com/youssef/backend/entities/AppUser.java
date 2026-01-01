@@ -5,6 +5,10 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * Entité JPA représentant un utilisateur de l'application (pour la sécurité).
+ * Stocke les informations d'authentification (username, password) et les rôles.
+ */
 @Entity
 @AllArgsConstructor
 @Getter @Setter
@@ -18,6 +22,10 @@ public class AppUser {
     private String password;
     private String email;
 
+    /**
+     * Liste des rôles attribués à l'utilisateur.
+     * Relation Many-to-Many chargée en EAGER pour être disponible lors de l'authentification.
+     */
     @ManyToMany(fetch = FetchType.EAGER) // EAGER pour charger les rôles dès qu'on charge l'user
     private List<AppRole> roles;
 }
