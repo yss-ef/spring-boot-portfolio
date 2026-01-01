@@ -14,7 +14,8 @@ src/main/java/com/youssef/backend
 ├── 📂 security     (Configuration : JWT, Filtres, Encodeurs)
 ├── 📂 repositories (Accès aux données : Interfaces Spring Data JPA)
 ├── 📂 dtos         (Objets de transfert : Isolation des entités)
-└── 📂 mappers      (Conversion : Entité <-> DTO)
+├── 📂 mappers      (Conversion : Entité <-> DTO)
+└── 📂 bot          (Service Bot Telegram : Interaction utilisateur via Telegram)
 ```
 
 ---
@@ -141,6 +142,37 @@ public List<CustomerDTO> getAllCustomers() {
 
 ---
 
+### 5️⃣ Couche Bot & IA (Telegram & OpenAI)
+
+Cette couche permet l'interaction avec les utilisateurs via un bot Telegram intelligent.
+
+**Fonctionnalités :**
+*   **Liaison de compte** : Permet à un utilisateur Telegram de lier son compte bancaire via son email (`/link email@exemple.com`).
+*   **Virements** : Exécution de virements bancaires via commande stricte (`/vir [Source] [Dest] [Montant]`).
+*   **Assistant IA** : Utilisation de l'API OpenAI pour répondre aux questions en langage naturel sur le solde et l'historique des transactions.
+
+**Code (`bot/TelegramBotService.java`) :**
+```java
+// Exemple de gestion de message
+if (messageUser.startsWith("/vir")) {
+    handleVirement(messageUser, telegramId, client);
+} else {
+    handleConversationIA(messageUser, telegramId, client);
+}
+```
+
+**Code (`services/OpenAiService.java`) :**
+```java
+// Appel à l'API OpenAI
+public String generateResponse(String userMessage) {
+    // ... Construction de la requête JSON ...
+    ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+    return extractContent(response);
+}
+```
+
+---
+
 ## 🚀 Installation et Démarrage
 
 ### Prérequis
@@ -155,6 +187,13 @@ spring.datasource.url=jdbc:mysql://localhost:3306/BANK?createDatabaseIfNotExist=
 spring.datasource.username=root
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=create
+
+# Configuration Telegram & OpenAI
+telegram.bot.token=VOTRE_TOKEN_TELEGRAM
+telegram.bot.username=VOTRE_BOT_USERNAME
+openai.api.key=VOTRE_API_KEY_OPENAI
+openai.model=gpt-3.5-turbo
+openai.api.url=https://api.openai.com/v1/chat/completions
 ```
 
 ### Lancement
@@ -207,4 +246,5 @@ spring.jpa.hibernate.ddl-auto=create
 *   **Core :** Java, Spring Boot 3
 *   **Data :** Spring Data JPA, Hibernate, MySQL
 *   **Security :** Spring Security, OAuth2 Resource Server, Nimbus JOSE + JWT
+*   **Bot & IA :** Telegram Bots API, OpenAI API (GPT-3.5)
 *   **Utils :** Lombok, BeanUtils

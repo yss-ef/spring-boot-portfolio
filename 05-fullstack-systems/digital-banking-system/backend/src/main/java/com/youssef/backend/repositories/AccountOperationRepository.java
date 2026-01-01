@@ -19,5 +19,6 @@ public interface AccountOperationRepository extends JpaRepository<AccountOperati
      * @return Liste des opérations du compte
      */
     List<AccountOperation> findAccountOperationByBankAccountId(String  bankAccountId);
+    List<AccountOperation> findByBankAccountIdOrderByDateDesc(String bankAccountId);
 
 }

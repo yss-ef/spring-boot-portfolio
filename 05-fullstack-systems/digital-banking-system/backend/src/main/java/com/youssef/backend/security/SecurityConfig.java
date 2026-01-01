@@ -42,27 +42,14 @@ public class SecurityConfig {
     private String secretKey;
 
     /**
-     * Définit les utilisateurs en mémoire pour l'authentification.
-     * Crée un utilisateur standard et un administrateur.
-     *
-     * @return InMemoryUserDetailsManager contenant les utilisateurs
-     */
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("user1").password(passwordEncoder().encode("1234")).authorities("USER").build(),
-                User.withUsername("admin").password(passwordEncoder().encode("1234")).authorities("USER", "ADMIN").build()
-        );
-    }
-
-    /**
      * Bean pour l'encodage des mots de passe.
      * Utilise BCrypt pour le hachage sécurisé.
      *
      * @return PasswordEncoder instance de BCryptPasswordEncoder
      */
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    // on ajoute static pour eviter une erreur cyclique ou le main a besoin de AccontService qui a besoin de encode qui a besoin ...
+    public static PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
