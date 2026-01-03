@@ -35,14 +35,6 @@ Bienvenue sur le projet **Digital Banking Frontend**. Une interface utilisateur 
 
 Le projet adopte une architecture **Angular Moderne** favorisant la modularité, la maintenabilité et la performance.
 
-```mermaid
-graph TD;
-    User[Utilisateur] --> View[Composants (UI)];
-    View --> Service[Services (Logique Métier)];
-    Service --> Interceptor[Intercepteur HTTP (Token JWT)];
-    Interceptor --> API[Backend API (Spring Boot)];
-```
-
 ### Structure du Code
 ```
 src/app
