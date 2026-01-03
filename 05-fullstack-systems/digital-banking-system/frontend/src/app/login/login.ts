@@ -50,7 +50,7 @@ export class Login implements OnInit {
         this.authService.loadProfile(jwt);
 
         // Puis on change de page
-        this.router.navigateByUrl('/customers');
+        this.router.navigateByUrl('/home');
       },
       error: (err) => {
         console.log(err);
