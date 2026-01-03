@@ -1,139 +1,145 @@
-# Digital Banking Frontend
+# 🏦 Digital Banking Frontend
 
-Ceci est l'application frontend pour le système de Banque Digitale, construite avec **Angular 17+**. Elle fournit une interface utilisateur robuste pour gérer les clients de la banque, les comptes et les opérations, en utilisant des pratiques de développement web modernes.
+![Angular](https://img.shields.io/badge/Angular-17%2B-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-## 🚀 Fonctionnalités
-
-*   **Authentification & Sécurité**
-    *   Connexion utilisateur avec authentification JWT (JSON Web Token).
-    *   **Intercepteur :** Ajout automatique du token aux requêtes HTTP.
-    *   Déconnexion sécurisée et gestion du LocalStorage.
-    *   Contrôle d'accès basé sur les rôles (adaptation de l'interface utilisateur selon les rôles).
-
-*   **Gestion des Clients**
-    *   **Recherche :** Filtrage des clients en temps réel.
-    *   **Opérations CRUD :** Créer, Lire, Mettre à jour et Supprimer des clients.
-    *   **Validation :** Validation stricte des formulaires pour l'intégrité des données.
-
-*   **Gestion des Comptes**
-    *   **Polymorphisme :** Gestion de différents types de comptes (Courant vs Épargne) avec des règles métier spécifiques.
-    *   **Vues Dynamiques :** Affichage des comptes spécifiques à un client ou listes globales.
-
-*   **Opérations (Transactions)**
-    *   **Historique :** Vue chronologique des débits et crédits.
-    *   **Virements :** Transferts de fonds sécurisés entre comptes avec validation.
+Bienvenue sur le projet **Digital Banking Frontend**. Une interface utilisateur moderne, réactive et sécurisée, développée avec **Angular 17+**. Elle permet la gestion complète des clients, des comptes bancaires et des opérations financières en communiquant avec un backend Spring Boot.
 
 ---
 
-## 💻 Plongée Technique & Aperçu du Code
+## 📑 Table des Matières
+1.  [Fonctionnalités Clés](#-fonctionnalités-clés)
+2.  [Architecture du Projet](#-architecture-globale)
+3.  [Analyse Technique](#-analyse-technique)
+    *   [Composants (Standalone)](#1️⃣-composants-autonomes-standalone)
+    *   [Services & API](#2️⃣-services--communication-api)
+    *   [Sécurité (Interceptors)](#3️⃣-sécurité--intercepteurs)
+    *   [Formulaires](#4️⃣-formulaires-réactifs)
+4.  [Guide de Démarrage](#-installation-et-démarrage)
+5.  [Structure de l'Application](#-structure-de-lapplication)
+6.  [Stack Technique](#-stack-technique)
 
-Ce projet suit l'architecture **Angular Moderne**. Voici les choix techniques clés et les détails d'implémentation :
+---
 
-### 1. Composants Autonomes (Standalone Components)
-Nous nous sommes éloignés de l'approche traditionnelle `NgModule`. Tous les composants sont **Standalone**, rendant l'application plus légère et plus facile à tester.
+## ✨ Fonctionnalités Clés
 
-**Exemple (`src/app/customers/customers.ts`) :**
+*   **🔐 Authentification & Sécurité** : Connexion sécurisée via **JWT** et gestion de session (LocalStorage).
+*   **👥 Gestion des Clients** : Recherche en temps réel, ajout, modification et suppression de clients avec validation stricte.
+*   **🏦 Gestion des Comptes** : Support des comptes **Courants** (avec découvert) et **Épargne** (avec taux d'intérêt).
+*   **💸 Opérations Bancaires** : Consultation de l'historique des transactions et exécution de virements compte-à-compte.
+
+---
+
+## 🏗 Architecture Globale
+
+Le projet adopte une architecture **Angular Moderne** favorisant la modularité, la maintenabilité et la performance.
+
+```mermaid
+graph TD;
+    User[Utilisateur] --> View[Composants (UI)];
+    View --> Service[Services (Logique Métier)];
+    Service --> Interceptor[Intercepteur HTTP (Token JWT)];
+    Interceptor --> API[Backend API (Spring Boot)];
+```
+
+### Structure du Code
+```
+src/app
+├── 📂 services     # Services API (Auth, Accounts, Customers)
+├── 📂 model        # Interfaces et Types (DTOs)
+├── 📂 interceptor  # Gestion du Token JWT
+├── 📂 customers    # Composants de gestion des clients
+├── 📂 accounts     # Composants de gestion des comptes
+├── 📂 operations   # Composants de gestion des opérations
+└── 📂 login        # Page d'authentification
+```
+
+---
+
+## 📚 Analyse Technique
+
+### 1️⃣ Composants Autonomes (Standalone)
+Utilisation exclusive des **Standalone Components** pour réduire la complexité (suppression des `NgModule`) et optimiser le chargement.
+
 ```typescript
 @Component({
   selector: 'app-customers',
-  standalone: true, // Implicite dans Angular 17+ si 'imports' est utilisé
-  imports: [CommonModule, ReactiveFormsModule, RouterLink], // Imports directs
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })
 export class Customers implements OnInit { ... }
 ```
 
-### 2. Formulaires Réactifs (Reactive Forms)
-Nous utilisons les **Reactive Forms** pour toutes les saisies de données. Cela offre une meilleure scalabilité, réutilisabilité et testabilité par rapport aux formulaires pilotés par template. La logique de validation est définie dans le code TypeScript, gardant le HTML propre.
+### 2️⃣ Services & Communication API
+Isolation de la logique métier et des appels HTTP dans des services dédiés, injectés dans les composants. Utilisation de **RxJS** pour la gestion asynchrone.
 
-**Exemple (`src/app/new-customer/new-customer.ts`) :**
-```typescript
-this.newCustomerFormGroup = this.formBuilder.group({
-  name : this.formBuilder.control("", [Validators.required, Validators.minLength(4)]),
-  email : this.formBuilder.control("", [Validators.required, Validators.email]),
-});
+### 3️⃣ Sécurité & Intercepteurs
+Un `HttpInterceptor` intercepte toutes les requêtes sortantes pour y injecter automatiquement le token d'authentification `Authorization: Bearer ...`.
+
+### 4️⃣ Formulaires Réactifs
+Gestion des formulaires via **Reactive Forms** pour une validation robuste et découplée du template HTML.
+
+---
+
+## 🚀 Installation et Démarrage
+
+### Prérequis
+*   **Node.js** (v18 ou supérieur)
+*   **Backend Digital Banking** lancé sur le port `8085`
+
+### 1. Installation des dépendances
+```bash
+npm install
 ```
 
-### 3. Intercepteur HTTP & Sécurité JWT
-La sécurité est gérée de manière centralisée. Au lieu d'ajouter l'en-tête Authorization à chaque appel de service manuellement, nous utilisons un **Intercepteur HTTP**.
-
-**Comment ça marche :**
-1.  L'intercepteur intercepte *chaque* requête HTTP sortante.
-2.  Il vérifie si un token JWT existe dans le `localStorage`.
-3.  Il clone la requête et ajoute l'en-tête `Authorization: Bearer <token>`.
-4.  Il transmet la requête.
-
-**Extrait de Code (`src/app/interceptor/app-http-interceptor.ts`) :**
-```typescript
-intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-  if (!request.url.includes("/auth/login")) {
-    let token = localStorage.getItem('access-token');
-    if (token) {
-      let newRequest = request.clone({
-        headers: request.headers.set('Authorization', 'Bearer ' + token)
-      });
-      return next.handle(newRequest);
-    }
-  }
-  return next.handle(request);
-}
+### 2. Lancement du serveur de développement
+```bash
+ng serve
 ```
+L'application sera accessible sur `http://localhost:4200/`.
 
-### 4. Modèle Service-Repository
-Toute la logique HTTP est encapsulée dans des **Services** (`src/app/services/`). Les composants ne font jamais d'appels HTTP directs ; ils s'abonnent aux Observables fournis par les services. Cela assure la séparation des préoccupations.
+---
 
-**Exemple (`src/app/services/account-service.ts`) :**
-```typescript
-public getAccounts(): Observable<Array<Account>> {
-  return this.httpClient.get<Array<Account>>(this.backendHost + "/accounts");
-}
-```
+## 📱 Structure de l'Application
 
-### 5. Pipe Async & Gestion des Observables
-Dans de nombreuses vues, nous utilisons le `AsyncPipe` (`| async`) dans le template HTML. Cela s'abonne automatiquement à l'Observable lorsque le composant se charge et se désabonne lorsqu'il est détruit, évitant les fuites de mémoire.
+### 🔐 Authentification
+*   **Route** : `/login`
+*   **Description** : Formulaire de connexion pour récupérer le JWT.
 
-**Exemple (`src/app/customers/customers.html`) :**
-```html
-<ng-container *ngIf="customers | async as listCustomer; else failure">
-   <!-- Les données sont disponibles dans la variable 'listCustomer' -->
-   <tr *ngFor="let c of listCustomer">...</tr>
-</ng-container>
+### 👤 Clients (`/customers`)
+*   **Route** : `/customers`
+*   **Fonctions** : Liste des clients, barre de recherche, boutons d'actions (Edit/Delete).
+
+### 🏦 Comptes & Opérations (`/accounts`)
+*   **Route** : `/accounts`
+*   **Fonctions** : Consultation d'un compte par ID, affichage du solde, historique des opérations, et formulaire de virement.
+
+---
+
+## 🛠 Stack Technique
+
+| Catégorie | Technologie | Usage |
+| :--- | :--- | :--- |
+| **Core** | Angular 17+ | Framework Frontend |
+| **Langage** | TypeScript 5.0 | Typage et Logique |
+| **UI/UX** | Bootstrap 5 | Design et Responsivité |
+| **Data** | RxJS | Programmation Réactive |
+| **Build** | Angular CLI / Vite | Outils de build |
+
+---
+
+## 🧪 Tests
+Pour lancer les tests unitaires :
+```bash
+ng test
 ```
 
 ---
 
-## 🛠 Technologies Utilisées
+## 👥 Crédits
 
-*   **Framework :** [Angular](https://angular.io/) (v17+)
-*   **Langage :** TypeScript
-*   **Style :** [Bootstrap 5](https://getbootstrap.com/) & [Bootstrap Icons](https://icons.getbootstrap.com/)
-*   **Gestion d'État :** RxJS (Observables, Subjects)
-*   **Outil de Build :** Angular CLI / Vite
-
-## 📋 Prérequis
-
-*   **Node.js** (v18+)
-*   **Angular CLI** (`npm install -g @angular/cli`)
-*   **Backend :** Une instance en cours d'exécution du Backend Digital Banking sur le port `8085`.
-
-## ⚙️ Installation & Lancement
-
-1.  **Installer les dépendances :**
-    ```bash
-    npm install
-    ```
-
-2.  **Démarrer l'application :**
-    ```bash
-    ng serve
-    ```
-    Naviguez vers `http://localhost:4200/`.
-
-## 🏗 Structure du Projet
-
-*   `src/app/services/` : Logique de communication API.
-*   `src/app/model/` : Interfaces TypeScript (DTOs).
-*   `src/app/interceptor/` : Logique de sécurité (JWT).
-*   `src/app/guards/` : Protection des routes.
-*   `src/app/customers/`, `src/app/accounts/` : Modules fonctionnels.
+*   **Réalisé par :** Youssef Fellah
+*   **Encadré par :** Pr. Mohamed Youssfi

@@ -1,21 +1,67 @@
 # 🏦 Digital Banking Backend
 
-Bienvenue sur le projet **Digital Banking Backend**. Ce projet est une application robuste basée sur **Spring Boot** simulant un système bancaire numérique.
+![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.0-green?style=for-the-badge&logo=spring-boot)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
+![Security](https://img.shields.io/badge/Spring_Security-OAuth2-red?style=for-the-badge&logo=spring-security)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-412991?style=for-the-badge&logo=openai)
+![Telegram](https://img.shields.io/badge/Telegram-Bot_API-26A5E4?style=for-the-badge&logo=telegram)
+
+Bienvenue sur le projet **Digital Banking Backend**. Une application bancaire robuste, sécurisée et intelligente, développée avec **Spring Boot**. Elle intègre des fonctionnalités modernes comme la sécurité JWT, une architecture en couches stricte, et un assistant bancaire via Telegram propulsé par l'IA.
+
+---
+
+## 📑 Table des Matières
+1.  [Fonctionnalités Clés](#-fonctionnalités-clés)
+2.  [Architecture du Projet](#-architecture-globale)
+3.  [Analyse Technique](#-analyse-détaillée-par-couche)
+    *   [Données (JPA)](#1️⃣-couche-de-données-jpa--entities)
+    *   [Sécurité (JWT)](#2️⃣-couche-de-sécurité-spring-security--jwt)
+    *   [Métier (Services)](#3️⃣-couche-métier-services--transactions)
+    *   [Web (API REST)](#4️⃣-couche-web-contrôleurs--dtos)
+    *   [Bot & IA](#5️⃣-couche-bot--ia-telegram--openai)
+4.  [Guide de Démarrage](#-installation-et-démarrage)
+5.  [Documentation API](#-documentation-de-lapi)
+6.  [Stack Technique](#-stack-technique)
+
+---
+
+## ✨ Fonctionnalités Clés
+
+*   **Gestion des Clients** : Création, recherche, modification et suppression de clients.
+*   **Gestion des Comptes** : Support des comptes **Courants** (avec découvert) et **Épargne** (avec taux d'intérêt).
+*   **Opérations Bancaires** : Débits, Crédits et Virements compte-à-compte avec gestion transactionnelle.
+*   **Sécurité Avancée** : Authentification Stateless via **JWT** (JSON Web Tokens) et gestion des rôles (USER/ADMIN).
+*   **Assistant Intelligent** :
+    *   Bot **Telegram** interactif.
+    *   Consultation de solde et virements via commandes chat.
+    *   Support conversationnel via **OpenAI (ChatGPT)** pour répondre aux questions financières.
+
+---
 
 ## 🏗 Architecture Globale
 
-Le projet suit une architecture **N-Tiers** classique pour assurer la séparation des responsabilités et la maintenabilité :
+Le projet respecte une architecture **N-Tiers** stricte pour garantir la maintenabilité et la scalabilité.
 
+```mermaid
+graph TD;
+    Client[Client Web/Mobile/Telegram] --> Controller[Couche Web / Bot];
+    Controller --> Service[Couche Service (Métier)];
+    Service --> Repository[Couche DAO (Data Access)];
+    Repository --> Database[(Base de Données MySQL)];
+```
+
+### Structure du Code
 ```
 src/main/java/com/youssef/backend
-├── 📂 web          (Contrôleurs REST : Point d'entrée de l'API)
-├── 📂 services     (Logique métier : Traitements, calculs, transactions)
-├── 📂 entities     (Modèle de données : Mappage JPA avec la BDD)
-├── 📂 security     (Configuration : JWT, Filtres, Encodeurs)
-├── 📂 repositories (Accès aux données : Interfaces Spring Data JPA)
-├── 📂 dtos         (Objets de transfert : Isolation des entités)
-├── 📂 mappers      (Conversion : Entité <-> DTO)
-└── 📂 bot          (Service Bot Telegram : Interaction utilisateur via Telegram)
+├── 📂 web          # Contrôleurs REST (Points d'entrée HTTP)
+├── 📂 bot          # Service Bot Telegram (Point d'entrée Chat)
+├── 📂 services     # Logique métier & Transactionnelle
+├── 📂 entities     # Modèle de données (JPA)
+├── 📂 repositories # Interfaces d'accès aux données (Spring Data)
+├── 📂 security     # Configuration JWT & Filtres de sécurité
+├── 📂 dtos         # Data Transfer Objects (Isolation API/BDD)
+└── 📂 mappers      # Convertisseurs (MapStruct/BeanUtils)
 ```
 
 ---
@@ -23,230 +69,147 @@ src/main/java/com/youssef/backend
 ## 📚 Analyse Détaillée par Couche
 
 ### 1️⃣ Couche de Données (JPA & Entities)
+Gestion de la persistance avec la stratégie d'héritage **Single Table**.
+*   **Concept** : Une seule table `BankAccount` stocke à la fois les comptes courants et épargne, différenciés par une colonne `TYPE`.
 
-Cette couche gère la persistance des données et la structure de la base de données.
-
-**La Logique :**
-Nous utilisons la stratégie d'héritage **Single Table** pour gérer les comptes bancaires.
-*   Nous avons une classe abstraite `BankAccount`.
-*   Deux classes filles : `CurrentAccount` (Compte Courant) et `SavingAccount` (Compte Épargne).
-*   Au lieu de créer plusieurs tables, JPA stocke tout dans une seule table `BankAccount` et utilise une colonne discriminante (`TYPE`) pour savoir de quel type de compte il s'agit.
-
-**Code (`entities/BankAccount.java`) :**
 ```java
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Une seule table pour toute la hiérarchie
-@DiscriminatorColumn(name = "TYPE", length = 4)       // Colonne qui distingue le type (ex: "CUR", "SAV")
-public abstract class BankAccount {
-    @Id
-    private String id;
-    private double balance;
-    
-    @ManyToOne
-    private Customer customer; // Relation Many-to-One vers le client
-    
-    // ... getters et setters
-}
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TYPE", length = 4)
+public abstract class BankAccount { ... }
 ```
 
----
-
 ### 2️⃣ Couche de Sécurité (Spring Security & JWT)
+Sécurité **Stateless** basée sur les standards OAuth2 Resource Server.
+*   **Flux** : Login -> Génération JWT -> Requête API + Header `Authorization: Bearer token`.
+*   **Config** : Désactivation CSRF, Session Stateless, Filtres JWT.
 
-La sécurité est gérée de manière **Stateless** (sans session serveur) en utilisant des tokens **JWT (JSON Web Tokens)**.
-
-**La Logique :**
-1.  **Configuration** : Nous configurons une chaîne de filtres (`SecurityFilterChain`) pour intercepter les requêtes HTTP.
-2.  **Stateless** : Nous désactivons les sessions HTTP classiques (`SessionCreationPolicy.STATELESS`). Chaque requête doit contenir le token.
-3.  **JWT** : Nous utilisons un encodeur et un décodeur JWT pour signer et vérifier les tokens.
-
-**Code de Configuration (`security/SecurityConfig.java`) :**
 ```java
 @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    return httpSecurity
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Pas de session en mémoire
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(ar -> ar
-                    .requestMatchers("/auth/login/**").permitAll() // Endpoint de login public
-                    .anyRequest().authenticated()                  // Tous les autres endpoints nécessitent une authentification
-            )
-            .oauth2ResourceServer(oa -> oa.jwt(Customizer.withDefaults())) // Active la gestion des tokens JWT
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
+            .oauth2ResourceServer(oa -> oa.jwt(Customizer.withDefaults()))
             .build();
 }
 ```
 
-**Code de Génération du Token (`web/SecurityRestController.java`) :**
-```java
-// Création des "Claims" (les informations contenues dans le token)
-JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-        .subject(username)
-        .claim("scope", scope) // Les rôles de l'utilisateur
-        .expiresAt(Instant.now().plus(10, ChronoUnit.MINUTES)) // Expiration
-        .build();
-
-// Signature et encodage du token avec la clé secrète
-String jwt = jwtEncoder.encode(JwtEncoderParameters.from(header, jwtClaimsSet)).getTokenValue();
-```
-
----
-
 ### 3️⃣ Couche Métier (Services & Transactions)
+Garantie de l'intégrité des données via `@Transactional`.
+*   **Exemple** : Un virement est atomique. Si le crédit échoue, le débit est annulé.
 
-C'est le cœur de l'application, où les règles de gestion sont appliquées.
-
-**La Logique :**
-Les opérations financières (comme un virement) doivent être **atomiques**. Cela signifie que tout doit réussir, ou tout doit échouer. Si on débite le compte A mais que le crédit du compte B échoue, l'argent ne doit pas disparaître. L'annotation `@Transactional` gère cela automatiquement (Rollback en cas d'erreur).
-
-**Code (`services/AccountOperationServiceImpl.java`) :**
 ```java
-@Transactional // Garantit l'intégrité des données
-public void transfer(String source, String destination, double amount) {
-    // 1. Retrait
-    debit(source, amount, "Transfer to " + destination);
-    // 2. Dépôt
-    credit(destination, amount, "Transfer from " + source);
-    // Si une erreur survient ici, le débit est annulé automatiquement.
+@Transactional
+public void transfer(String source, String dest, double amount) {
+    debit(source, amount, "Virement vers " + dest);
+    credit(dest, amount, "Virement de " + source);
 }
 ```
-
----
 
 ### 4️⃣ Couche Web (Contrôleurs & DTOs)
-
-Cette couche expose l'API REST au monde extérieur (Frontend, Mobile, etc.).
-
-**La Logique :**
-Nous appliquons le pattern **DTO (Data Transfer Object)**.
-*   **Problème** : Les entités JPA (`Customer`, `BankAccount`) contiennent des relations bidirectionnelles qui peuvent causer des boucles infinies lors de la conversion en JSON. De plus, on ne veut pas toujours exposer toute la base de données.
-*   **Solution** : Le Contrôleur reçoit et renvoie des objets simples (DTO). Un `Mapper` s'occupe de copier les données entre les Entités et les DTOs.
-
-**Code du Mapper (`mappers/BankAccountMapper.java`) :**
-```java
-// Conversion Entité -> DTO
-public CustomerDTO fromCustomer(Customer customer){
-    CustomerDTO customerDTO = new CustomerDTO();
-    BeanUtils.copyProperties(customer, customerDTO); // Copie intelligente des propriétés
-    return customerDTO;
-}
-```
-
-**Code du Contrôleur (`web/CustomerRestController.java`) :**
-```java
-@GetMapping("/")
-public List<CustomerDTO> getAllCustomers() {
-    // Le contrôleur appelle le service, qui lui renvoie des DTOs propres
-    return customerService.listCustomers();
-}
-```
-
----
+Exposition propre des données via le pattern **DTO**.
+*   Les entités JPA ne sont jamais exposées directement pour éviter les boucles infinies JSON et fuites de données.
 
 ### 5️⃣ Couche Bot & IA (Telegram & OpenAI)
-
-Cette couche permet l'interaction avec les utilisateurs via un bot Telegram intelligent.
-
-**Fonctionnalités :**
-*   **Liaison de compte** : Permet à un utilisateur Telegram de lier son compte bancaire via son email (`/link email@exemple.com`).
-*   **Virements** : Exécution de virements bancaires via commande stricte (`/vir [Source] [Dest] [Montant]`).
-*   **Assistant IA** : Utilisation de l'API OpenAI pour répondre aux questions en langage naturel sur le solde et l'historique des transactions.
-
-**Code (`bot/TelegramBotService.java`) :**
-```java
-// Exemple de gestion de message
-if (messageUser.startsWith("/vir")) {
-    handleVirement(messageUser, telegramId, client);
-} else {
-    handleConversationIA(messageUser, telegramId, client);
-}
-```
-
-**Code (`services/OpenAiService.java`) :**
-```java
-// Appel à l'API OpenAI
-public String generateResponse(String userMessage) {
-    // ... Construction de la requête JSON ...
-    ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
-    return extractContent(response);
-}
-```
+Interaction utilisateur nouvelle génération.
+*   **Commandes** : `/vir [Source] [Dest] [Montant]` pour les virements rapides.
+*   **IA** : Le bot utilise GPT-3.5 pour analyser les demandes en langage naturel et fournir des réponses contextuelles basées sur les données du client.
 
 ---
 
 ## 🚀 Installation et Démarrage
 
 ### Prérequis
-*   Java 17+
-*   MySQL
-*   Maven
+*   **Java 17** ou supérieur
+*   **Maven 3.8+**
+*   **MySQL 8.0+**
+*   Un compte **Telegram** (pour créer un bot via BotFather)
+*   Une clé API **OpenAI** (optionnel, pour l'IA)
 
-### Configuration (`application.properties`)
-> **Note :** Le fichier `application.properties` est ignoré par Git pour des raisons de sécurité. Veuillez copier `src/main/resources/application.properties.example` vers `src/main/resources/application.properties` et remplir vos propres clés API.
+### 1. Clonage et Configuration
+```bash
+git clone https://github.com/votre-repo/digital-banking-backend.git
+cd digital-banking-backend
+```
 
+⚠️ **Important** : Configurez vos variables d'environnement.
+Copiez le fichier d'exemple et remplissez-le :
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+Modifiez `src/main/resources/application.properties` :
 ```properties
-server.port=8085
+# Base de données
 spring.datasource.url=jdbc:mysql://localhost:3306/BANK?createDatabaseIfNotExist=true
 spring.datasource.username=root
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=create
+spring.datasource.password=VOTRE_MOT_DE_PASSE
 
-# Configuration Telegram & OpenAI
+# Telegram & OpenAI
 telegram.bot.token=VOTRE_TOKEN_TELEGRAM
 telegram.bot.username=VOTRE_BOT_USERNAME
 openai.api.key=VOTRE_API_KEY_OPENAI
-openai.model=gpt-3.5-turbo
-openai.api.url=https://api.openai.com/v1/chat/completions
 ```
 
-### Lancement
-1.  Clonez le projet.
-2.  Lancez : `mvn spring-boot:run`
-3.  Accédez à : `http://localhost:8085`
-4.  Données de test : Initialisées automatiquement au démarrage.
+### 2. Lancement
+```bash
+mvn spring-boot:run
+```
+L'application démarrera sur `http://localhost:8085`.
+Les données de test sont générées automatiquement au démarrage via `CommandLineRunner`.
 
 ---
 
 ## 📡 Documentation de l'API
 
-### 🔐 Authentification (`/auth`)
-| Méthode | Endpoint | Description | Body Requis |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/auth/login` | Authentification utilisateur | `{"username": "...", "password": "..."}` |
-| `GET` | `/auth/profile` | Récupérer le profil connecté | *Aucun* (Token Bearer requis) |
+### 🔐 Authentification
+| Méthode | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/auth/login` | Login (Body: `{"username": "...", "password": "..."}`) |
+| `GET` | `/auth/profile` | Profil utilisateur courant |
 
 ### 👤 Clients (`/customers`)
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/customers/` | Liste tous les clients |
-| `GET` | `/customers/{id}` | Récupère un client par son ID |
-| `POST` | `/customers/` | Crée un nouveau client |
-| `PATCH` | `/customers/{id}` | Met à jour partiellement un client |
-| `DELETE` | `/customers/{id}` | Supprime un client |
-
-### 🏦 Comptes Bancaires (`/accounts`)
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/accounts/` | Liste tous les comptes |
-| `GET` | `/accounts/{id}` | Récupère un compte par son ID |
-| `GET` | `/accounts/customer/{id}` | Liste les comptes d'un client spécifique |
-| `POST` | `/accounts/current` | Crée un compte courant |
-| `POST` | `/accounts/saving` | Crée un compte épargne |
-| `PUT` | `/accounts/{id}` | Met à jour un compte |
-| `DELETE` | `/accounts/{id}` | Supprime un compte |
-
-### 💸 Opérations (`/accounts`)
-| Méthode | Endpoint | Description | Body Requis |
+| Méthode | Endpoint | Rôle Requis | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/accounts/{id}/operations` | Historique des opérations d'un compte | - |
-| `POST` | `/accounts/debit` | Effectuer un débit | `{"accountId": "...", "amount": 100, "description": "..."}` |
-| `POST` | `/accounts/credit` | Effectuer un crédit | `{"accountId": "...", "amount": 100, "description": "..."}` |
-| `POST` | `/accounts/transfer` | Effectuer un virement | `{"accountSource": "...", "accountDestination": "...", "amount": 100}` |
+| `GET` | `/customers` | USER | Liste des clients |
+| `GET` | `/customers/search?keyword=...` | USER | Recherche de clients |
+| `POST` | `/customers` | ADMIN | Créer un client |
+| `DELETE` | `/customers/{id}` | ADMIN | Supprimer un client |
+
+### 🏦 Comptes & Opérations (`/accounts`)
+| Méthode | Endpoint | Rôle Requis | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/accounts/{id}` | USER | Détails d'un compte |
+| `GET` | `/accounts/{id}/operations` | USER | Historique des opérations |
+| `POST` | `/accounts/debit` | ADMIN | Effectuer un débit |
+| `POST` | `/accounts/credit` | ADMIN | Effectuer un crédit |
+| `POST` | `/accounts/transfer` | USER | Effectuer un virement |
 
 ---
 
 ## 🛠 Stack Technique
-*   **Core :** Java, Spring Boot 3
-*   **Data :** Spring Data JPA, Hibernate, MySQL
-*   **Security :** Spring Security, OAuth2 Resource Server, Nimbus JOSE + JWT
-*   **Bot & IA :** Telegram Bots API, OpenAI API (GPT-3.5)
-*   **Utils :** Lombok, BeanUtils
+
+| Catégorie | Technologie | Usage |
+| :--- | :--- | :--- |
+| **Langage** | Java 17 | Core |
+| **Framework** | Spring Boot 3 | Structure de l'application |
+| **Data** | Spring Data JPA / Hibernate | ORM & Accès BDD |
+| **Base de données** | MySQL | Persistance |
+| **Sécurité** | Spring Security / OAuth2 | Auth & JWT |
+| **IA & Chat** | OpenAI API / Telegram Bots | Assistant Intelligent |
+| **Outils** | Maven, Lombok, MapStruct | Build & Boilerplate |
+
+---
+
+## 🧪 Tests
+Pour lancer les tests unitaires et d'intégration :
+```bash
+mvn test
+```
+
+---
+## 👥 Crédits
+
+*   **Réalisé par :** Youssef Fellah
+*   **Encadré par :** Pr. Mohamed Youssfi
+
