@@ -1,0 +1,56 @@
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h2>
+    <button class="btn btn-outline-secondary btn-sm" (click)="loadData()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Actualiser
+    </button>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card-counter primary">
+        <i class="bi bi-people-fill"></i>
+        <span class="count-numbers">{{ totalCustomers }}</span>
+        <span class="count-name">Total Clients</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-counter success">
+        <i class="bi bi-wallet2"></i>
+        <span class="count-numbers">{{ totalAccounts }}</span>
+        <span class="count-name">Total Comptes</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-counter info">
+        <i class="bi bi-cash-stack"></i>
+        <span class="count-numbers">{{ totalBalance | currency:'MAD':'symbol':'1.2-2' }}</span>
+        <span class="count-name">Actifs Totaux</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 text-muted"><i class="bi bi-pie-chart-fill me-2"></i>Répartition</h5>
+        </div>
+        <div class="card-body" style="height: 300px; position: relative;">
+          <canvas #chartDoughnut></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 text-muted"><i class="bi bi-bar-chart-fill me-2"></i>Aperçu des Soldes</h5>
+        </div>
+        <div class="card-body" style="height: 300px; position: relative;">
+          <canvas #chartBar></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

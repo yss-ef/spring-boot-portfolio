@@ -35,7 +35,7 @@
               <th class="py-3 ps-3">ID</th>
               <th>Name</th>
               <th>Email</th>
-              <th class="text-center">Manage</th>
+              <th class="text-center" *ngIf="authService.roles.includes('ADMIN')">Manage</th>
               <th class="text-center pe-3">View</th>
             </tr>
             </thead>
@@ -51,7 +51,7 @@
 
               <td>{{c.email}}</td>
 
-              <td class="text-center">
+              <td class="text-center" *ngIf="authService.roles.includes('ADMIN')">
                 <div class="btn-group btn-group-sm">
                   <a class="btn btn-outline-secondary" [routerLink]="['/edit-customer', c.id]" title="Edit Customer">
                     <i class="bi bi-pencil"></i>

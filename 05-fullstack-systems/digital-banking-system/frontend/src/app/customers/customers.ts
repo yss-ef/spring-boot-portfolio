@@ -5,6 +5,7 @@ import {catchError, map, Observable, throwError} from 'rxjs';
 import {Customer} from '../model/customer';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
+import {AuthService} from '../services/auth-service';
 
 /**
  * Component for managing customers.
@@ -26,7 +27,7 @@ export class Customers implements OnInit {
   errorMessage! : string;
   searchformGroup! : FormGroup;
 
-  constructor(private customerService: CustomerService, private formBuilder : FormBuilder, private router: Router) { }
+  constructor(private customerService: CustomerService, private formBuilder : FormBuilder, private router: Router, public authService: AuthService) { }
 
   /**
    * Initializes the component and the search form.

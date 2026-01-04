@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth-service'; // Vérifie le chemin
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {NgIf} from '@angular/common';
 
 /**
  * Component representing the navigation bar.
@@ -11,7 +12,8 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
   templateUrl: './navbar.html',
   imports: [
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NgIf
   ],
   styleUrls: ['./navbar.css']
 })

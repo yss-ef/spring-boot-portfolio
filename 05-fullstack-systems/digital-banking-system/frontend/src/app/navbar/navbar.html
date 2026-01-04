@@ -10,11 +10,17 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" *ngIf="authService.isAuthenticated">
 
         <li class="nav-item">
           <a class="nav-link" routerLink="/home" routerLinkActive="active">
             <i class="bi bi-house me-1"></i> Home
+          </a>
+        </li>
+
+        <li class="nav-item" *ngIf="authService.roles.includes('ADMIN')">
+          <a class="nav-link" routerLink="/admin" routerLinkActive="active">
+            <i class="bi bi-speedometer2 me-1"></i> Dashboard
           </a>
         </li>
 
@@ -69,13 +75,17 @@
       </ul>
 
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown" *ngIf="authService.isAuthenticated">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            <i class="bi bi-person-circle fs-5 align-middle me-1"></i> Account
+            <i class="bi bi-person-circle fs-5 align-middle me-1"></i>
+            {{ authService.username }}
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
+            <li><a class="dropdown-item text-danger" (click)="handleLogout()" style="cursor: pointer;">Logout</a></li>
           </ul>
+        </li>
+        <li class="nav-item" *ngIf="!authService.isAuthenticated">
+            <a class="nav-link" routerLink="/login">Login</a>
         </li>
       </ul>
 
