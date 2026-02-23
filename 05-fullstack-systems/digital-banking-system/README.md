@@ -136,7 +136,4 @@ ng serve
 
 ---
 
-## 👥 Credits
-
-* **Developed by:** Youssef Fellah
-* **Supervised by:** Pr. Mohamed Youssfi
+*Authored by Youssef Fellah.*
