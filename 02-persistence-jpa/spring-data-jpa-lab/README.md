@@ -127,3 +127,5 @@ The `application.properties` file centralizes the configuration (e.g., MySQL cre
 ---
 
 *Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
