@@ -1,133 +1,142 @@
-# 🏦 Digital Banking Project
+# 🏦 Digital Banking Platform
 
-![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![Angular](https://img.shields.io/badge/Angular-17-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+> A comprehensive full-stack digital banking solution. This system features a robust Spring Boot backend handling secure financial transactions and a modern, responsive Angular frontend for seamless user interaction.
 
-Bienvenue sur le dépôt global du projet **Digital Banking**. Ce projet est une solution complète de banque numérique ("Digital Banking"), composée d'un backend robuste basé sur Spring Boot et d'un frontend moderne développé avec Angular.
+## 📑 Table of Contents
 
----
+* [System Architecture](https://www.google.com/search?q=%23%EF%B8%8F-system-architecture)
+* [Core Features](https://www.google.com/search?q=%23-core-features)
+* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
+* [Interface Showcase](https://www.google.com/search?q=%23-interface-showcase)
+* [Quick Start Guide](https://www.google.com/search?q=%23-quick-start-guide)
+* [Credits](https://www.google.com/search?q=%23-credits)
 
-## 📑 Table des Matières
-- [Architecture Globale](#-architecture-globale)
-- [Fonctionnalités](#-fonctionnalités-principales)
-- [Technologies Utilisées](#-technologies)
-- [Captures d'écran](#-captures-décran)
-- [Démarrage Rapide](#-démarrage-rapide)
-- [Crédits](#-crédits)
+## 🏗️ System Architecture
 
----
+The platform is built on a modern **Multi-Tier Architecture** ensuring high scalability and separation of concerns:
 
-## 🏗 Architecture Globale
+1. **Presentation Tier (SPA)**: An Angular application communicating asynchronously via HTTP/REST.
+2. **Application Tier (API)**: A Spring Boot backend exposing secured RESTful web services.
+3. **Data Tier**: A relational MySQL database for robust data persistence.
 
-Le système suit une architecture **Multi-Tiers** moderne :
-1.  **Frontend (SPA)** : Application Angular communiquant via HTTP/REST.
-2.  **Backend (API)** : Spring Boot exposant des services RESTful sécurisés.
-3.  **Data** : Base de données relationnelle MySQL.
+* 🔙 **[View Backend Documentation](https://www.google.com/search?q=./backend/README.md)**
+* 🖥️ **[View Frontend Documentation](https://www.google.com/search?q=./frontend/README.md)**
 
-### 🔙 Backend (Spring Boot)
-Le backend gère la persistance, la sécurité (JWT) et la logique métier (virements, comptes).
-*   [Voir le README du Backend](./backend/README.md)
+## 🔐 Core Features
 
-### 🖥️ Frontend (Angular)
-Interface utilisateur réactive pour la gestion des clients et des comptes bancaires.
-*   [Voir le README du Frontend](./frontend/README.md)
+* **Security & Authentication**:
+* Stateless authentication using **JSON Web Tokens (JWT)**.
+* Role-Based Access Control (RBAC) supporting ADMIN and USER roles.
 
----
 
-## 🔐 Fonctionnalités Principales
+* **Customer Management**:
+* Dynamic customer search functionality.
+* Full CRUD operations (Create, Read, Update, Delete) for client profiles.
 
-*   **Sécurité & Authentification** :
-    *   Authentification Stateless avec **JWT (JSON Web Tokens)**.
-    *   Gestion des rôles (ADMIN, USER).
-*   **Gestion des Clients** :
-    *   Recherche de clients (Search bar).
-    *   Ajout, modification et suppression de clients.
-*   **Gestion des Comptes Bancaires** :
-    *   Support des comptes **Courants** (avec découvert) et **Épargne** (avec taux d'intérêt).
-    *   Consultation du solde et des détails.
-*   **Opérations Bancaires** :
-    *   **Débit** (Retrait).
-    *   **Crédit** (Dépôt).
-    *   **Virement** (Transfert compte à compte).
-*   **Historique** :
-    *   Consultation des opérations passées sur un compte.
 
----
+* **Bank Account Management**:
+* Support for **Current Accounts** (including overdraft limits) and **Saving Accounts** (including interest rates).
+* Real-time balance and account detail consultation.
 
-## 🛠 Technologies
+
+* **Financial Operations**:
+* **Debit**: Cash withdrawals.
+* **Credit**: Cash deposits.
+* **Transfer**: Secure account-to-account money transfers.
+
+
+* **Transaction History**:
+* Pagination and detailed consultation of all past operations linked to an account.
+
+
+
+## 🛠️ Technology Stack
 
 ### Backend
-*   **Langage** : Java 17
-*   **Framework** : Spring Boot 3
-*   **Data** : Spring Data JPA, Hibernate, MySQL
-*   **Sécurité** : Spring Security, OAuth2 Resource Server / JWT
+
+* **Language**: Java 17
+* **Framework**: Spring Boot 3
+* **Data Persistence**: Spring Data JPA, Hibernate, MySQL
+* **Security**: Spring Security, OAuth2 Resource Server, JWT
 
 ### Frontend
-*   **Framework** : Angular 17+
-*   **Langage** : TypeScript
-*   **UI** : Bootstrap 5, Icons Bootstrap
-*   **State/Async** : RxJS
+
+* **Framework**: Angular 17+
+* **Language**: TypeScript
+* **UI Library**: Bootstrap 5, Bootstrap Icons
+* **State/Asynchronous Management**: RxJS
+
+## 📸 Interface Showcase
+
+| Authentication & Home | Customer Management |
+| --- | --- |
+| <img src="./screenshots/login.png" width="400" alt="Login Page"><br>
+
+<br>
+
+<br><img src="./screenshots/home.png" width="400" alt="Home Page"> | <img src="./screenshots/customers.png" width="400" alt="Customers List"><br>
+
+<br>
+
+<br><img src="./screenshots/customers-add.png" width="400" alt="Add Customer"> |
+
+| Account Overview & Creation | Financial Operations |
+| --- | --- |
+| <img src="./screenshots/accounts.png" width="400" alt="Accounts Overview"><br>
+
+<br>
+
+<br><img src="./screenshots/accounts-add-cur.png" width="400" alt="New Current Account"><br>
+
+<br><img src="./screenshots/accounts-add-sav.png" width="400" alt="New Saving Account"> | <img src="./screenshots/transfer.png" width="400" alt="Money Transfer"> |
+
+## 🚀 Quick Start Guide
+
+### System Prerequisites (Fedora 43)
+
+Ensure your local environment is fully equipped:
+
+```bash
+sudo dnf install java-17-openjdk-devel maven nodejs mysql-server
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+
+```
+
+### 1️⃣ Backend Setup & Launch
+
+1. Log into MySQL and create the required database: `CREATE DATABASE digital_banking_db;`
+2. Verify the database credentials in `backend/src/main/resources/application.properties`.
+3. Compile and launch the Spring Boot server:
+```bash
+cd backend
+mvn spring-boot:run
+
+```
+
+
+> 📍 API is now accessible at: `http://localhost:8085`
+
+
+
+### 2️⃣ Frontend Setup & Launch
+
+1. Install the necessary Node modules and start the Angular development server:
+```bash
+cd frontend
+npm install
+ng serve
+
+```
+
+
+> 📍 Web Application is now accessible at: `http://localhost:4200`
+
+
 
 ---
 
-## 📸 Captures d'écran
+## 👥 Credits
 
-*Veuillez ajouter vos captures dans un dossier `screenshots/` à la racine.*
-
-### Page d'Authentification
-![Login Page](./screenshots/login.png)
-
-### Page d'Acceuil
-![Home Page](./screenshots/home.png)
-
-
-### Gestion des Clients
-![Customers Page](./screenshots/customers.png)
-![Customers add Page](./screenshots/customers-add.png)
-
-
-### Comptes & Opérations
-![Accounts Page](./screenshots/accounts.png)
-![Accounts add cur Page](./screenshots/accounts-add-cur.png)
-![Accounts add sav Page](./screenshots/accounts-add-sav.png)
-![Transfer Page](./screenshots/transfer.png)
-
-
----
-
-## 🚀 Démarrage Rapide
-
-### Prérequis
-*   **Java 17** ou supérieur
-*   **Node.js** (v18+) & **NPM**
-*   **MySQL**
-*   **Maven**
-
-### 1️⃣ Configuration & Lancement du Backend
-1.  Créez une base de données MySQL nommée `digital_banking_db`.
-2.  Vérifiez la configuration dans `backend/src/main/resources/application.properties`.
-3.  Lancez le serveur :
-    ```bash
-    cd backend
-    mvn spring-boot:run
-    ```
-    > API accessible sur : `http://localhost:8085`
-
-### 2️⃣ Lancement du Frontend
-1.  Installez les dépendances et lancez le serveur de développement :
-    ```bash
-    cd frontend
-    npm install
-    ng serve
-    ```
-    > Application accessible sur : `http://localhost:4200`
-
----
-
-## 👥 Crédits
-
-*   **Réalisé par :** Youssef Fellah
-*   **Encadré par :** Pr. Mohamed Youssfi
+* **Developed by:** Youssef Fellah
+* **Supervised by:** Pr. Mohamed Youssfi
