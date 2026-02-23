@@ -223,3 +223,5 @@ By transitioning from static instantiation to reflection-based dynamic instantia
 ---
 
 *Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
