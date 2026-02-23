@@ -123,3 +123,7 @@ The API will be instantly accessible at `http://localhost:8080/products`.
 One of the most powerful aspects of Spring Data JPA is the invisible orchestration of the database lifecycle.
 
 The `application.properties` file centralizes the configuration (e.g., MySQL credentials). Upon startup, Hibernate reads the `@Entity` annotated classes and executes the DDL (Data Definition Language) to structure the database automatically. The `ProductRepository` interface eliminates all the repetitive boilerplate code associated with JDBC connections and `ResultSet` mapping, making the development of REST APIs remarkably fluid, robust, and secure.
+
+---
+
+*Authored by Youssef Fellah.*
