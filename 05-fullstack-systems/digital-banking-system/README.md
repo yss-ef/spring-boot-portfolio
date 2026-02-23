@@ -137,3 +137,5 @@ ng serve
 ---
 
 *Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
