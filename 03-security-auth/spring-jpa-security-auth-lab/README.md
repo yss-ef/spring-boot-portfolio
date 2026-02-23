@@ -1,137 +1,116 @@
-# Architecture JEE - JPA, Hibernate et Spring Data : Relation Many-To-Many et Héritage
+# 🔐 Authorization Management | JPA Architecture: Many-To-Many & Inheritance
 
-Ce projet Spring Boot se concentre sur l'implémentation de la **Relation Many-To-Many (Plusieurs-à-Plusieurs)** avec JPA/Hibernate et Spring Data, ainsi que sur l'approche de la gestion de l'**Héritage JPA**.
+> **Advanced JEE Architecture Practice**
+> This Spring Boot application demonstrates the implementation of complex **Many-To-Many** relationships and **JPA Inheritance** strategies. It models a robust User and Role management system, emphasizing data security, unique identifier generation, and transactional integrity.
 
-Il suit la démonstration détaillée dans le tutoriel vidéo [Relation Many to Many, Héritage JPA, Spring Data, Hibernate](http://www.youtube.com/watch?v=s6p2dE3qrsU) du Professeur Mohamed YOUSSFI.
+## 📑 Table of Contents
 
----
+* [Core Concepts](https://www.google.com/search?q=%23-core-concepts)
+* [Annotations & Security](https://www.google.com/search?q=%23-annotations--security)
+* [Source Code Analysis](https://www.google.com/search?q=%23-source-code-analysis)
+* [Data Architecture](https://www.google.com/search?q=%23-data-architecture)
+* [Local Deployment](https://www.google.com/search?q=%23-local-deployment)
 
-## Concepts Clés Abordés
+## 🏗️ Core Concepts
 
-Le cas d'utilisation principal est la gestion des autorisations, modélisée par une relation Many-to-Many entre les entités `User` et `Role`.
+### 1. Many-To-Many Relationship (`User` ↔ `Role`)
 
-### 1. Relation Many-To-Many (`User` et `Role`)
+The project models a bidirectional relationship where a user can possess multiple roles, and each role can be assigned to multiple users.
 
-* **Modélisation :** Un `User` peut avoir plusieurs `Role`s, et un `Role` peut concerner plusieurs `User`s.
-* **Table de Jonction :** JPA/Hibernate crée automatiquement une table d'association (`Role_Users` par défaut, ou personnalisable avec `@JoinTable`) contenant les clés étrangères des deux entités.
-* **Bidirectionnalité :** La relation est mappée des deux côtés, avec `mappedBy` spécifié sur le côté non-propriétaire (`Role` dans cet exemple) pour indiquer où se trouve la clé étrangère.
+* **Junction Table**: Hibernate automatically generates an association table (defaulting to `users_roles`) to store the foreign key mappings.
+* **Bidirectionality**: The `mappedBy` attribute is used on the `Role` entity to define `User` as the owner of the relationship.
 
-### 2. Contraintes de Données et Sécurité
+### 2. Identifier Management (UUID)
 
-* **Identifiant Unique (String) :** Utilisation de `UUID.randomUUID().toString()` dans la couche Service pour générer des IDs uniques de type `String` pour l'entité `User`, plutôt que de s'appuyer sur l'auto-incrémentation.
-* **Contrainte UNIQUE :** Utilisation de l'annotation `@Column(unique = true)` pour garantir qu'un attribut, comme `username`, est unique dans la base de données.
-* **Sécurité des Mots de Passe :** Mise en évidence de l'obligation de **Hacher** les mots de passe (avec des outils comme Bcrypt) avant de les stocker, et d'utiliser des annotations pour les masquer dans les réponses JSON.
+Instead of standard numerical auto-incrementing IDs, user identifiers are dynamically generated as **UUIDs** (`String`) within the service layer. This approach enhances security and facilitates the merging of distributed databases.
 
-### 3. Gestion Transactionnelle (Couche Service)
+### 3. Transactional Integrity
 
-* La couche Service (`@Service` et `@Transactional`) est responsable de la logique métier, y compris la génération d'IDs uniques.
-* Les modifications sur les objets persistants (`User.getRoles().add(Role)`) sont automatiquement mises à jour en base de données à la fin de la méthode `@Transactional`, sans appel explicite à `repository.save()`.
+Utilizing `@Transactional` in the Service layer ensures that any modification to a persistent object (e.g., `user.getRoles().add(role)`) is automatically synchronized with the database during the *commit* phase, without requiring a manual call to `repository.save()`.
 
----
+## 🛡️ Annotations & Security
 
-## Annotations JPA et Spring Essentielles
+| Annotation | Technical Role |
+| --- | --- |
+| **`@ManyToMany`** | Defines the many-to-many relationship between entities. |
+| **`@Column(unique = true)`** | Enforces field uniqueness (e.g., `username`) at the database level. |
+| **`@ToString.Exclude`** | (Lombok) Prevents infinite logging loops when calling `toString()`. |
+| **`@JsonIgnoreProperties`** | (Jackson) Hides sensitive data (e.g., `password`) during JSON serialization (GET). |
+| **`FetchType.EAGER`** | Immediately loads associated collections to prevent `LazyInitializationException`. |
 
-| Annotation | Contexte | Rôle |
-| :--- | :--- | :--- |
-| **`@ManyToMany`** | Collection (Liste de Rôles) | Mappe la relation plusieurs-à-plusieurs. |
-| **`@JoinTable`** | Collection (`@ManyToMany`) | **Optionnel.** Permet de personnaliser le nom de la table de jointure et des colonnes de clés étrangères. |
-| **`@Column(unique = true, length = 20)`** | Attribut | Ajoute des contraintes SQL de niveau colonne (UNIQUE, longueur maximale) à l'attribut mappé. |
-| **`@ToString.Exclude`** | Collection | Annotation Lombok pour exclure l'attribut du `toString()` généré, afin d'éviter les boucles infinies lors de l'affichage. |
-| **`@JsonIgnoreProperties(access = Access.WRITE_ONLY)`** | Attribut | Annotation Jackson/REST pour que l'attribut (ex: `password`) ne soit pas sérialisé lors d'une lecture (GET), mais uniquement lors d'une écriture (POST). |
+## 💻 Source Code Analysis
 
----
+### 1. Secured Entity: `User.java`
 
-## Extraits de Code Illustratifs (du Dépôt)
-
-### 1. Entité `User.java` (Relation et Sécurité)
-
-L'entité `User` est le côté propriétaire de la relation et inclut des annotations de sécurité.
+Leveraging Jackson to protect passwords and Lombok for code clarity.
 
 ```java
-// src/main/java/.../entities/User.java
-
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class User {
     @Id
-    private String userId; // ID généré par le Service (UUID)
+    private String userId; // Generated via UUID.randomUUID()
     
     @Column(unique = true, length = 20)
     private String username;
     
-    // N'est accessible qu'en écriture pour les API REST (masque le mot de passe)
+    // Write-only access ensures the password is never leaked in API responses
     @JsonIgnoreProperties(access = JsonIgnoreProperties.Access.WRITE_ONLY)
     private String password;
 
-    // Relation ManyToMany : coté propriétaire
-
-    @ManyToMany(fetch = FetchType.EAGER) // Chargement immédiat des rôles
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 }
+
 ```
 
-### 2. Entité Role.java (Relation et Boucle Infinie)
+### 2. Service Layer: `UserServiceImpl.java`
 
-Le côté non-propriétaire (`Role`) utilise `mappedBy` et l'exclusion de `toString()` pour éviter les problèmes de boucle.
-
-```java
-// src/main/java/.../entities/Role.java
-
-@Entity
-@Data @NoArgsConstructor @AllArgsConstructor
-public class Role {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String roleName;
-
-    // Relation ManyToMany : coté non-propriétaire
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    @ToString.Exclude // Exclure du toString() pour éviter la StackOverflowError
-    @JsonIgnore
-    private List<User> users = new ArrayList<>();
-}
-```
-### 3. Couche Service : UserServiceImpl.java (Génération d'ID et Logique)
-
-La couche Service est le lieu de la génération d'ID et de la logique métier.
+Handling business logic and the generation of secure identifiers.
 
 ```java
-// src/main/java/.../service/UserServiceImpl.java
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     
     @Override
     public User addNewUser(User user) {
-        // 1. Génération de l'ID unique (UUID)
+        // Generation of a unique secure ID
         user.setUserId(UUID.randomUUID().toString());
-        
-        // 2. Hacher le mot de passe (À IMPLÉMENTER AVEC BCrypt)
-        // String hashedPassword = passwordEncoder.encode(user.getPassword());
-        // user.setPassword(hashedPassword);
-
+        // Note: Password hashing (BCrypt) is recommended here
         return userRepository.save(user);
     }
-
-    @Override
-    public void addRoleToUser(String username, String roleName) {
-        // Chargement des entités persistantes
-        User user = userRepository.findByUsername(username);
-        Role role = roleRepository.findByRoleName(roleName);
-        
-        // 3. Modification de l'objet (persistance automatique grâce à @Transactional)
-        if (user != null && role != null) {
-            user.getRoles().add(role);
-            role.getUsers().add(user); // Cohérence bidirectionnelle
-        }
-    }
-    
-    // ... autres méthodes ...
 }
+
 ```
 
+## 🚀 Local Deployment
+
+To configure and launch this project on your **Fedora 43** environment:
+
+**1. Install Prerequisites:**
+
+```bash
+sudo dnf install java-17-openjdk-devel maven
+
+```
+
+**2. Compile and Run:**
+
+```bash
+# From the project root
+mvn spring-boot:run
+
+```
+
+**3. Database Visualization (H2 Console):**
+Access the web console at: `http://localhost:8080/h2-console`
+*(Use JDBC URL: `jdbc:h2:mem:testdb`)*
+
+---
+
+*Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
