@@ -1,88 +1,74 @@
 # 🏦 Digital Banking Backend
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.0-green?style=for-the-badge&logo=spring-boot)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
-![Security](https://img.shields.io/badge/Spring_Security-OAuth2-red?style=for-the-badge&logo=spring-security)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-412991?style=for-the-badge&logo=openai)
-![Telegram](https://img.shields.io/badge/Telegram-Bot_API-26A5E4?style=for-the-badge&logo=telegram)
+> A robust, secure, and intelligent backend banking application developed with **Spring Boot**. This core system integrates modern features such as JWT stateless security, a strict multi-tier architecture, and an AI-powered financial assistant accessible via a Telegram bot.
 
-Bienvenue sur le projet **Digital Banking Backend**. Une application bancaire robuste, sécurisée et intelligente, développée avec **Spring Boot**. Elle intègre des fonctionnalités modernes comme la sécurité JWT, une architecture en couches stricte, et un assistant bancaire via Telegram propulsé par l'IA.
+## 📑 Table of Contents
 
----
+* [Key Features](https://www.google.com/search?q=%23-key-features)
+* [System Architecture](https://www.google.com/search?q=%23%EF%B8%8F-system-architecture)
+* [Detailed Layer Analysis](https://www.google.com/search?q=%23-detailed-layer-analysis)
+* [Installation & Setup](https://www.google.com/search?q=%23-installation--setup)
+* [API Documentation](https://www.google.com/search?q=%23-api-documentation)
+* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
+* [Credits](https://www.google.com/search?q=%23-credits)
 
-## 📑 Table des Matières
-1.  [Fonctionnalités Clés](#-fonctionnalités-clés)
-2.  [Architecture du Projet](#-architecture-globale)
-3.  [Analyse Technique](#-analyse-détaillée-par-couche)
-    *   [Données (JPA)](#1️⃣-couche-de-données-jpa--entities)
-    *   [Sécurité (JWT)](#2️⃣-couche-de-sécurité-spring-security--jwt)
-    *   [Métier (Services)](#3️⃣-couche-métier-services--transactions)
-    *   [Web (API REST)](#4️⃣-couche-web-contrôleurs--dtos)
-    *   [Bot & IA](#5️⃣-couche-bot--ia-telegram--openai)
-4.  [Guide de Démarrage](#-installation-et-démarrage)
-5.  [Documentation API](#-documentation-de-lapi)
-6.  [Stack Technique](#-stack-technique)
+## ✨ Key Features
 
----
+* **Customer Management:** Complete CRUD (Create, Read, Update, Delete) operations and dynamic search capabilities for client profiles.
+* **Account Management:** Native support for both **Current Accounts** (incorporating overdraft limits) and **Saving Accounts** (incorporating variable interest rates).
+* **Financial Operations:** Secure processing of debits, credits, and account-to-account transfers with strict transactional management.
+* **Advanced Security:** Stateless authentication workflow utilizing **JSON Web Tokens (JWT)** alongside strict Role-Based Access Control (USER/ADMIN).
+* **Intelligent Assistant:** An interactive Telegram bot featuring real-time balance inquiries, quick transfers via chat commands, and conversational financial support powered by OpenAI (ChatGPT).
 
-## ✨ Fonctionnalités Clés
+## 🏗️ System Architecture
 
-*   **Gestion des Clients** : Création, recherche, modification et suppression de clients.
-*   **Gestion des Comptes** : Support des comptes **Courants** (avec découvert) et **Épargne** (avec taux d'intérêt).
-*   **Opérations Bancaires** : Débits, Crédits et Virements compte-à-compte avec gestion transactionnelle.
-*   **Sécurité Avancée** : Authentification Stateless via **JWT** (JSON Web Tokens) et gestion des rôles (USER/ADMIN).
-*   **Assistant Intelligent** :
-    *   Bot **Telegram** interactif.
-    *   Consultation de solde et virements via commandes chat.
-    *   Support conversationnel via **OpenAI (ChatGPT)** pour répondre aux questions financières.
-
----
-
-## 🏗 Architecture Globale
-
-Le projet respecte une architecture **N-Tiers** stricte pour garantir la maintenabilité et la scalabilité.
+The project strictly adheres to an **N-Tier architecture** to guarantee high maintainability, separation of concerns, and scalability.
 
 ```mermaid
 graph TD;
-    Client[Client Web/Mobile/Telegram] --> Controller[Couche Web / Bot];
-    Controller --> Service[Couche Service (Métier)];
-    Service --> Repository[Couche DAO (Data Access)];
-    Repository --> Database[(Base de Données MySQL)];
+    Client[Client Web/Mobile/Telegram] --> Controller[Web Layer / Bot Controller];
+    Controller --> Service[Service Layer / Business Logic];
+    Service --> Repository[DAO Layer / Spring Data];
+    Repository --> Database[(MySQL Database)];
+
 ```
 
-### Structure du Code
-```
+### Directory Structure
+
+```text
 src/main/java/com/youssef/backend
-├── 📂 web          # Contrôleurs REST (Points d'entrée HTTP)
-├── 📂 bot          # Service Bot Telegram (Point d'entrée Chat)
-├── 📂 services     # Logique métier & Transactionnelle
-├── 📂 entities     # Modèle de données (JPA)
-├── 📂 repositories # Interfaces d'accès aux données (Spring Data)
-├── 📂 security     # Configuration JWT & Filtres de sécurité
-├── 📂 dtos         # Data Transfer Objects (Isolation API/BDD)
-└── 📂 mappers      # Convertisseurs (MapStruct/BeanUtils)
+├── 📂 web          # REST Controllers (HTTP Entry Points)
+├── 📂 bot          # Telegram Bot Service (Chat Entry Point)
+├── 📂 services     # Business & Transactional Logic
+├── 📂 entities     # Data Models (JPA)
+├── 📂 repositories # Data Access Interfaces (Spring Data)
+├── 📂 security     # JWT Configuration & Security Filters
+├── 📂 dtos         # Data Transfer Objects (API/DB Isolation)
+└── 📂 mappers      # Object Converters (MapStruct/BeanUtils)
+
 ```
 
----
+## 📚 Detailed Layer Analysis
 
-## 📚 Analyse Détaillée par Couche
+### 1️⃣ Data Layer (JPA & Entities)
 
-### 1️⃣ Couche de Données (JPA & Entities)
-Gestion de la persistance avec la stratégie d'héritage **Single Table**.
-*   **Concept** : Une seule table `BankAccount` stocke à la fois les comptes courants et épargne, différenciés par une colonne `TYPE`.
+Data persistence is managed using the **Single Table** inheritance strategy.
 
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", length = 4)
 public abstract class BankAccount { ... }
+
 ```
 
-### 2️⃣ Couche de Sécurité (Spring Security & JWT)
-Sécurité **Stateless** basée sur les standards OAuth2 Resource Server.
-*   **Flux** : Login -> Génération JWT -> Requête API + Header `Authorization: Bearer token`.
-*   **Config** : Désactivation CSRF, Session Stateless, Filtres JWT.
+**Technical Breakdown:** * **`@Inheritance(strategy = InheritanceType.SINGLE_TABLE)`**: Instead of creating separate tables for Current and Saving accounts, Hibernate merges all attributes into one single database table (`BankAccount`).
+
+* **`@DiscriminatorColumn`**: This instructs JPA to use a specific column (named `TYPE`) to distinguish between the child classes. If a row has `TYPE = "CUR"`, Hibernate instantiates a Current Account object; if `"SAV"`, it instantiates a Saving Account. This optimizes database query performance by avoiding complex `JOIN` operations.
+
+### 2️⃣ Security Layer (Spring Security & JWT)
+
+The system employs **Stateless** security based on OAuth2 Resource Server standards.
 
 ```java
 @Bean
@@ -93,123 +79,137 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .oauth2ResourceServer(oa -> oa.jwt(Customizer.withDefaults()))
             .build();
 }
+
 ```
 
-### 3️⃣ Couche Métier (Services & Transactions)
-Garantie de l'intégrité des données via `@Transactional`.
-*   **Exemple** : Un virement est atomique. Si le crédit échoue, le débit est annulé.
+**Technical Breakdown:**
+
+* **`.sessionCreationPolicy(STATELESS)`**: This disables traditional server-side HTTP sessions (Cookies/JSESSIONID). The server forgets the user the moment the request ends, vastly improving scalability.
+* **`.oauth2ResourceServer(...)`**: This configures Spring to look for a Bearer token in the `Authorization` header of incoming HTTP requests. It intercepts the request, decodes the JWT, verifies its cryptographic signature, and extracts the user's roles before allowing access to the controllers.
+
+### 3️⃣ Business Layer (Services & Transactions)
+
+Data integrity is absolutely critical in banking and is guaranteed via the `@Transactional` annotation.
 
 ```java
 @Transactional
 public void transfer(String source, String dest, double amount) {
-    debit(source, amount, "Virement vers " + dest);
-    credit(dest, amount, "Virement de " + source);
+    debit(source, amount, "Transfer to " + dest);
+    credit(dest, amount, "Transfer from " + source);
 }
+
 ```
 
-### 4️⃣ Couche Web (Contrôleurs & DTOs)
-Exposition propre des données via le pattern **DTO**.
-*   Les entités JPA ne sont jamais exposées directement pour éviter les boucles infinies JSON et fuites de données.
+**Technical Breakdown:**
 
-### 5️⃣ Couche Bot & IA (Telegram & OpenAI)
-Interaction utilisateur nouvelle génération.
-*   **Commandes** : `/vir [Source] [Dest] [Montant]` pour les virements rapides.
-*   **IA** : Le bot utilise GPT-3.5 pour analyser les demandes en langage naturel et fournir des réponses contextuelles basées sur les données du client.
+* **`@Transactional`**: This Spring annotation wraps the entire method inside a database transaction. It enforces the ACID property of Atomicity. If the `debit` succeeds but the `credit` fails (e.g., due to a network error or invalid destination), Spring automatically issues a `ROLLBACK` command to the database. The debit is undone, ensuring no money vanishes into thin air.
 
----
+### 4️⃣ Web Layer (Controllers & DTOs)
 
-## 🚀 Installation et Démarrage
+The API strictly utilizes the **Data Transfer Object (DTO)** design pattern. JPA entities are never exposed directly to the web layer. This prevents infinite recursion errors during JSON serialization and protects sensitive database fields from unauthorized exposure.
 
-### Prérequis
-*   **Java 17** ou supérieur
-*   **Maven 3.8+**
-*   **MySQL 8.0+**
-*   Un compte **Telegram** (pour créer un bot via BotFather)
-*   Une clé API **OpenAI** (optionnel, pour l'IA)
+### 5️⃣ Bot & AI Layer (Telegram & OpenAI)
 
-### 1. Clonage et Configuration
+This layer introduces next-generation user interaction. Users can execute commands like `/vir [Source] [Dest] [Amount]` for rapid money transfers. Furthermore, the bot leverages the GPT-3.5 model to parse natural language requests, providing contextual and intelligent responses based on the client's localized banking data.
+
+## 🚀 Installation & Setup
+
+### Prerequisites (Fedora 43)
+
+Ensure your local environment is fully equipped:
+
 ```bash
-git clone https://github.com/votre-repo/digital-banking-backend.git
-cd digital-banking-backend
+sudo dnf install java-17-openjdk-devel maven mysql-server
+sudo systemctl enable --now mysqld
+
 ```
 
-⚠️ **Important** : Configurez vos variables d'environnement.
-Copiez le fichier d'exemple et remplissez-le :
+### 1. Repository Cloning & Configuration
+
+```bash
+git clone https://github.com/yss-ef/[YOUR_REPO_NAME].git
+cd [YOUR_REPO_NAME]
+
+```
+
+**⚠️ Important:** You must configure your environment variables. Copy the template file and fill in your credentials:
+
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
+
 ```
-Modifiez `src/main/resources/application.properties` :
+
+Update the variables inside `application.properties`:
+
 ```properties
-# Base de données
+# Database Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/BANK?createDatabaseIfNotExist=true
 spring.datasource.username=root
-spring.datasource.password=VOTRE_MOT_DE_PASSE
+spring.datasource.password=YOUR_SECURE_PASSWORD
 
-# Telegram & OpenAI
-telegram.bot.token=VOTRE_TOKEN_TELEGRAM
-telegram.bot.username=VOTRE_BOT_USERNAME
-openai.api.key=VOTRE_API_KEY_OPENAI
+# External APIs
+telegram.bot.token=YOUR_TELEGRAM_BOT_TOKEN
+telegram.bot.username=YOUR_BOT_USERNAME
+openai.api.key=YOUR_OPENAI_API_KEY
+
 ```
 
-### 2. Lancement
+### 2. Application Launch
+
+Execute the following Maven command to compile and start the backend:
+
 ```bash
 mvn spring-boot:run
+
 ```
-L'application démarrera sur `http://localhost:8085`.
-Les données de test sont générées automatiquement au démarrage via `CommandLineRunner`.
 
----
+The application will boot up and bind to `http://localhost:8085`. Test data is automatically injected into the MySQL database upon startup via the `CommandLineRunner` interface.
 
-## 📡 Documentation de l'API
+## 📡 API Documentation
 
-### 🔐 Authentification
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/auth/login` | Login (Body: `{"username": "...", "password": "..."}`) |
-| `GET` | `/auth/profile` | Profil utilisateur courant |
+### 🔐 Authentication
 
-### 👤 Clients (`/customers`)
-| Méthode | Endpoint | Rôle Requis | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/customers` | USER | Liste des clients |
-| `GET` | `/customers/search?keyword=...` | USER | Recherche de clients |
-| `POST` | `/customers` | ADMIN | Créer un client |
-| `DELETE` | `/customers/{id}` | ADMIN | Supprimer un client |
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/auth/login` | Authenticate user (Body: `{"username": "...", "password": "..."}`) |
+| `GET` | `/auth/profile` | Retrieve the currently authenticated user's profile |
 
-### 🏦 Comptes & Opérations (`/accounts`)
-| Méthode | Endpoint | Rôle Requis | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/accounts/{id}` | USER | Détails d'un compte |
-| `GET` | `/accounts/{id}/operations` | USER | Historique des opérations |
-| `POST` | `/accounts/debit` | ADMIN | Effectuer un débit |
-| `POST` | `/accounts/credit` | ADMIN | Effectuer un crédit |
-| `POST` | `/accounts/transfer` | USER | Effectuer un virement |
+### 👤 Customers (`/customers`)
 
----
+| Method | Endpoint | Required Role | Description |
+| --- | --- | --- | --- |
+| `GET` | `/customers` | USER | Retrieve a complete list of customers |
+| `GET` | `/customers/search?keyword=...` | USER | Search for specific customers by keyword |
+| `POST` | `/customers` | ADMIN | Create and register a new customer profile |
+| `DELETE` | `/customers/{id}` | ADMIN | Permanently delete a customer record |
 
-## 🛠 Stack Technique
+### 🏦 Accounts & Operations (`/accounts`)
 
-| Catégorie | Technologie | Usage |
-| :--- | :--- | :--- |
-| **Langage** | Java 17 | Core |
-| **Framework** | Spring Boot 3 | Structure de l'application |
-| **Data** | Spring Data JPA / Hibernate | ORM & Accès BDD |
-| **Base de données** | MySQL | Persistance |
-| **Sécurité** | Spring Security / OAuth2 | Auth & JWT |
-| **IA & Chat** | OpenAI API / Telegram Bots | Assistant Intelligent |
-| **Outils** | Maven, Lombok, MapStruct | Build & Boilerplate |
+| Method | Endpoint | Required Role | Description |
+| --- | --- | --- | --- |
+| `GET` | `/accounts/{id}` | USER | Retrieve detailed metrics for a specific account |
+| `GET` | `/accounts/{id}/operations` | USER | Retrieve the paginated transaction history |
+| `POST` | `/accounts/debit` | ADMIN | Execute a cash withdrawal (debit) |
+| `POST` | `/accounts/credit` | ADMIN | Execute a cash deposit (credit) |
+| `POST` | `/accounts/transfer` | USER | Execute a secure account-to-account transfer |
 
----
+## 🛠️ Technology Stack
 
-## 🧪 Tests
-Pour lancer les tests unitaires et d'intégration :
+| Category | Technology | Purpose |
+| --- | --- | --- |
+| **Language** | Java 17 | Core programming language |
+| **Framework** | Spring Boot 3 | Application scaffolding and orchestration |
+| **Data Access** | Spring Data JPA / Hibernate | ORM mapping and database interaction |
+| **Database** | MySQL 8.0+ | Relational data persistence |
+| **Security** | Spring Security / OAuth2 | Access control, stateless sessions, and JWT |
+| **AI & Messaging** | OpenAI API / Telegram Bots API | Intelligent conversational assistant |
+| **Tooling** | Maven, Lombok, MapStruct | Dependency management, boilerplate reduction, object mapping |
+
+## 🧪 Testing
+
+To execute the suite of unit and integration tests:
+
 ```bash
 mvn test
+
 ```
-
----
-## 👥 Crédits
-
-*   **Réalisé par :** Youssef Fellah
-*   **Encadré par :** Pr. Mohamed Youssfi
-
