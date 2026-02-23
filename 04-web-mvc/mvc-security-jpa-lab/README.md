@@ -1,161 +1,94 @@
-# Compte Rendu du TP 3 : Application Web avec Spring Boot, Spring Security et JPA
+# 🌐 Web Application with Spring Boot, Spring Security & JPA
 
-Ce document est le rapport du troisième travail pratique, axé sur le développement d'une application web complète de gestion de produits. L'objectif était de mettre en œuvre une architecture multicouche en utilisant **Spring Boot**, avec une persistance des données gérée par **Spring Data JPA** et une sécurisation des accès via **Spring Security**.
+> **Practical Work (TP) Report #3**
+> This project focuses on the development of a complete web application for product management. The primary objective was to implement a multi-tier architecture using **Spring Boot**, with data persistence managed by **Spring Data JPA** and access control secured via **Spring Security**.
 
----
+## 📑 Table of Contents
 
-## 1. Captures d'Écran de l'Application
+* [Application Showcase](https://www.google.com/search?q=%23-application-showcase)
+* [Key Features](https://www.google.com/search?q=%23-key-features)
+* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
+* [Implementation Details](https://www.google.com/search?q=%23-implementation-details)
+* [Database Configuration](https://www.google.com/search?q=%23-database-configuration)
+* [Troubleshooting](https://www.google.com/search?q=%23-troubleshooting)
 
-Voici un aperçu des différentes pages de l'application.
+## 📸 Application Showcase
 
-### Page de Connexion
-*La page de login permet aux utilisateurs de s'authentifier pour accéder à l'application.*
-![Page de Connexion](/screenshots/login.png)
+| Login Page | Product Catalog |
+| --- | --- |
+| <img src="/screenshots/login.png" width="400" alt="Login Page"><br>
 
-### Page des Produits
-*Cette page affiche la liste de tous les produits. Les utilisateurs avec le rôle `ADMIN` voient également les boutons pour supprimer et modifier les produits.*
-![Page des Produits](/screenshots/products.png)
+<br>*Secure authentication portal.* | <img src="/screenshots/products.png" width="400" alt="Products Screen"><br>
 
-### Page de Création de Produit
-*Le formulaire pour ajouter un nouveau produit à la base de données.*
-![Page de Création](/screenshots/new.png)
+<br>*Dynamic list with role-based actions.* |
 
-### Page de Mise à Jour de Produit
-*Le formulaire de modification, pré-rempli avec les informations du produit sélectionné.*
-![Page de Mise à Jour](/screenshots/update.png)
+| Add New Product | Update Product |
+| --- | --- |
+| <img src="/screenshots/new.png" width="400" alt="Creation Page"><br>
 
----
+<br>*Validated input form.* | <img src="/screenshots/update.png" width="400" alt="Update Page"><br>
 
-## 2. Fonctionnalités de l'Application
+<br>*Pre-filled modification form.* |
 
-L'application permet de réaliser les opérations CRUD (Create, Read, Update, Delete) sur une entité "Produit". Les accès sont restreints par rôles, démontrant une gestion des autorisations simple mais efficace :
+## ✨ Key Features
 
-*   **Utilisateurs (rôle `USER`) :** Peuvent consulter la liste des produits.
-*   **Administrateurs (rôle `ADMIN`) :** Disposent des droits complets et peuvent consulter, ajouter, modifier et supprimer des produits.
-*   Une page de connexion standard fournie par Spring Security permet aux utilisateurs de s'authentifier.
+The application implements full **CRUD** (Create, Read, Update, Delete) operations on a "Product" entity. Access is strictly controlled through role-based authorization:
 
----
+* **Standard Users (`USER` role):** Authorized to browse and view the product catalog.
+* **Administrators (`ADMIN` role):** Authorized for full administrative control (View, Add, Edit, and Delete products).
+* **Security:** A standard login portal provided by Spring Security manages the authentication flow.
 
-## 3. Technologies Utilisées
+## 🛠️ Technology Stack
 
-Le projet s'appuie sur l'écosystème Spring et d'autres technologies standards du développement web Java :
+| Category | Technology |
+| --- | --- |
+| **Backend** | Spring Boot, Spring MVC, Spring Data JPA, Spring Security |
+| **Frontend** | Thymeleaf, Thymeleaf Layout Dialect, Bootstrap 5 |
+| **Database** | H2 (In-memory) for rapid development / MySQL (Optional) |
+| **Build Tool** | Maven |
+| **Server** | Embedded Apache Tomcat |
 
-*   **Backend :** Spring Boot, Spring MVC, Spring Data JPA, Spring Security
-*   **Frontend :** Thymeleaf, Thymeleaf Layout Dialect, Bootstrap 5
-*   **Base de données :** H2 (base de données en mémoire pour le développement)
-*   **Build Tool :** Maven
-*   **Serveur d'application :** Tomcat (embarqué par défaut dans Spring Boot)
+## 🏗️ Implementation Details
 
----
+The application architecture is divided into clear logical layers: Entities, Repositories, Services, and Controllers.
 
-## 4. Détails de l'Implémentation
+### 1. Persistence Layer (JPA)
 
-L'architecture de l'application est divisée en plusieurs couches logiques : entités, repositories, services, et contrôleurs.
+#### Entity: `Product.java`
 
-### Couche de Persistance (JPA)
-
-#### Entité `Product.java`
-La classe `Product` représente les données des produits qui seront stockées en base de données. Elle utilise des annotations de validation (`@NotEmpty`, `@Min`) pour assurer l'intégrité des données.
+The `Product` class maps to the database table. It utilizes Bean Validation annotations (`@NotEmpty`, `@Min`) to enforce data integrity.
 
 ```java
-package com.youssef.springweb.entities;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Product {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty
-    @Size(min = 3, max = 50)
+    
+    @NotEmpty @Size(min = 3, max = 50)
     private String name;
+    
     @Min(1)
     private double price;
+    
     private int quantity;
 }
+
 ```
 
-#### Repository `ProductRepository.java`
-L'interface `ProductRepository`, qui étend `JpaRepository`, permet de bénéficier sans effort des opérations CRUD et de requêtes plus complexes.
+### 2. Security Configuration
+
+`SecurityConfig.java` defines the authentication and authorization rules. This lab uses **In-Memory Authentication** for simplicity.
 
 ```java
-package com.youssef.springweb.reposetories;
-
-import com.youssef.springweb.entities.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
-}
-```
-
-### Couche Web (Controller)
-
-Le `ProductController` gère les requêtes HTTP, interagit avec la couche service pour manipuler les données, et retourne les vues Thymeleaf appropriées.
-
-```java
-package com.youssef.springweb.web;
-
-@Controller
-@AllArgsConstructor
-public class ProductController {
-    private ProductService productService;
-
-    @GetMapping("/user/products")
-    public String index(Model model) {
-        List<Product> products = productService.findAll();
-        model.addAttribute("productList", products);
-        return "products";
-    }
-
-    @GetMapping("/admin/delete")
-    public String deleteProduct(@RequestParam(name = "id") Long id) {
-        productService.deleteById(id);
-        return "redirect:/user/products";
-    }
-
-    @PostMapping("/admin/saveProduct")
-    public String saveProduct(@Valid Product product, BindingResult result) {
-        if (result.hasErrors()) {
-            return "new-product";
-        }
-        productService.addProduct(product);
-        return "redirect:/user/products";
-    }
-    // ... autres méthodes pour la mise à jour
-}
-```
-
-### Configuration de la Sécurité
-
-Le fichier `SecurityConfig.java` définit les règles d'authentification et d'autorisation. Pour ce TP, une authentification en mémoire (`InMemoryUserDetailsManager`) a été utilisée pour définir des utilisateurs et leurs rôles.
-
-```java
-package com.youssef.springweb.security;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("admin").password(passwordEncoder().encode("123")).roles("ADMIN", "USER").build(),
-                User.withUsername("user1").password(passwordEncoder().encode("123")).roles("USER").build(),
-                User.withUsername("user2").password(passwordEncoder().encode("123")).roles("USER").build()
-        );
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .formLogin(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults()) // Standard login page
                 .authorizeHttpRequests(ar -> ar
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/user/**").hasRole("USER")
@@ -164,72 +97,52 @@ public class SecurityConfig {
                 .build();
     }
 }
+
 ```
 
-### Vues avec Thymeleaf et Bootstrap
+## 🚀 Database Configuration
 
-Un template de base `layout.html` a été créé pour unifier l'apparence des pages. Il inclut Bootstrap pour le style.
+While initially configured for MySQL, the project was migrated to **H2** for better portability and zero-configuration during the development phase.
 
-**Fichier `layout.html` :**
-```html
-<!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-    <title>Products</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}">
-</head>
-<body>
-    <!-- ... Navbar ... -->
-    <div layout:fragment="content">
-        <!-- Le contenu de chaque page sera inséré ici -->
-    </div>
-</body>
-</html>
-```
+**`application.properties` snippet:**
 
----
-
-## 5. Configuration de la Base de Données
-
-Initialement, le projet a été configuré pour utiliser une base de données MySQL. Cependant, pour simplifier le développement et assurer la portabilité, la configuration a été basculée vers **H2**, une base de données en mémoire.
-
-**Fichier `application.properties` :**
 ```properties
 spring.datasource.url=jdbc:h2:mem:product-db
 spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
-# Activer la console H2 pour le débogage
+# Enable H2 Console for debugging
 spring.h2.console.enabled=true
 
-# Stratégie de génération du schéma (update pour ne pas perdre les données à chaque redémarrage)
+# Schema generation strategy
 spring.jpa.hibernate.ddl-auto=update
+
 ```
-La console H2 est accessible à l'adresse `http://localhost:8080/h2-console` pour inspecter la base de données en cours d'exécution.
+
+*The console is accessible at: `http://localhost:8080/h2-console*`
+
+## 🛠️ Troubleshooting
+
+1. **Database Connection Issues:** Initially, the app threw a `Communications link failure` error when connecting to XAMPP/MySQL.
+* **Solution:** Switched the datasource to **H2** (In-memory), resolving all connectivity issues and allowing focus on business logic.
+
+
+2. **Missing Bootstrap Styles:** CSS files were not loading on nested URLs like `/user/products`.
+* **Solution:** Corrected paths in the Thymeleaf template using the `@{/...}` syntax (`th:href="@{/webjars/...}"`) to ensure absolute path generation relative to the app context.
+
+
+
+## 🎯 Conclusion
+
+This lab successfully consolidated core Spring ecosystem skills by building a functional web application from scratch. Key takeaways include:
+
+* Efficiently managing data persistence with **Spring Data JPA**.
+* Securing web routes and managing role-based access with **Spring Security**.
+* Developing dynamic and modular UI components with **Thymeleaf** and **Bootstrap**.
+* Debugging environment-specific configuration issues in a Spring Boot context.
 
 ---
 
-## 6. Difficultés Rencontrées et Solutions
+*Authored by Youssef Fellah.*
 
-1.  **Erreur de Connexion à la Base de Données :** Au démarrage, l'application échouait avec une erreur `Communications link failure`. Ce problème était lié à la connexion avec le serveur MySQL local (XAMPP).
-    *   **Solution :** Pour contourner ce problème et se concentrer sur la logique applicative, la base de données a été remplacée par **H2**, ce qui a immédiatement résolu le problème de démarrage.
-
-2.  **Problème de Style Bootstrap :** Les styles CSS de Bootstrap ne s'appliquaient pas correctement lors de la navigation vers des URL imbriquées comme `/user/products`. La cause était l'utilisation de chemins relatifs pour les fichiers CSS dans le template Thymeleaf.
-    *   **Solution :** Les chemins ont été corrigés en utilisant la syntaxe `@{/...}` de Thymeleaf (`th:href="@{/webjars/...}"`). Cette syntaxe génère des URL absolues par rapport au contexte de l'application, assurant que les ressources sont toujours trouvées.
-
----
-
-## 7. Conclusion
-
-Ce TP a permis de consolider les compétences sur l'écosystème Spring en construisant une application web fonctionnelle de A à Z. Les points clés abordés sont :
-
-*   La mise en place rapide d'une application web robuste avec **Spring Boot**.
-*   La gestion de la persistance des données de manière efficace avec **Spring Data JPA**.
-*   La sécurisation des routes web avec **Spring Security**, en gérant l'authentification et les autorisations par rôles.
-*   La création de vues dynamiques et modulaires avec **Thymeleaf** et l'intégration d'un framework frontend comme **Bootstrap**.
-*   Le débogage de problèmes courants liés à la configuration de la base de données et à la gestion des ressources statiques dans une application web.
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
