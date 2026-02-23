@@ -1,45 +1,46 @@
-# Compte Rendu du TP 4 : Application Full-Stack avec Angular et Spring Boot
+# 🌐 Full-Stack Application with Angular & Spring Boot
 
-Ce document est le rapport du quatrième travail pratique, centré sur le développement d'une application web full-stack avec une architecture découplée. L'objectif était de construire une interface utilisateur réactive avec Angular qui communique avec une API REST développée avec Spring Boot pour la gestion de produits.
+> **Practical Work (TP) Report #4**
+> This project focuses on developing a full-stack web application with a decoupled architecture. The goal was to build a reactive user interface with **Angular** that communicates with a **Spring Boot** REST API for product management.
 
-## 1. Architecture de l'Application
+## 📑 Table of Contents
 
-L'application est conçue selon une architecture client-serveur moderne :
+* [Application Architecture](https://www.google.com/search?q=%23-application-architecture)
+* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
+* [Implementation Details](https://www.google.com/search?q=%23-implementation-details)
+* [Database Configuration](https://www.google.com/search?q=%23-database-configuration)
+* [Troubleshooting](https://www.google.com/search?q=%23-troubleshooting)
+* [Conclusion](https://www.google.com/search?q=%23-conclusion)
 
-*   **Backend (Serveur)** : Une API REST développée avec **Spring Boot**. Elle gère la logique métier, l'accès aux données et expose des endpoints pour les opérations CRUD (Create, Read, Update, Delete).
-*   **Frontend (Client)** : Une application monopage (SPA) développée avec **Angular**. Elle consomme l'API du backend pour afficher les données et permettre les interactions utilisateur.
+## 🏗️ Application Architecture
 
-Cette séparation claire des responsabilités permet un développement et un déploiement indépendants des deux parties de l'application.
+The application follows a modern client-server architecture:
 
-## 2. Technologies Utilisées
+* **Backend (Server)**: A REST API developed with **Spring Boot**. It handles business logic and data access, exposing endpoints for CRUD operations.
+* **Frontend (Client)**: A Single Page Application (SPA) developed with **Angular**. It consumes the backend API to display data and handle user interactions.
 
-**Backend (dossier `backend-app`)**
-*   **Framework** : Spring Boot
-*   **Accès aux données** : Spring Data JPA
-*   **API** : Spring Web (pour l'API REST)
-*   **Base de données** : H2 (base de données en mémoire)
-*   **Utilitaires** : Lombok
-*   **Build Tool** : Maven
+This clear separation of concerns allows for independent development and deployment of the two tiers.
 
-**Frontend (dossier `angular-app`)**
-*   **Framework** : Angular
-*   **Communication HTTP** : `HttpClientModule` d'Angular
-*   **Style** : Bootstrap, Bootstrap Icons
-*   **Gestion des dépendances** : npm
+## 🛠️ Technology Stack
 
-## 3. Détails de l'Implémentation
+| Category | Technology |
+| --- | --- |
+| **Backend** | Spring Boot, Spring Data JPA, Spring Web, Lombok, Maven |
+| **Frontend** | Angular, HttpClientModule, Bootstrap 5, Bootstrap Icons, npm |
+| **Database** | H2 (In-memory) |
 
-### Partie Backend (Spring Boot)
+## 🏗️ Implementation Details
 
-L'architecture du backend est divisée en plusieurs couches logiques : entité, repository, service et contrôleur.
+### 1. Backend Layer (Spring Boot)
 
-#### Couche de Persistance (JPA)
+The backend architecture is divided into logical layers: Entity, Repository, and REST Controller.
 
-**Entité `Product.java`**
-La classe `Product` représente les données des produits. Elle utilise des annotations JPA pour le mapping objet-relationnel et des annotations de validation pour l'intégrité des données.
+#### Persistence Layer (JPA)
+
+**Entity: `Product.java**`
+Uses JPA annotations for ORM mapping and Bean Validation to ensure data integrity.
 
 ```java
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/backend/backend-app/src/main/java/com/youssef/backendapp/entities/Product.java
 @Entity
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter
 public class Product {
@@ -51,26 +52,26 @@ public class Product {
     private double price;
     private Boolean selected;
 }
+
 ```
 
-**Repository `ProductRepository.java`**
-Une interface simple qui étend `JpaRepository` pour fournir toutes les opérations CRUD standard sans code supplémentaire.
+**Repository: `ProductRepository.java**`
+Extends `JpaRepository` to provide standard CRUD operations out of the box.
 
 ```java
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/backend/backend-app/src/main/java/com/youssef/backendapp/repositories/ProductRepository.java
-public interface ProductRepository extends JpaRepository<Product,Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
+
 ```
 
-#### Couche Web (API REST)
+#### Web Layer (REST API)
 
-**Contrôleur `ProductRestAPI.java`**
-Ce contrôleur expose les endpoints REST pour la gestion des produits. Il est configuré pour accepter les requêtes de n'importe quelle origine (`@CrossOrigin("*")`), ce qui est essentiel pour la communication avec l'application Angular.
+**Controller: `ProductRestAPI.java**`
+Exposes REST endpoints. The `@CrossOrigin("*")` annotation is critical for allowing the Angular application to communicate with the API across different ports.
 
 ```java
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/backend/backend-app/src/main/java/com/youssef/backendapp/web/ProductRestAPI.java
 @RestController
-@CrossOrigin("*")
+@CrossOrigin("*") // Essential for Angular communication
 @RequestMapping("/api")
 @AllArgsConstructor
 public class ProductRestAPI {
@@ -85,41 +86,20 @@ public class ProductRestAPI {
     public void deleteProductById(@PathVariable(name = "id") Long id){
         productService.deleteById(id);
     }
-    // ... autres endpoints
 }
+
 ```
 
-#### Initialisation des Données
+### 2. Frontend Layer (Angular)
 
-La classe `BackendAppApplication.java` utilise un `CommandLineRunner` pour peupler la base de données H2 avec des données de test au démarrage de l'application.
+The frontend is built using components and services to maintain a clean separation of concerns.
 
-```java
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/backend/backend-app/src/main/java/com/youssef/backendapp/BackendAppApplication.java
-@Bean
-CommandLineRunner init(ProductService productService) {
-    return args -> {
-        productService.addProduct(new Product(null, "ordinateur", 5000, true ));
-        productService.addProduct(new Product(null, "telephone", 2500, true ));
-        productService.addProduct(new Product(null, "tablette", 3000, false ));
-        // ...
-    };
-}
-```
+#### Data Service: `ProductService.ts`
 
-### Partie Frontend (Angular)
-
-L'architecture du frontend est basée sur des composants et des services pour une bonne séparation des préoccupations.
-
-#### Service de Données
-
-**`ProductService.ts`**
-Ce service encapsule la communication avec l'API backend. Il utilise le `HttpClient` d'Angular pour effectuer les requêtes HTTP.
+Encapsulates API communication using Angular's `HttpClient`.
 
 ```typescript
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/angular-app/src/app/services/productService.ts
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ProductService {
   constructor(private http: HttpClient) {}
 
@@ -131,25 +111,21 @@ export class ProductService {
       return this.http.delete("http://localhost:8080/api/products/" + p.id);
   }
 }
+
 ```
 
-#### Composant d'Affichage
+#### Display Component: `products.ts`
 
-**`products.ts`**
-Le composant `Products` injecte le `ProductService` pour récupérer et afficher la liste des produits. Il gère également l'action de suppression.
+Injects the `ProductService` to fetch data. It uses `ChangeDetectorRef` to ensure the UI stays synchronized with the data stream.
 
 ```typescript
-// C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/angular-app/src/app/products/products.ts
 @Component({ /* ... */ })
 export class Products implements OnInit {
-  products: any = [] ;
+  products: any = [];
 
-  constructor(
-    private productService:ProductService,
-    private cd: ChangeDetectorRef,
-  ) {}
+  constructor(private productService: ProductService, private cd: ChangeDetectorRef) {}
 
-  ngOnInit () {
+  ngOnInit() {
     this.getAllProducts();
   }
 
@@ -157,89 +133,58 @@ export class Products implements OnInit {
     this.productService.getAllProducts().subscribe({
       next: resp => {
         this.products = resp;
-        this.cd.detectChanges(); // Forcer la détection de changement
-      },
-      // ...
+        this.cd.detectChanges(); // Force UI refresh
+      }
     });
   }
 
   handleDelete(p: any) {
     this.productService.deleteProduct(p).subscribe({
-      next: resp => {
-        this.getAllProducts(); // Recharger la liste après suppression
-      },
-      // ...
+      next: () => this.getAllProducts() // Reload list after deletion
     });
   }
 }
+
 ```
 
-**Template `products.html`**
-Le template utilise la nouvelle syntaxe de contrôle de flux (`@for`, `@if`) d'Angular pour afficher les produits de manière performante.
+## 🚀 Database Configuration
 
-```html
-<!-- C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/angular-app/src/app/products/products.html -->
-<table class="table">
-  <!-- ... thead ... -->
-  @if (products) {
-    <tbody>
-      @for (p of products; track p){
-        <tr>
-          <td>{{p.id}}</td>
-          <td>{{p.name}}</td>
-          <td>{{p.price}}</td>
-          <td>
-            @if (p.selected) { <i class="bi bi-check-circle"></i> }
-            @else { <i class="bi bi-circle"></i> }
-          </td>
-          <td>
-            <button (click)="handleDelete(p)" class="btn btn-outline-danger">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      }
-    </tbody>
-  }
-</table>
-```
+The backend uses **H2** for zero-configuration development.
 
-## 4. Configuration de la Base de Données
+**`application.properties` snippet:**
 
-Le backend est configuré pour utiliser une base de données H2 en mémoire, ce qui facilite le développement et les tests sans nécessiter de serveur de base de données externe.
-
-Fichier `application.properties` :
 ```properties
-# C:/Users/Youssef/OneDrive/Documents/Youssef/TPs/Tp JEE/Tp 4 - Angular/backend/backend-app/src/main/resources/application.properties
 spring.datasource.url=jdbc:h2:mem:product-db
 spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-
-# Activer la console H2 pour le débogage
 spring.h2.console.enabled=true
-
-# Stratégie de génération du schéma (create pour recréer la DB à chaque redémarrage)
 spring.jpa.hibernate.ddl-auto=create
+
 ```
-La console H2 est accessible à l'adresse `http://localhost:8080/h2-console` pour inspecter les données.
 
-## 5. Difficultés Rencontrées et Solutions
+*Access the DB manager at: `http://localhost:8080/h2-console*`
 
-*   **Problème de Communication Frontend-Backend (CORS)** : Lors des premiers appels de l'application Angular vers l'API Spring Boot, des erreurs de type "Cross-Origin Resource Sharing" (CORS) sont apparues. Le navigateur bloque par défaut les requêtes HTTP entre différentes origines (`localhost:4200` et `localhost:8080`).
-    *   **Solution** : L'annotation `@CrossOrigin("*")` a été ajoutée au contrôleur REST dans le backend. Cela indique au navigateur que l'API est autorisée à recevoir des requêtes de n'importe quelle origine, résolvant ainsi le problème.
+## 🛠️ Troubleshooting
 
-*   **Problème de Mise à Jour de la Vue dans Angular** : Après avoir récupéré les produits depuis le backend, la vue ne se mettait pas toujours à jour automatiquement pour afficher les données.
-    *   **Solution** : Le `ChangeDetectorRef` d'Angular a été injecté dans le composant `Products`, et sa méthode `detectChanges()` a été appelée manuellement après la réception des données. Cela force Angular à relancer son cycle de détection de changements et à rafraîchir l'interface utilisateur.
+* **CORS Issues**: Browser security initially blocked requests from `localhost:4200` to `localhost:8080`.
+* **Solution**: Added `@CrossOrigin("*")` to the Spring Boot REST controller to allow cross-origin resource sharing.
 
-## 6. Conclusion
 
-Ce TP a été une excellente introduction au développement d'applications full-stack modernes. Il a permis de mettre en pratique les concepts suivants :
+* **UI Refresh Latency**: Sometimes the Angular view didn't update immediately after data retrieval.
+* **Solution**: Injected `ChangeDetectorRef` and manually triggered `detectChanges()` after successful API responses to ensure the DOM reflected the latest state.
 
-*   La création d'une API REST robuste et bien structurée avec Spring Boot.
-*   Le développement d'une interface utilisateur dynamique et réactive avec Angular.
-*   La gestion de la communication asynchrone entre un client et un serveur.
-*   Le débogage de problèmes courants dans un environnement full-stack, notamment les erreurs CORS et les subtilités de la détection de changements dans les frameworks frontend.
 
-Le découplage entre le frontend et le backend offre une grande flexibilité et constitue une base solide pour la construction d'applications web complexes et évolutives.
+
+## 🎯 Conclusion
+
+This project served as an excellent introduction to modern full-stack development. Key takeaways include:
+
+* Building a robust, decoupled REST API with **Spring Boot**.
+* Creating a reactive, dynamic UI with **Angular**.
+* Managing asynchronous communication and overcoming common hurdles like **CORS** and **Change Detection** strategies.
+
+---
+
+*Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
