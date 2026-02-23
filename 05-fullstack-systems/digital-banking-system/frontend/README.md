@@ -1,136 +1,142 @@
 # 🏦 Digital Banking Frontend
 
-![Angular](https://img.shields.io/badge/Angular-17%2B-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![Chart.js](https://img.shields.io/badge/Chart.js-4.x-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+> A modern, responsive, and secure user interface developed with **Angular 17+**. This frontend client provides comprehensive management of customers, bank accounts, and financial operations by communicating seamlessly with the Spring Boot backend REST API.
 
-Bienvenue sur le projet **Digital Banking Frontend**. Une interface utilisateur moderne, réactive et sécurisée, développée avec **Angular 17+**. Elle permet la gestion complète des clients, des comptes bancaires et des opérations financières en communiquant avec un backend Spring Boot.
+## 📑 Table of Contents
 
----
+* [Key Features](https://www.google.com/search?q=%23-key-features)
+* [System Architecture](https://www.google.com/search?q=%23%EF%B8%8F-system-architecture)
+* [Technical Analysis](https://www.google.com/search?q=%23-technical-analysis)
+* [Application Structure](https://www.google.com/search?q=%23-application-structure)
+* [Installation & Setup](https://www.google.com/search?q=%23-installation--setup)
+* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
+* [Credits](https://www.google.com/search?q=%23-credits)
 
-## 📑 Table des Matières
-1.  [Fonctionnalités Clés](#-fonctionnalités-clés)
-2.  [Architecture du Projet](#-architecture-globale)
-3.  [Analyse Technique](#-analyse-technique)
-4.  [Guide de Démarrage](#-installation-et-démarrage)
-5.  [Structure de l'Application](#-structure-de-lapplication)
-6.  [Stack Technique](#-stack-technique)
+## ✨ Key Features
 
----
+* **🔐 Authentication & Security:** Secure login workflow via **JWT**, strict Role-Based Access Control (Admin/User), and protected routing using Angular Route Guards.
+* **📊 Administrative Dashboard:** A comprehensive overview featuring Key Performance Indicators (Total clients, accounts, total assets) and interactive charts detailing account distribution and balances.
+* **👥 Customer Management:** Real-time search capabilities alongside full CRUD (Create, Read, Update, Delete) operations for client profiles.
+* **🏦 Account Management:** Native interface support for **Current Accounts** (handling overdrafts) and **Saving Accounts** (handling interest rates).
+* **💸 Financial Operations:** Dedicated interfaces for consulting paginated transaction histories and executing secure account-to-account transfers.
 
-## ✨ Fonctionnalités Clés
+## 🏗️ System Architecture
 
-*   **🔐 Authentification & Sécurité** : Connexion sécurisée via **JWT**, gestion des rôles (Admin/User) et protection des routes.
-*   **📊 Tableau de Bord Admin** : Vue d'ensemble avec KPIs (Total clients, comptes, actifs) et graphiques sur la répartition des comptes et des soldes.
-*   **👥 Gestion des Clients** : Recherche en temps réel, ajout, modification et suppression de clients (CRUD complet).
-*   **🏦 Gestion des Comptes** : Support des comptes **Courants** (avec découvert) et **Épargne** (avec taux d'intérêt).
-*   **💸 Opérations Bancaires** : Consultation de l'historique des transactions et exécution de virements compte-à-compte.
+The project adopts a **Modern Angular Architecture**, heavily prioritizing modularity, ease of maintenance, and rendering performance.
 
----
+### Directory Structure
 
-## 🏗 Architecture Globale
-
-Le projet adopte une architecture **Angular Moderne** favorisant la modularité, la maintenabilité et la performance.
-
-### Structure du Code
-```
+```text
 src/app
-├── 📂 admin-dashboard # Composant du tableau de bord
-├── 📂 services        # Services API (Auth, Accounts, Customers)
-├── 📂 model           # Interfaces et Types (DTOs)
-├── 📂 interceptor     # Gestion du Token JWT
-├── 📂 customers       # Composants de gestion des clients
-├── 📂 accounts        # Composants de gestion des comptes
-├── 📂 operations      # Composants de gestion des opérations
-└── 📂 login           # Page d'authentification
+├── 📂 admin-dashboard # Dashboard UI and Chart components
+├── 📂 services        # API communication (Auth, Accounts, Customers)
+├── 📂 model           # TypeScript Interfaces and Types (DTOs)
+├── 📂 interceptor     # HTTP Interceptor for injecting JWT Bearer tokens
+├── 📂 customers       # Customer management interfaces
+├── 📂 accounts        # Account management interfaces
+├── 📂 operations      # Financial transaction interfaces
+└── 📂 login           # Authentication UI
+
 ```
 
----
+## 📚 Technical Analysis
 
-## 📚 Analyse Technique
+### 1️⃣ Interactive Dashboard (Chart.js)
 
-### 1️⃣ Tableau de Bord (Chart.js)
-Le dashboard administrateur utilise **Chart.js** pour visualiser les données de l'application. Il présente :
-*   Des **KPIs** (Key Performance Indicators) pour un aperçu rapide.
-*   Un **graphique Doughnut** pour la répartition des types de comptes.
-*   Un **graphique en barres** pour comparer les actifs totaux par type de compte.
+The administrator dashboard leverages **Chart.js** to transform raw banking data into visual intelligence. It features:
 
-### 2️⃣ Sécurité Basée sur les Rôles
-L'interface s'adapte en fonction des rôles de l'utilisateur (extraits du JWT) :
-*   Le lien vers le **Dashboard** n'est visible que pour les `ADMIN`.
-*   Les boutons de **suppression/modification** sont masqués pour les utilisateurs non-`ADMIN`.
+* **KPI Cards:** Rapid insights into core metrics.
+* **Doughnut Charts:** Visualizing the proportional distribution of account types (Current vs. Savings).
+* **Bar Charts:** Comparing total financial assets locked within different account categories.
 
-### 3️⃣ Composants Autonomes (Standalone)
-Utilisation exclusive des **Standalone Components** pour réduire la complexité (suppression des `NgModule`) et optimiser le chargement.
+### 2️⃣ Client-Side Role-Based Security
 
-### 4️⃣ Formulaires Réactifs
-Gestion des formulaires via **Reactive Forms** pour une validation robuste et découplée du template HTML.
+The user interface dynamically adapts based on the roles extracted and decoded directly from the JWT payload:
 
----
+* The **Dashboard** navigation link is strictly rendered only for users possessing the `ADMIN` authority.
+* Destructive actions (like the **Delete** or **Edit** buttons on customer profiles) are structurally hidden from non-administrative users.
 
-## 🚀 Installation et Démarrage
+### 3️⃣ Standalone Components
 
-### Prérequis
-*   **Node.js** (v18 ou supérieur)
-*   **Backend Digital Banking** lancé sur le port `8085`
+The architecture exclusively utilizes Angular 17 **Standalone Components**. By completely removing traditional `NgModule` wrappers, the codebase is significantly simplified, and the application benefits from highly optimized lazy-loading and faster bootstrap times.
 
-### 1. Installation des dépendances
+### 4️⃣ Reactive Forms
+
+Data collection and user input are managed entirely via **Reactive Forms**. This paradigm ensures robust, synchronous data validation that is completely decoupled from the HTML template, making the logic highly testable.
+
+## 📱 Application Structure
+
+### 🔐 Authentication (`/login`)
+
+* **Description:** Secure login form designed to authenticate credentials and securely store the returned JWT in the browser's local storage.
+
+### 📊 Admin Dashboard (`/admin`)
+
+* **Access:** Strictly reserved for Administrators.
+* **Functions:** Global statistical visualization of the bank's operational health.
+
+### 👤 Customers (`/customers`)
+
+* **Functions:** Paginated list of clients, live search filtering, and management actions (CRUD).
+
+### 🏦 Accounts & Operations (`/accounts`)
+
+* **Functions:** Direct account consultation, live balance rendering, and historical operation tracking.
+
+## 🚀 Installation & Setup
+
+### Prerequisites (Fedora 43)
+
+Ensure your local development environment is configured with the required Node runtime:
+
+```bash
+# Install Node.js and NPM
+sudo dnf install nodejs npm
+
+```
+
+*Note: Ensure the Digital Banking Backend is actively running on port `8085` before launching the frontend.*
+
+### 1. Install Dependencies
+
+Clone the repository and install the required Angular packages:
+
 ```bash
 npm install
+
 ```
 
-### 2. Lancement du serveur de développement
+### 2. Launch the Development Server
+
 ```bash
 ng serve
+
 ```
-L'application sera accessible sur `http://localhost:4200/`.
 
----
+The application will compile and be instantly accessible at `http://localhost:4200/`.
 
-## 📱 Structure de l'Application
+## 🛠️ Technology Stack
 
-### 🔐 Authentification
-*   **Route** : `/login`
-*   **Description** : Formulaire de connexion pour récupérer le JWT.
+| Category | Technology | Purpose |
+| --- | --- | --- |
+| **Core Framework** | Angular 17+ | Frontend SPA architecture |
+| **Language** | TypeScript 5.0 | Strict typing and business logic |
+| **UI/UX Design** | Bootstrap 5 | Component styling and responsive grid |
+| **Data Visualization** | Chart.js | Rendering interactive dashboard graphics |
+| **Data Handling** | RxJS | Reactive programming and asynchronous streams |
+| **Build Tools** | Angular CLI / Vite | Development server and production bundling |
 
-### 📊 Dashboard Admin
-*   **Route** : `/admin`
-*   **Accès** : Réservé aux administrateurs.
-*   **Fonctions** : Visualisation des statistiques globales de la banque.
+## 🧪 Testing
 
-### 👤 Clients (`/customers`)
-*   **Route** : `/customers`
-*   **Fonctions** : Liste des clients, recherche, et actions de gestion (CRUD).
+To execute the suite of unit tests:
 
-### 🏦 Comptes & Opérations (`/accounts`)
-*   **Route** : `/accounts`
-*   **Fonctions** : Consultation des comptes, affichage du solde, et historique des opérations.
-
----
-
-## 🛠 Stack Technique
-
-| Catégorie | Technologie | Usage |
-| :--- | :--- | :--- |
-| **Core** | Angular 17+ | Framework Frontend |
-| **Langage** | TypeScript 5.0 | Typage et Logique |
-| **UI/UX** | Bootstrap 5 | Design et Responsivité |
-| **Data Visualization** | Chart.js | Graphiques du Dashboard |
-| **Data** | RxJS | Programmation Réactive |
-| **Build** | Angular CLI / Vite | Outils de build |
-
----
-
-## 🧪 Tests
-Pour lancer les tests unitaires :
 ```bash
 ng test
+
 ```
 
 ---
 
-## 👥 Crédits
+*Authored by Youssef Fellah.*
 
-*   **Réalisé par :** Youssef Fellah
-*   **Encadré par :** Pr. Mohamed Youssfi
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
