@@ -1,91 +1,86 @@
-# Compte Rendu du TP : Inversion de Contrôle et Injection de Dépendances
+# 🔄 Java IoC & Dependency Injection Lab
 
-Ce document sert de rapport pour le travail pratique portant sur les principes de **l'Inversion de Contrôle (IoC)** et de **l'Injection de Dépendances (DI)** en Java. L'objectif est de mettre en œuvre une application simple en respectant le principe de **couplage faible** pour en faciliter la maintenance et l'évolutivité.
+> **Academic Practical Work (TP) Report**
+> This repository contains the practical implementation of **Inversion of Control (IoC)** and **Dependency Injection (DI)** principles in Java. The primary objective is to build a simple application demonstrating **loose coupling** to ensure high maintainability and scalability.
 
-## 1. Énoncé du TP
+## 📑 Table of Contents
 
-La consigne était de reprendre l'exemple traité dans les ressources vidéo fournies, en suivant les étapes ci-dessous.
+* [Project Assignment](https://www.google.com/search?q=%23-project-assignment)
+* [Application Architecture](https://www.google.com/search?q=%23%EF%B8%8F-application-architecture)
+* [Implementation Steps](https://www.google.com/search?q=%23%EF%B8%8F-implementation-steps)
+* [Dependency Injection Methods](https://www.google.com/search?q=%23-dependency-injection-methods)
+* [Local Setup (Fedora)](https://www.google.com/search?q=%23-local-setup)
+* [Conclusion & Takeaways](https://www.google.com/search?q=%23-conclusion--takeaways)
 
-> **Consignes :**
-> * Créer un repository Github.
-> * Déposer le lien du repository comme seul livrable dans Classroom.
-> * Pour chaque période de 30 min environ, effectuer un commit et un push.
-> * Pour le rapport, utiliser le fichier README.MD du repository.
-> * À la fin de la séance, faire un dernier commit.
-> * Après, vous continuez à compléter l'activité pratique.
+## 📋 Project Assignment
 
-> **Partie 1 : (Voir support et vidéo)**
-> 1.  Créer l'interface `IDao` avec une méthode `getData`.
-> 2.  Créer une implémentation de cette interface.
-> 3.  Créer l'interface `IMetier` avec une méthode `calcul`.
-> 4.  Créer une implémentation de cette interface en utilisant le **couplage faible**.
-> 5.  Faire l'injection des dépendances :
->     a. Par instanciation statique.
->     b. Par instanciation dynamique.
->     c. En utilisant le Framework Spring (Version XML et Version annotations).
+The directive was to reproduce the concepts covered in the course materials by following a strict iterative process:
 
----
+1. Create an `IDao` interface with a `getData` method.
+2. Create a concrete implementation of this interface.
+3. Create an `IMetier` interface with a `calculate` method.
+4. Create an implementation of this interface utilizing **loose coupling**.
+5. Inject the dependencies using three distinct approaches:
+* Static Instantiation.
+* Dynamic Instantiation.
+* The Spring Framework (both XML and Annotation-based versions).
 
-## 2. Conception de l'Application
 
-Pour répondre à l'exigence de **couplage faible**, l'application est conçue autour d'interfaces qui définissent des contrats, plutôt que des implémentations concrètes.
 
-* **`IDao`** : Interface pour la couche d'accès aux données (Data Access Object). Elle définit un contrat pour obtenir une donnée (`double getData()`).
-* **`IMetier`** : Interface pour la couche métier (logique applicative). Elle définit un contrat pour effectuer un calcul (`double calculate()`).
+## 🏗️ Application Architecture
 
-La classe `MetierImpl` (implémentation de `IMetier`) dépend de l'interface `IDao`, et non d'une classe comme `DaoImpl`. Cela signifie que l'on peut changer l'implémentation de la couche DAO (par exemple, passer d'une base de données à un web service) sans jamais modifier le code de la couche métier.
+To satisfy the **loose coupling** requirement, the application's architecture is strictly interface-driven. Classes depend on contracts rather than concrete implementations.
 
-Cette architecture rend l'application **ouverte à l'extension mais fermée à la modification**.
+* **`IDao`**: The Data Access Object layer interface. It defines a generic contract for retrieving data (`double getData()`).
+* **`IMetier`**: The Business Logic layer interface. It defines a contract for executing calculations (`double calculate()`).
 
----
+The `MetierImpl` class depends solely on `IDao`, not on a specific database implementation like `DaoImpl`. This architectural choice makes the application **open for extension but closed for modification** (OCP principle). You can swap the data source (e.g., from a database to a REST API) without altering a single line of the business logic.
 
-## 3. Implémentation et Code Source
+## ⚙️ Implementation Steps
 
-Voici les différentes étapes de l'implémentation, conformément à l'énoncé.
+### 1. Defining the Interfaces
 
-### Étape 1 à 4 : Création des Interfaces et Implémentations
+**`IDao.java` & `IMetier.java**`
+These files establish the contracts. They contain no logic, only method signatures.
 
-#### Interface `IDao.java`
-Définit le contrat pour l'accès aux données.
 ```java
 package org.yss.dao;
-
 public interface IDao {
     public double getData();
 }
+
+package org.yss.metier;
+public interface IMetier {
+    public double calculate();
+}
+
 ```
-#### Implémentation `DaoImpl.java`
-Une première implémentation qui simule une récupération de données depuis une base de données.
+
+### 2. Concrete Implementations
+
+**`DaoImpl.java`**
+A simulated data access class. The `@Component("d")` annotation will later tell Spring to manage this class.
+
 ```java
 package org.yss.dao;
-
 import org.springframework.stereotype.Component;
 
 @Component("d")
 public class DaoImpl implements IDao {
     @Override
     public double getData() {
-        System.out.println("Utilisation de la BDD");
-        double data = 31;
-        return data;
+        System.out.println("Using the Database");
+        return 31;
     }
 }
-```
-#### Interface `IMetier.java`
-Définit le contrat pour la logique métier.
-```Java
-package org.yss.metier;
 
-public interface IMetier {
-    public double calculate();
-}
 ```
 
-#### Implémentation `MetierImpl.java`
-Implémentation de la logique métier. On remarque qu'elle dépend de IDao` (couplage faible).
-```Java
-package org.yss.metier;
+**`MetierImpl.java`**
+The business logic implementation. Notice the `IDao dao` property. The `MetierImpl` does not instantiate the DAO itself using `new DaoImpl()`; it expects it to be provided (injected).
 
+```java
+package org.yss.metier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yss.dao.IDao;
@@ -93,79 +88,67 @@ import org.yss.dao.IDao;
 @Component
 public class MetierImpl implements IMetier {
     @Autowired
-    IDao dao;
+    IDao dao; // Loose coupling: depends on the interface
 
     @Override
     public double calculate() {
         double t = dao.getData();
-        double result = t * 21 * Math.PI;
-        return result;
+        return t * 21 * Math.PI;
     }
 
+    // Setter required for XML/Dynamic injection
     public void setDao(IDao dao) {
         this.dao = dao;
     }
 }
+
 ```
----
-### Étape 5 : Les Différentes Méthodes d'Injection de Dépendances
 
-L'objectif est d'injecter une implémentation de `IDao` dans l'objet `MetierImpl`.
+## 💉 Dependency Injection Methods
 
-#### a. Injection par Instanciation Statique
+The core challenge is securely passing an instance of `IDao` into `MetierImpl`. Here is how it evolves from basic to enterprise-grade.
 
-C'est la méthode la plus simple mais la moins flexible. On instancie directement les classes dans le code. Le couplage, bien que basé sur des interfaces, reste "statique" car un changement d'implémentation de `IDao` (ex: `DaoImpl2`) nécessite de modifier le code et de le recompiler.
+### A. Static Instantiation (Tight Assembly)
 
-**Fichier `Pres.java` :**
+The simplest approach, but the least flexible. The developer hardcodes the instantiation in the `main` method. Changing the DAO implementation requires editing this code and recompiling the application.
+
 ```java
-package org.yss.pres;
-
-import org.yss.dao.IDao;
-import org.yss.dao.DaoImpl;
-import org.yss.metier.IMetier;
-import org.yss.metier.MetierImpl;
-
 public class Pres {
     public static void main(String[] args) {
-        // Injection via le constructeur
-        IDao dao = new DaoImpl();
-        IMetier metier = new MetierImpl(dao);
-
+        IDao dao = new DaoImpl();           // Hardcoded instantiation
+        IMetier metier = new MetierImpl(dao); // Constructor injection
         System.out.println(metier.calculate());
     }
 }
+
 ```
-Résultat d'exécution :
-```
-Utilisation de la BDD
-2045.353833219463
-``
-#### b. Injection par Instanciation Dynamique
-Cette méthode améliore la flexibilité. On externalise le nom des classes à instancier dans un fichier de configuration (`config.txt). L'application lit ce fichier au démarrage pour savoir quelles implémentations utiliser, grâce à la réflexivité Java.
-**Fichier `config.txt :**
-`
+
+### B. Dynamic Instantiation (Java Reflection)
+
+This method achieves true runtime flexibility. The exact classes to instantiate are read from an external `config.txt` file.
+
+**`config.txt` content:**
+
+```text
 org.yss.ext.DaoImpl2
 org.yss.metier.MetierImpl
-`
-**Fichier `Pres2.java` :**
-```Java
-package org.yss.pres;
 
-import org.yss.dao.IDao;
-import org.yss.metier.IMetier;
-import java.io.File;
-import java.util.Scanner;
+```
 
+**Implementation:**
+By using `Class.forName()`, the JVM loads the classes dynamically at runtime. We then use reflection (`newInstance()`) to create objects without ever hardcoding their names in the Java file.
+
+```java
 public class Pres2 {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(new File("config.txt"));
 
-        // Instanciation dynamique de la couche DAO
+        // 1. Dynamically load and instantiate the DAO
         String daoClassName = sc.nextLine();
         Class cDao = Class.forName(daoClassName);
         IDao dao = (IDao) cDao.newInstance();
 
-        // Instanciation dynamique de la couche Métier et injection
+        // 2. Dynamically load the Metier class and inject the DAO via constructor
         String metierClassName = sc.nextLine();
         Class cMetier = Class.forName(metierClassName);
         IMetier metier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(dao);
@@ -173,87 +156,70 @@ public class Pres2 {
         System.out.println(metier.calculate());
     }
 }
+
 ```
-**Résultat d'exécution (avec `DaoImpl2`) :**
+
+### C. The Spring Framework Approach
+
+In modern enterprise applications, we delegate the entire lifecycle and injection process to an IoC Container (Spring).
+
+#### XML Configuration
+
+We map the objects (beans) and their relationships in an XML file. Spring reads this file, creates the instances, and wires them together via setter methods (`<property>`).
+
+**`config.xml` snippet:**
+
+```xml
+<bean id="d" class="org.yss.dao.DaoImpl"></bean>
+<bean id="metier" class="org.yss.metier.MetierImpl">
+    <property name="dao" ref="d"></property> </bean>
+
 ```
-Utilisation d'un web service
-1385.4423602330987
-``
-#### c. Injection avec le Framework Spring
-C'est l'approche la plus robuste et la plus utilisée en industrie. On délègue la création et l'injection des objets à un conteneur IoC : Spring.
-##### Version XML
-La configuration des objets (les "beans") et de leurs dépendances se fait dans un fichier XML.
-**Fichier ``config.xml` (dans `src/main/resources`) :**
-```XML
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="[http://www.springframework.org/schema/beans](http://www.springframework.org/schema/beans)"
-       xmlns:xsi="[http://www.w3.org/2001/XMLSchema-instance](http://www.w3.org/2001/XMLSchema-instance)"
-       xsi:schemaLocation="[http://www.springframework.org/schema/beans](http://www.springframework.org/schema/beans) [http://www.springframework.org/schema/beans/spring-beans.xsd](http://www.springframework.org/schema/beans/spring-beans.xsd)">
 
-    <bean id="d" class="org.yss.dao.DaoImpl"></bean>
+#### Annotation Configuration (Modern Standard)
 
-    <bean id="metier" class="org.yss.metier.MetierImpl">
-        <property name="dao" ref="d"></property>
-    </bean>
-</beans>
-```
-**Fichier PresSpringXml.java` :**
-```Java
-package org.yss.pres;
+XML is replaced by inline metadata. Spring scans the specified packages.
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.yss.metier.IMetier;
+* `@Component`: Flags the class as a Spring-managed bean.
+* `@Autowired`: Tells Spring to find a matching bean (like `DaoImpl`) and automatically inject it into the field.
 
-public class PresSpringXml {
-    public static void main(String[] args) {
-        // 1. Charger le contexte Spring à partir du fichier XML
-        ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
-        // 2. Récupérer le bean "metier"
-        IMetier metier = (IMetier) context.getBean("metier");
-        // 3. Utiliser l'objet
-        System.out.println(metier.calculate());
-    }
-}
-```
-##### Version Annotations
-Cette version, plus moderne, remplace le XML par des annotations directement dans le code Java. Spring scanne les packages pour trouver et configurer les beans automatiquement.
-  * `@Component : Indique que la classe est un bean géré par Spring.
-  * `@Autowired` : Demande à Spring d'injecter automatiquement une dépendance.
-**Fichier `PresSpringAnnotation.java :**
-```Java
-package org.yss.pres;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.yss.metier.IMetier;
-
+```java
 public class PresSpringAnnotation {
     public static void main(String[] args) {
-        // 1. Démarrer le contexte Spring en scannant les packages
+        // Start Spring context and scan specific packages for annotations
         ApplicationContext ctx = new AnnotationConfigApplicationContext("org.yss.dao", "org.yss.metier");
-        // 2. Récupérer le bean de type IMetier
+        
+        // Retrieve the fully assembled bean
         IMetier metier = ctx.getBean(IMetier.class);
-        // 3. Utiliser l'objet
         System.out.println(metier.calculate());
     }
 }
+
 ```
 
-##### Résultat d'exécution (pour les deux versions Spring) :
+## 💻 Local Setup
+
+To run this project on your Fedora environment:
+
+```bash
+# Ensure Java and Maven are installed
+sudo dnf install java-17-openjdk maven
+
+# Clone the repository
+git clone https://github.com/yss-ef/[REPO_NAME].git
+cd [REPO_NAME]
+
+# Compile and run the Annotation version using Maven
+mvn compile exec:java -Dexec.mainClass="org.yss.pres.PresSpringAnnotation"
+
 ```
-Utilisation de la BDD
-2045.353833219463
-```
+
+## 🎯 Conclusion & Takeaways
+
+This lab successfully demonstrates the critical importance of Inversion of Control in creating modular software.
+
+By transitioning from static instantiation to reflection-based dynamic instantiation, and finally to the Spring Framework, the evolution of flexibility becomes evident. While manual dynamic injection reveals the underlying mechanics of IoC, leveraging an enterprise framework like Spring automates object lifecycle management, allowing engineers to focus entirely on business logic. The modern annotation-based approach proves to be the most efficient and readable paradigm.
+
 ---
-## 4. Conclusion
-Ce travail pratique a permis de mettre en évidence l'importance du principe de l'Inversion de Contrôle pour créer des applications modulaires et faciles à maintenir.
 
-Nous avons vu que l'injection de dépendances est le mécanisme qui permet de mettre en œuvre l'IoC. En passant de l'instanciation statique à l'instanciation dynamique, puis au framework Spring, nous avons gagné en flexibilité et en maintenabilité.
-
-L'utilisation d'un framework comme Spring est aujourd'hui un standard, car il automatise entièrement la gestion du cycle de vie des objets et de leurs dépendances, permettant au développeur de se concentrer sur la logique métier. La version par annotations est particulièrement appréciée pour sa simplicité et sa clarté.
-
----
-## 5. Notes Personnelles
-
-La principale difficulté rencontrée durant ce TP a été de bien saisir les mécanismes de l'injection de dépendances manuelle, notamment l'approche dynamique via la réflexivité. Cette étape, bien que fondamentale pour la compréhension du principe, met en lumière toute la puissance et l'utilité d'un framework comme Spring.
+*Authored by Youssef Fellah.*
