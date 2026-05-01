@@ -28,6 +28,18 @@ The platform follows a decoupled Multi-Tier Architecture designed for scalabilit
 
 ---
 
+## Interface Showcase
+
+| Authentication & Home | Customer Management |
+| --- | --- |
+| <img src="./screenshots/login.png" width="400" alt="Login Page"><br><img src="./screenshots/home.png" width="400" alt="Home Page"> | <img src="./screenshots/customers.png" width="400" alt="Customers List"><br><img src="./screenshots/customers-add.png" width="400" alt="Add Customer"> |
+
+| Account Overview & Creation | Financial Operations |
+| --- | --- |
+| <img src="./screenshots/accounts.png" width="400" alt="Accounts Overview"><br><img src="./screenshots/accounts-add-cur.png" width="400" alt="New Current Account"><br><img src="./screenshots/accounts-add-sav.png" width="400" alt="New Saving Account"> | <img src="./screenshots/transfer.png" width="400" alt="Money Transfer"> |
+
+---
+
 ## System Features
 
 ### 1. Security & Identity Management
