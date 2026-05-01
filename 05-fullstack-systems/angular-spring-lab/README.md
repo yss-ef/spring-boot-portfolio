@@ -1,190 +1,86 @@
-# 🌐 Full-Stack Application with Angular & Spring Boot
+# Full-Stack Orchestration: Angular & Spring Boot Integration
 
-> **Practical Work (TP) Report #4**
-> This project focuses on developing a full-stack web application with a decoupled architecture. The goal was to build a reactive user interface with **Angular** that communicates with a **Spring Boot** REST API for product management.
+A decoupled, multi-tier web application demonstrating the integration of a reactive Angular frontend with a robust Spring Boot REST API. This project focuses on asynchronous data flow, cross-origin resource sharing (CORS) management, and modular full-stack architecture.
 
-## 📑 Table of Contents
+## Technical Architecture
 
-* [Application Architecture](https://www.google.com/search?q=%23-application-architecture)
-* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
-* [Implementation Details](https://www.google.com/search?q=%23-implementation-details)
-* [Database Configuration](https://www.google.com/search?q=%23-database-configuration)
-* [Troubleshooting](https://www.google.com/search?q=%23-troubleshooting)
-* [Conclusion](https://www.google.com/search?q=%23-conclusion)
+The system follows a modern client-server paradigm, ensuring a strict separation of concerns between the presentation and application layers:
 
-## 🏗️ Application Architecture
+1.  **Frontend (Client)**: A Single Page Application (SPA) built with **Angular**, utilizing reactive programming patterns for dynamic state management.
+2.  **Backend (Server)**: A RESTful API engineered with **Spring Boot**, managing business logic and relational data persistence.
+3.  **Communication**: Asynchronous data exchange via HTTP/REST with JSON as the primary payload format.
 
-The application follows a modern client-server architecture:
+---
 
-* **Backend (Server)**: A REST API developed with **Spring Boot**. It handles business logic and data access, exposing endpoints for CRUD operations.
-* **Frontend (Client)**: A Single Page Application (SPA) developed with **Angular**. It consumes the backend API to display data and handle user interactions.
+## Technical Stack
 
-This clear separation of concerns allows for independent development and deployment of the two tiers.
+### Backend
+*   **Framework**: Spring Boot 3
+*   **Persistence**: Spring Data JPA / Hibernate
+*   **Database**: H2 In-Memory (Development)
+*   **API Design**: RESTful Controllers with CORS orchestration
+*   **Build Tool**: Maven
 
-## 🛠️ Technology Stack
+### Frontend
+*   **Framework**: Angular 17+
+*   **State Management**: RxJS (Observables)
+*   **Styling**: Bootstrap 5 / SCSS
+*   **Client**: HttpClientModule for asynchronous service integration
 
-| Category | Technology |
-| --- | --- |
-| **Backend** | Spring Boot, Spring Data JPA, Spring Web, Lombok, Maven |
-| **Frontend** | Angular, HttpClientModule, Bootstrap 5, Bootstrap Icons, npm |
-| **Database** | H2 (In-memory) |
+---
 
-## 🏗️ Implementation Details
+## Core Implementations
 
-### 1. Backend Layer (Spring Boot)
+### 1. Decoupled Service Architecture
+*   **CORS Management**: Implementation of `@CrossOrigin` policies at the controller level to enable secure, multi-origin communication between the Angular client (`localhost:4200`) and the Spring API (`localhost:8080`).
+*   **Reactive Services**: Angular services designed to encapsulate `HttpClient` logic, providing clean, observable data streams to UI components.
 
-The backend architecture is divided into logical layers: Entity, Repository, and REST Controller.
+### 2. Data Integrity & Persistence
+*   **JPA Modeling**: Precise mapping of relational entities with automated schema synchronization via Hibernate.
+*   **Bean Validation**: Use of JSR-303 annotations (`@NotEmpty`, `@Min`) to ensure data validity before database persistence.
+*   **Transactional Services**: Leveraging Spring's service-layer abstraction for atomic business operations.
 
-#### Persistence Layer (JPA)
+### 3. Reactive UI Synchrony
+*   **Change Detection**: Strategic use of `ChangeDetectorRef` to ensure the DOM remains synchronized with high-frequency asynchronous API responses.
+*   **Staggered Loading**: Implementing subscription-based data fetching to maintain a fluid user experience during network latency.
 
-**Entity: `Product.java**`
-Uses JPA annotations for ORM mapping and Bean Validation to ensure data integrity.
+---
 
-```java
-@Entity
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter
-public class Product {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NotEmpty
-    private String name;
-    @Min(0)
-    private double price;
-    private Boolean selected;
-}
+## Project Structure
 
+```text
+├── backend-app/  # Spring Boot REST API source
+├── angular-app/  # Angular Single Page Application source
+└── README.md     # System documentation
 ```
 
-**Repository: `ProductRepository.java**`
-Extends `JpaRepository` to provide standard CRUD operations out of the box.
+---
 
-```java
-public interface ProductRepository extends JpaRepository<Product, Long> {
-}
+## Deployment & Setup
 
+### Prerequisites
+*   Java 17 (OpenJDK)
+*   Maven 3.8+
+*   Node.js 18+ & Angular CLI
+
+### 1. Backend Initialization
+```bash
+cd backend-app
+mvn spring-boot:run
 ```
+*   **API Endpoint**: `http://localhost:8080/api/products`
+*   **Database Console**: `http://localhost:8080/h2-console`
 
-#### Web Layer (REST API)
-
-**Controller: `ProductRestAPI.java**`
-Exposes REST endpoints. The `@CrossOrigin("*")` annotation is critical for allowing the Angular application to communicate with the API across different ports.
-
-```java
-@RestController
-@CrossOrigin("*") // Essential for Angular communication
-@RequestMapping("/api")
-@AllArgsConstructor
-public class ProductRestAPI {
-    private ProductService productService;
-
-    @GetMapping("/products")
-    public List<Product> getAllProducts(){
-        return productService.findAll();
-    }
-
-    @DeleteMapping("/products/{id}")
-    public void deleteProductById(@PathVariable(name = "id") Long id){
-        productService.deleteById(id);
-    }
-}
-
+### 2. Frontend Initialization
+```bash
+cd angular-app
+npm install
+ng serve
 ```
-
-### 2. Frontend Layer (Angular)
-
-The frontend is built using components and services to maintain a clean separation of concerns.
-
-#### Data Service: `ProductService.ts`
-
-Encapsulates API communication using Angular's `HttpClient`.
-
-```typescript
-@Injectable({ providedIn: 'root' })
-export class ProductService {
-  constructor(private http: HttpClient) {}
-
-  getAllProducts() {
-      return this.http.get("http://localhost:8080/api/products");
-  }
-
-  deleteProduct(p: any) {
-      return this.http.delete("http://localhost:8080/api/products/" + p.id);
-  }
-}
-
-```
-
-#### Display Component: `products.ts`
-
-Injects the `ProductService` to fetch data. It uses `ChangeDetectorRef` to ensure the UI stays synchronized with the data stream.
-
-```typescript
-@Component({ /* ... */ })
-export class Products implements OnInit {
-  products: any = [];
-
-  constructor(private productService: ProductService, private cd: ChangeDetectorRef) {}
-
-  ngOnInit() {
-    this.getAllProducts();
-  }
-
-  getAllProducts() {
-    this.productService.getAllProducts().subscribe({
-      next: resp => {
-        this.products = resp;
-        this.cd.detectChanges(); // Force UI refresh
-      }
-    });
-  }
-
-  handleDelete(p: any) {
-    this.productService.deleteProduct(p).subscribe({
-      next: () => this.getAllProducts() // Reload list after deletion
-    });
-  }
-}
-
-```
-
-## 🚀 Database Configuration
-
-The backend uses **H2** for zero-configuration development.
-
-**`application.properties` snippet:**
-
-```properties
-spring.datasource.url=jdbc:h2:mem:product-db
-spring.datasource.driverClassName=org.h2.Driver
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.h2.console.enabled=true
-spring.jpa.hibernate.ddl-auto=create
-
-```
-
-*Access the DB manager at: `http://localhost:8080/h2-console*`
-
-## 🛠️ Troubleshooting
-
-* **CORS Issues**: Browser security initially blocked requests from `localhost:4200` to `localhost:8080`.
-* **Solution**: Added `@CrossOrigin("*")` to the Spring Boot REST controller to allow cross-origin resource sharing.
-
-
-* **UI Refresh Latency**: Sometimes the Angular view didn't update immediately after data retrieval.
-* **Solution**: Injected `ChangeDetectorRef` and manually triggered `detectChanges()` after successful API responses to ensure the DOM reflected the latest state.
-
-
-
-## 🎯 Conclusion
-
-This project served as an excellent introduction to modern full-stack development. Key takeaways include:
-
-* Building a robust, decoupled REST API with **Spring Boot**.
-* Creating a reactive, dynamic UI with **Angular**.
-* Managing asynchronous communication and overcoming common hurdles like **CORS** and **Change Detection** strategies.
+*   **Application Gateway**: `http://localhost:4200`
 
 ---
 
 *Authored by Youssef Fellah.*
 
-*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
+*Developed for the Engineering Cycle - Mundiapolis University.*
