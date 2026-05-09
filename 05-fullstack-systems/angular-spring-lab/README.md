@@ -79,6 +79,5 @@ ng serve
 ```
 *   **Application Gateway**: `http://localhost:4200`
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

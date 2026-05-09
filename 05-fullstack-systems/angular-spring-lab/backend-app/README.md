@@ -112,6 +112,5 @@ La console H2 est disponible à l'adresse `http://localhost:8080/h2-console` pou
         ```
 2.  L'API sera disponible sur `http://localhost:8080`.
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

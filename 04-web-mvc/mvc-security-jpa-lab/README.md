@@ -92,6 +92,5 @@ The application implements a classic MVC (Model-View-Controller) architecture wi
     *   **App**: `http://localhost:8080`
     *   **H2 Console**: `http://localhost:8080/h2-console`
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

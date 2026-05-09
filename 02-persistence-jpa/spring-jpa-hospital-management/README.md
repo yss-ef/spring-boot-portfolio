@@ -80,6 +80,5 @@ The system simulates a real-world clinical workflow through structured entity re
 3.  **H2 Console Access**:
     Navigate to `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:testdb`).
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

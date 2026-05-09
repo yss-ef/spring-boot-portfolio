@@ -66,6 +66,5 @@ Each subdirectory is an independent Maven project. To run a specific project:
 ## Port Configuration
 Most projects default to port `8080`. If you wish to run multiple projects simultaneously, update the `server.port` in the respective `application.properties` files.
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

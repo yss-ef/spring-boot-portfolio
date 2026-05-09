@@ -75,6 +75,5 @@ The application implements a streamlined data access architecture designed for h
     mvn spring-boot:run
     ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

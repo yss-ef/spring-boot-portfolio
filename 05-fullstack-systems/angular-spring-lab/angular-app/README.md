@@ -131,6 +131,5 @@ La vue utilise la syntaxe moderne d'Angular (`@for`, `@if`) pour afficher la lis
 
 **Note :** Assurez-vous que le serveur backend est en cours d'exécution sur `http://localhost:8080`.
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

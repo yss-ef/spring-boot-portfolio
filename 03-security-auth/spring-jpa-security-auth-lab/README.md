@@ -72,6 +72,5 @@ The system implements a decoupled service-oriented architecture designed to hand
 3.  **Inspect Data Tier**:
     Access the H2 Console at `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:testdb`).
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.
