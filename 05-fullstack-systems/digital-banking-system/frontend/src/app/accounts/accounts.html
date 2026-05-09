@@ -1,0 +1,92 @@
+<div class="container mt-4">
+  <ng-container *ngIf="accounts | async as listAccount; else failure">
+
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-muted">
+          <i class="bi bi-bank me-2"></i>Account List
+        </h5>
+
+        <a class="btn btn-primary btn-sm" routerLink="/new-operation">
+          <i class="bi bi-plus-lg"></i> New Operation
+        </a>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+              <th class="py-3 ps-3">ID</th>
+              <th>Status</th>
+              <th>Creation Date</th>
+              <th>Type</th>
+              <th class="text-end">Balance</th>
+              <th>Customer</th>
+              <th class="text-center pe-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let a of listAccount">
+              <td class="ps-3">
+                <span class="font-monospace small text-muted">{{a.id}}</span>
+              </td>
+
+              <td>
+                  <span class="badge rounded-pill"
+                        [ngClass]="{
+                          'bg-success': a.accountStatus === 'ACTIVATED',
+                          'bg-danger': a.accountStatus === 'SUSPENDED',
+                          'bg-warning text-dark': a.accountStatus === 'CREATED'
+                        }">
+                    {{a.accountStatus}}
+                  </span>
+              </td>
+
+              <td>
+                <i class="bi bi-calendar3 me-1 text-muted small"></i>
+                {{a.creationDate | date : 'dd-MM-yyyy'}}
+              </td>
+
+              <td>{{a.type}}</td>
+
+              <td class="text-end fw-bold text-primary">
+                {{a.balance | number : '1.2-2'}}
+                <span class="text-muted small fw-normal">{{a.currency}}</span>
+              </td>
+
+              <td>
+                <i class="bi bi-person me-1 text-muted"></i>
+                {{a.customerDTO.name}}
+              </td>
+
+              <td class="text-center pe-3">
+                <a class="btn btn-outline-dark btn-sm" [routerLink]="['/operations', a.id]" title="View Operations">
+                  <i class="bi bi-list-ul"></i> Details
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <ng-template #failure>
+    <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        {{errorMessage}}
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #loading>
+    <div class="d-flex justify-content-center align-items-center mt-5">
+      <div class="spinner-border text-primary me-2" role="status"></div>
+      <span class="text-muted">Loading accounts...</span>
+    </div>
+  </ng-template>
+</div>

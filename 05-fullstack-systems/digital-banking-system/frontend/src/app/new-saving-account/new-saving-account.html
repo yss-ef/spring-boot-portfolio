@@ -1,0 +1,102 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 text-muted">
+            <i class="bi bi-piggy-bank me-2"></i>New Saving Account
+          </h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="newSavingAccountFormGroup" *ngIf="newSavingAccountFormGroup" (ngSubmit)="handleSaveSavingAccount()">
+
+            <div class="mb-3">
+              <label class="form-label text-muted small">Customer Owner</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-person text-secondary"></i>
+                </span>
+                <select formControlName="customerId" class="form-select border-start-0">
+                  <option [ngValue]="null">Select a customer...</option>
+                  <option *ngFor="let c of customers | async" [value]="c.id">
+                    {{ c.name }} ({{ c.email }})
+                  </option>
+                </select>
+              </div>
+              <small class="text-danger" *ngIf="newSavingAccountFormGroup.get('customerId')?.touched && newSavingAccountFormGroup.get('customerId')?.errors">
+                Customer selection is required.
+              </small>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-7">
+                <label class="form-label text-muted small">Initial Balance</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-coin text-secondary"></i>
+                  </span>
+                  <input type="number" formControlName="balance" class="form-control border-start-0" placeholder="0.00">
+                </div>
+                <small class="text-danger" *ngIf="newSavingAccountFormGroup.get('balance')?.touched && newSavingAccountFormGroup.get('balance')?.errors">
+                  Min balance: 100.
+                </small>
+              </div>
+
+              <div class="col-md-5">
+                <label class="form-label text-muted small">Currency</label>
+                <select formControlName="currency" class="form-select">
+                  <option value="MAD">MAD (Dirham)</option>
+                  <option value="EUR">EUR (Euro)</option>
+                  <option value="USD">USD (Dollar)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted small">Interest Rate (%)</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-percent text-secondary"></i>
+                </span>
+                <input type="number" step="0.1" formControlName="interestRate" class="form-control border-start-0" placeholder="Ex: 3.5">
+              </div>
+              <small class="text-muted" *ngIf="!newSavingAccountFormGroup.get('interestRate')?.errors">Annual interest rate.</small>
+              <small class="text-danger" *ngIf="newSavingAccountFormGroup.get('interestRate')?.touched && newSavingAccountFormGroup.get('interestRate')?.errors">
+                Rate required (0-100%).
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted small">Account Status</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-shield-check text-secondary"></i>
+                </span>
+                <select formControlName="accountStatus" class="form-select border-start-0">
+                  <option value="CREATED">Created</option>
+                  <option value="ACTIVATED">Activated</option>
+                  <option value="SUSPENDED">Suspended</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="my-4 text-muted opacity-25">
+
+            <div class="d-flex justify-content-end gap-2">
+              <a routerLink="/accounts" class="btn btn-outline-secondary">
+                Cancel
+              </a>
+              <button [disabled]="newSavingAccountFormGroup.invalid" class="btn btn-success" type="submit">
+                <i class="bi bi-check-lg me-1"></i> Save Account
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

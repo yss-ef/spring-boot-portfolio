@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 text-muted">
+            <i class="bi bi-person-gear me-2"></i>Edit Customer
+          </h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="patchCustomerFormeGroup" (ngSubmit)="handlePatchCustomer()">
+
+            <input type="hidden" formControlName="id" [value]="customerId" />
+
+            <div class="mb-3">
+              <label class="form-label text-muted small">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-person text-secondary"></i>
+                </span>
+                <input type="text" formControlName="name" class="form-control border-start-0" placeholder="Enter customer name">
+              </div>
+              <small class="text-danger" *ngIf="patchCustomerFormeGroup.get('name')?.touched && patchCustomerFormeGroup.get('name')?.errors">
+                Name is required (min 4 chars).
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted small">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-envelope text-secondary"></i>
+                </span>
+                <input type="text" formControlName="email" class="form-control border-start-0" placeholder="name@example.com">
+              </div>
+              <small class="text-danger" *ngIf="patchCustomerFormeGroup.get('email')?.touched && patchCustomerFormeGroup.get('email')?.errors">
+                Please enter a valid email.
+              </small>
+            </div>
+
+            <hr class="my-4 text-muted opacity-25">
+
+            <div class="d-flex justify-content-end gap-2">
+              <a routerLink="/customers" class="btn btn-outline-secondary">
+                Cancel
+              </a>
+
+              <button [disabled]="patchCustomerFormeGroup.invalid" class="btn btn-primary" type="submit">
+                <i class="bi bi-check-lg me-1"></i> Save Changes
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

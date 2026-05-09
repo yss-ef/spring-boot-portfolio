@@ -1,0 +1,121 @@
+# DIGITAL BANKING BACKEND - DETAILED TECHNICAL REPORT
+
+## 1. PROJECT OVERVIEW
+This project is a comprehensive backend system for a Digital Banking application developed using **Java 17** and **Spring Boot 3**. It simulates core banking functionalities such as account management, customer handling, and financial transactions.
+
+A distinctive feature of this project is its integration with **Artificial Intelligence (OpenAI)** and **Telegram**, allowing users to interact with their bank accounts via a chat interface.
+
+## 2. ARCHITECTURE
+The application follows a strict **N-Tier Architecture** to ensure separation of concerns, maintainability, and scalability.
+
+### Layers:
+1.  **Presentation Layer (Web/Bot)**: Handles HTTP requests (REST API) and Telegram updates.
+2.  **Service Layer**: Contains business logic, transaction management, and external API integrations.
+3.  **Data Access Layer (Repository)**: Manages interactions with the database using Spring Data JPA.
+4.  **Domain Layer (Entities)**: Represents the persistent data model.
+
+---
+
+## 3. DETAILED CODE ANALYSIS BY PACKAGE
+
+### A. Entities (`com.youssef.backend.entities`)
+The data model is designed using JPA (Java Persistence API).
+
+*   **`Customer`**: Represents a bank client.
+    *   Fields: `id`, `name`, `email`, `telegramId`.
+    *   Relations: One-to-Many with `BankAccount`.
+*   **`BankAccount` (Abstract)**: The base class for all accounts.
+    *   **Inheritance Strategy**: `SINGLE_TABLE`. All accounts are stored in one table with a discriminator column (`TYPE`).
+    *   Fields: `id` (String, UUID), `balance`, `creationDate`, `status`, `currency`.
+    *   Relations: Many-to-One with `Customer`, One-to-Many with `AccountOperation`.
+*   **`CurrentAccount`**: Extends `BankAccount`.
+    *   Specific Field: `overDraft` (Authorized negative balance).
+    *   Discriminator Value: "CUR".
+*   **`SavingAccount`**: Extends `BankAccount`.
+    *   Specific Field: `interestRate`.
+    *   Discriminator Value: "SAV".
+*   **`AccountOperation`**: Records financial movements.
+    *   Fields: `date`, `amount`, `type` (DEBIT/CREDIT), `description`.
+*   **Security Entities**: `AppUser` and `AppRole` manage users and permissions for authentication.
+
+### B. Repositories (`com.youssef.backend.repositories`)
+Interfaces extending `JpaRepository` to provide CRUD operations without boilerplate code.
+*   `CustomerRepository`: Includes custom finders like `findByTelegramId` and `findByEmail`.
+*   `BankAccountRepository`: Manages account persistence.
+*   `AccountOperationRepository`: Fetches operations, often by account ID.
+*   `AppUserRepository` & `AppRoleRepository`: Fetch users for security.
+
+### C. Services (`com.youssef.backend.services`)
+The core business logic resides here. All methods are transactional (`@Transactional`).
+
+*   **`CustomerServiceImpl`**: Manages customer lifecycle. Uses Mappers to convert Entities to DTOs.
+*   **`BankAccountServiceImpl`**: Handles account creation (generating UUIDs) and updates.
+*   **`AccountOperationServiceImpl`**:
+    *   **`debit()`**: Checks balance (including overdraft for Current Accounts) before deducting.
+    *   **`credit()`**: Adds amount to balance.
+    *   **`transfer()`**: Atomically executes a debit on source and credit on destination. If one fails, the entire transaction rolls back.
+*   **`OpenAiService`**:
+    *   Connects to the OpenAI API (GPT-3.5).
+    *   Constructs prompts with "System" and "User" roles to generate context-aware responses for the chatbot.
+
+### D. Web / REST Controllers (`com.youssef.backend.web`)
+Exposes the application features via JSON REST APIs.
+
+*   **`CustomerRestController`**: Endpoints for customer management (`GET /customers`, `POST /customers`).
+*   **`BankAccountRestController`**: Endpoints for accounts (`GET /accounts/{id}`, `POST /accounts/current`).
+*   **`AccountOperationRestController`**: Endpoints for transactions (`POST /accounts/transfer`).
+*   **`SecurityRestController`**:
+    *   `POST /auth/login`: Authenticates user and returns a **JWT (JSON Web Token)**.
+    *   `GET /auth/profile`: Returns the current authenticated user details.
+
+### E. Security (`com.youssef.backend.security`)
+Implements **Stateless Security** using Spring Security and OAuth2 Resource Server.
+
+*   **`SecurityConfig`**:
+    *   Disables CSRF and Sessions (`SessionCreationPolicy.STATELESS`).
+    *   Configures `SecurityFilterChain` to require authentication for all requests except `/auth/login`.
+    *   Sets up **JWT Encoder/Decoder** using Nimbus JOSE + JWT.
+    *   Defines `PasswordEncoder` (BCrypt).
+*   **`AccountServiceImpl`**: Implements `UserDetailsService` to load users from the database during login.
+
+### F. Bot Integration (`com.youssef.backend.bot`)
+*   **`TelegramBotService`**:
+    *   Extends `TelegramLongPollingBot`.
+    *   **`onUpdateReceived`**: Entry point for messages.
+    *   **Authentication**: Checks if the Telegram ID exists in the `Customer` database.
+    *   **Logic**:
+        *   If unknown: Prompts to link account (`/link email`).
+        *   If known:
+            *   **Strict Commands**: Handles `/vir` for transfers.
+            *   **AI Conversation**: For other messages, builds a prompt containing the user's financial context (balance, last ops) and sends it to `OpenAiService`.
+
+---
+
+## 4. KEY FUNCTIONALITIES
+
+### 1. Account Management
+*   Create Current and Saving accounts.
+*   List accounts by customer.
+*   View account details and history.
+
+### 2. Financial Transactions
+*   **Debit/Credit**: Basic operations with balance validation.
+*   **Transfer**: Secure money transfer between accounts.
+
+### 3. Security & Authentication
+*   Users must log in to receive a Bearer Token.
+*   Role-based access control (e.g., only ADMIN can create customers).
+
+### 4. AI-Powered Banking Assistant
+*   **Contextual Awareness**: The bot knows the user's balance and recent transactions.
+*   **Natural Language**: Users can ask "What is my balance?" or "Did I spend money recently?" and get accurate answers generated by ChatGPT based on real data.
+*   **Account Linking**: Securely links a Telegram account to a Bank Customer via email verification.
+
+---
+
+## 5. TECHNOLOGIES USED
+*   **Core**: Java 17, Spring Boot 3.4.1
+*   **Data**: Spring Data JPA, Hibernate, MySQL
+*   **Security**: Spring Security, OAuth2 (JWT), BCrypt
+*   **Integration**: Telegram Bots API, OpenAI API (RestTemplate)
+*   **Tools**: Maven, Lombok, MapStruct
