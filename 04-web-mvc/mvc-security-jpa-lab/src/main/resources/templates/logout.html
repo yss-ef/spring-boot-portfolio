@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.thymeleaf.org"
+      xmlns:layout="www.ultraq.net.nz/tymeleaf/layout"
+      layout:decorate="layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="p-3">
+        <form method="post" class="login-form" th:action="@{/logout}">
+            <label class="form-label" sec:authentication="name"></label>
+            <input class="btn-light" type="submit" value="Logout ?">
+        </form>
+    </div>
+</div>
+</body>
+</html>
