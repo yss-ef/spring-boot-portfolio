@@ -1,8 +1,8 @@
-# 🏦 Digital Banking Backend
+# Digital Banking Backend
 
 > A robust, secure, and intelligent backend banking application developed with **Spring Boot**. This core system integrates modern features such as JWT stateless security, a strict multi-tier architecture, and an AI-powered financial assistant accessible via a Telegram bot.
 
-## 📑 Table of Contents
+## Table of Contents
 
 * [Key Features](https://www.google.com/search?q=%23-key-features)
 * [System Architecture](https://www.google.com/search?q=%23%EF%B8%8F-system-architecture)
@@ -12,7 +12,7 @@
 * [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
 * [Credits](https://www.google.com/search?q=%23-credits)
 
-## ✨ Key Features
+## Key Features
 
 * **Customer Management:** Complete CRUD (Create, Read, Update, Delete) operations and dynamic search capabilities for client profiles.
 * **Account Management:** Native support for both **Current Accounts** (incorporating overdraft limits) and **Saving Accounts** (incorporating variable interest rates).
@@ -20,7 +20,7 @@
 * **Advanced Security:** Stateless authentication workflow utilizing **JSON Web Tokens (JWT)** alongside strict Role-Based Access Control (USER/ADMIN).
 * **Intelligent Assistant:** An interactive Telegram bot featuring real-time balance inquiries, quick transfers via chat commands, and conversational financial support powered by OpenAI (ChatGPT).
 
-## 🏗️ System Architecture
+## System Architecture
 
 The project strictly adheres to an **N-Tier architecture** to guarantee high maintainability, separation of concerns, and scalability.
 
@@ -37,20 +37,20 @@ graph TD;
 
 ```text
 src/main/java/com/youssef/backend
-├── 📂 web          # REST Controllers (HTTP Entry Points)
-├── 📂 bot          # Telegram Bot Service (Chat Entry Point)
-├── 📂 services     # Business & Transactional Logic
-├── 📂 entities     # Data Models (JPA)
-├── 📂 repositories # Data Access Interfaces (Spring Data)
-├── 📂 security     # JWT Configuration & Security Filters
-├── 📂 dtos         # Data Transfer Objects (API/DB Isolation)
-└── 📂 mappers      # Object Converters (MapStruct/BeanUtils)
+├── web          # REST Controllers (HTTP Entry Points)
+├── bot          # Telegram Bot Service (Chat Entry Point)
+├── services     # Business & Transactional Logic
+├── entities     # Data Models (JPA)
+├── repositories # Data Access Interfaces (Spring Data)
+├── security     # JWT Configuration & Security Filters
+├── dtos         # Data Transfer Objects (API/DB Isolation)
+└── mappers      # Object Converters (MapStruct/BeanUtils)
 
 ```
 
-## 📚 Detailed Layer Analysis
+## Detailed Layer Analysis
 
-### 1️⃣ Data Layer (JPA & Entities)
+### Data Layer (JPA & Entities)
 
 Data persistence is managed using the **Single Table** inheritance strategy.
 
@@ -66,7 +66,7 @@ public abstract class BankAccount { ... }
 
 * **`@DiscriminatorColumn`**: This instructs JPA to use a specific column (named `TYPE`) to distinguish between the child classes. If a row has `TYPE = "CUR"`, Hibernate instantiates a Current Account object; if `"SAV"`, it instantiates a Saving Account. This optimizes database query performance by avoiding complex `JOIN` operations.
 
-### 2️⃣ Security Layer (Spring Security & JWT)
+### Security Layer (Spring Security & JWT)
 
 The system employs **Stateless** security based on OAuth2 Resource Server standards.
 
@@ -87,7 +87,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 * **`.sessionCreationPolicy(STATELESS)`**: This disables traditional server-side HTTP sessions (Cookies/JSESSIONID). The server forgets the user the moment the request ends, vastly improving scalability.
 * **`.oauth2ResourceServer(...)`**: This configures Spring to look for a Bearer token in the `Authorization` header of incoming HTTP requests. It intercepts the request, decodes the JWT, verifies its cryptographic signature, and extracts the user's roles before allowing access to the controllers.
 
-### 3️⃣ Business Layer (Services & Transactions)
+### Business Layer (Services & Transactions)
 
 Data integrity is absolutely critical in banking and is guaranteed via the `@Transactional` annotation.
 
@@ -104,15 +104,15 @@ public void transfer(String source, String dest, double amount) {
 
 * **`@Transactional`**: This Spring annotation wraps the entire method inside a database transaction. It enforces the ACID property of Atomicity. If the `debit` succeeds but the `credit` fails (e.g., due to a network error or invalid destination), Spring automatically issues a `ROLLBACK` command to the database. The debit is undone, ensuring no money vanishes into thin air.
 
-### 4️⃣ Web Layer (Controllers & DTOs)
+### Web Layer (Controllers & DTOs)
 
 The API strictly utilizes the **Data Transfer Object (DTO)** design pattern. JPA entities are never exposed directly to the web layer. This prevents infinite recursion errors during JSON serialization and protects sensitive database fields from unauthorized exposure.
 
-### 5️⃣ Bot & AI Layer (Telegram & OpenAI)
+### Bot & AI Layer (Telegram & OpenAI)
 
 This layer introduces next-generation user interaction. Users can execute commands like `/vir [Source] [Dest] [Amount]` for rapid money transfers. Furthermore, the bot leverages the GPT-3.5 model to parse natural language requests, providing contextual and intelligent responses based on the client's localized banking data.
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites (Fedora 43)
 
@@ -132,7 +132,7 @@ cd [YOUR_REPO_NAME]
 
 ```
 
-**⚠️ Important:** You must configure your environment variables. Copy the template file and fill in your credentials:
+**Important:** You must configure your environment variables. Copy the template file and fill in your credentials:
 
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
@@ -165,16 +165,16 @@ mvn spring-boot:run
 
 The application will boot up and bind to `http://localhost:8085`. Test data is automatically injected into the MySQL database upon startup via the `CommandLineRunner` interface.
 
-## 📡 API Documentation
+## API Documentation
 
-### 🔐 Authentication
+### Authentication
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | `POST` | `/auth/login` | Authenticate user (Body: `{"username": "...", "password": "..."}`) |
 | `GET` | `/auth/profile` | Retrieve the currently authenticated user's profile |
 
-### 👤 Customers (`/customers`)
+### Customers (`/customers`)
 
 | Method | Endpoint | Required Role | Description |
 | --- | --- | --- | --- |
@@ -183,7 +183,7 @@ The application will boot up and bind to `http://localhost:8085`. Test data is a
 | `POST` | `/customers` | ADMIN | Create and register a new customer profile |
 | `DELETE` | `/customers/{id}` | ADMIN | Permanently delete a customer record |
 
-### 🏦 Accounts & Operations (`/accounts`)
+### Accounts & Operations (`/accounts`)
 
 | Method | Endpoint | Required Role | Description |
 | --- | --- | --- | --- |
@@ -193,7 +193,7 @@ The application will boot up and bind to `http://localhost:8085`. Test data is a
 | `POST` | `/accounts/credit` | ADMIN | Execute a cash deposit (credit) |
 | `POST` | `/accounts/transfer` | USER | Execute a secure account-to-account transfer |
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Category | Technology | Purpose |
 | --- | --- | --- |
@@ -205,7 +205,7 @@ The application will boot up and bind to `http://localhost:8085`. Test data is a
 | **AI & Messaging** | OpenAI API / Telegram Bots API | Intelligent conversational assistant |
 | **Tooling** | Maven, Lombok, MapStruct | Dependency management, boilerplate reduction, object mapping |
 
-## 🧪 Testing
+## Testing
 
 To execute the suite of unit and integration tests:
 

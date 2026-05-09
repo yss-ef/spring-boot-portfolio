@@ -10,6 +10,25 @@ The platform follows a decoupled Multi-Tier Architecture designed for scalabilit
 2.  **Application Tier**: Spring Boot RESTful API with stateless authentication.
 3.  **Data Tier**: Relational persistence using MySQL and Spring Data JPA.
 
+### Authentication Flow (Stateless JWT)
+
+```mermaid
+sequenceDiagram
+    participant User as Angular Client
+    participant API as Spring Boot API
+    participant DB as MySQL Database
+
+    User->>API: POST /login (Credentials)
+    API->>DB: Verify User & Roles
+    DB-->>API: User Data
+    API->>API: Generate Signed JWT
+    API-->>User: Bearer Token
+    Note over User,API: Subsequent Requests
+    User->>API: GET /accounts (Header: Authorization Bearer JWT)
+    API->>API: Validate Signature & Expiration
+    API-->>User: Financial Data
+```
+
 ---
 
 ## Technical Stack

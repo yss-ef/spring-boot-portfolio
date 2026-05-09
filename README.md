@@ -1,10 +1,35 @@
-# Spring Boot Mastery Collection
+# Spring Boot Portfolio
 
-A comprehensive collection of Spring Boot and Java projects, ranging from core fundamentals to complex full-stack enterprise systems.
+A comprehensive collection of Spring Boot and Java projects, ranging from core fundamentals to complex enterprise-grade systems. This portfolio demonstrates mastery in IoC/DI, JPA persistence, Spring Security, and modern full-stack integration.
+
+## Learning Progression & Roadmap
+
+```mermaid
+graph TD
+    subgraph "01. Fundamentals"
+        A[java-ioc-di-lab] -->|Spring Context| B[IoC / DI]
+    end
+    subgraph "02. Persistence"
+        C[spring-data-jpa-lab] -->|Hibernate| D[ORM Mapping]
+        E[hospital-management] -->|Many-to-Many| D
+    end
+    subgraph "03. Security"
+        F[security-auth-lab] -->|RBAC| G[JWT / OAuth2]
+    end
+    subgraph "04. Web MVC"
+        H[mvc-security-jpa] -->|Thymeleaf| I[SSR Validation]
+    end
+    subgraph "05. Full-Stack"
+        J[angular-spring-lab] -->|REST API| K[Angular SPA]
+        L[digital-banking] -->|Enterprise| K
+    end
+    B --> C
+    D --> F
+    G --> H
+    I --> J
+```
 
 ## Repository Roadmap
-
-The projects are organized to follow a logical learning progression:
 
 ### 01. Fundamentals
 - **[java-ioc-di-lab](./01-fundamentals/java-ioc-di-lab)**: Deep dive into Inversion of Control (IoC) and Dependency Injection (DI). Explores the transition from tight coupling to dynamic configuration using Spring Context (XML and Annotations).
@@ -40,3 +65,6 @@ Each subdirectory is an independent Maven project. To run a specific project:
 
 ## Port Configuration
 Most projects default to port `8080`. If you wish to run multiple projects simultaneously, update the `server.port` in the respective `application.properties` files.
+
+---
+*Authored by Youssef Fellah.*
