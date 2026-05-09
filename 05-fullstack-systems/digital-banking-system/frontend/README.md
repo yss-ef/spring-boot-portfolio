@@ -136,7 +136,5 @@ ng test
 ```
 
 ---
-
 *Authored by Youssef Fellah.*
-
-*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
+*Developed for the Engineering Cycle - Mundiapolis University.*

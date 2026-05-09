@@ -123,7 +123,5 @@ sequenceDiagram
    ```
 
 ---
-
 *Authored by Youssef Fellah.*
-
 *Developed for the Engineering Cycle - Mundiapolis University.*

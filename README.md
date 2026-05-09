@@ -68,3 +68,4 @@ Most projects default to port `8080`. If you wish to run multiple projects simul
 
 ---
 *Authored by Youssef Fellah.*
+*Developed for the Engineering Cycle - Mundiapolis University.*

@@ -72,7 +72,5 @@ mvn compile exec:java -Dexec.mainClass="org.yss.pres.PresSpringAnnotation"
 ```
 
 ---
-
 *Authored by Youssef Fellah.*
-
 *Developed for the Engineering Cycle - Mundiapolis University.*

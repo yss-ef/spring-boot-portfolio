@@ -76,7 +76,5 @@ The application implements a streamlined data access architecture designed for h
     ```
 
 ---
-
 *Authored by Youssef Fellah.*
-
 *Developed for the Engineering Cycle - Mundiapolis University.*
