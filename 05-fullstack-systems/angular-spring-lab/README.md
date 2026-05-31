@@ -1,52 +1,67 @@
-# Full-Stack Orchestration: Angular & Spring Boot Integration
+# Full-stack orchestration: Angular and Spring Boot integration
 
-A decoupled, multi-tier web application demonstrating the integration of a reactive Angular frontend with a robust Spring Boot REST API. This project focuses on asynchronous data flow, cross-origin resource sharing (CORS) management, and modular full-stack architecture.
+Bottom Line Up Front: This project provides a decoupled, multi-tier web
+application demonstrating the integration of a reactive Angular frontend with a
+robust Spring Boot REST API. It focuses on asynchronous data flow, cross-origin
+resource sharing (CORS) management, and modular full-stack architecture.
 
-## Technical Architecture
+## Technical architecture
 
-The system follows a modern client-server paradigm, ensuring a strict separation of concerns between the presentation and application layers:
+The system follows a modern client-server paradigm, ensuring a strict
+separation of concerns between the presentation and application layers:
 
-1.  **Frontend (Client)**: A Single Page Application (SPA) built with **Angular**, utilizing reactive programming patterns for dynamic state management.
-2.  **Backend (Server)**: A RESTful API engineered with **Spring Boot**, managing business logic and relational data persistence.
-3.  **Communication**: Asynchronous data exchange via HTTP/REST with JSON as the primary payload format.
+1.  **Frontend (client)**: A Single Page Application (SPA) built with Angular,
+    utilizing reactive programming patterns for dynamic state management.
+2.  **Backend (server)**: A RESTful API engineered with Spring Boot, managing
+    business logic and relational data persistence.
+3.  **Communication**: Asynchronous data exchange via HTTP/REST with JSON as the
+    primary payload format.
 
 ---
 
-## Technical Stack
+## Technical stack
 
 ### Backend
 *   **Framework**: Spring Boot 3
 *   **Persistence**: Spring Data JPA / Hibernate
 *   **Database**: H2 In-Memory (Development)
-*   **API Design**: RESTful Controllers with CORS orchestration
-*   **Build Tool**: Maven
+*   **API design**: RESTful Controllers with CORS orchestration
+*   **Build tool**: Maven
 
 ### Frontend
 *   **Framework**: Angular 17+
-*   **State Management**: RxJS (Observables)
+*   **State management**: RxJS (Observables)
 *   **Styling**: Bootstrap 5 / SCSS
 *   **Client**: HttpClientModule for asynchronous service integration
 
 ---
 
-## Core Implementations
+## Core implementations
 
-### 1. Decoupled Service Architecture
-*   **CORS Management**: Implementation of `@CrossOrigin` policies at the controller level to enable secure, multi-origin communication between the Angular client (`localhost:4200`) and the Spring API (`localhost:8080`).
-*   **Reactive Services**: Angular services designed to encapsulate `HttpClient` logic, providing clean, observable data streams to UI components.
+### 1. Decoupled service architecture
+*   **CORS management**: Implementation of `@CrossOrigin` policies at the
+    controller level to enable secure, multi-origin communication between the
+    Angular client (`localhost:4200`) and the Spring API (`localhost:8080`).
+*   **Reactive services**: Angular services designed to encapsulate `HttpClient`
+    logic, providing clean, observable data streams to UI components.
 
-### 2. Data Integrity & Persistence
-*   **JPA Modeling**: Precise mapping of relational entities with automated schema synchronization via Hibernate.
-*   **Bean Validation**: Use of JSR-303 annotations (`@NotEmpty`, `@Min`) to ensure data validity before database persistence.
-*   **Transactional Services**: Leveraging Spring's service-layer abstraction for atomic business operations.
+### 2. Data integrity and persistence
+*   **JPA modeling**: Precise mapping of relational entities with automated
+    schema synchronization via Hibernate.
+*   **Bean validation**: Use of JSR-303 annotations (`@NotEmpty`, `@Min`) to
+    ensure data validity before database persistence.
+*   **Transactional services**: Leveraging Spring's service-layer abstraction for
+    atomic business operations.
 
-### 3. Reactive UI Synchrony
-*   **Change Detection**: Strategic use of `ChangeDetectorRef` to ensure the DOM remains synchronized with high-frequency asynchronous API responses.
-*   **Staggered Loading**: Implementing subscription-based data fetching to maintain a fluid user experience during network latency.
+### 3. Reactive UI synchrony
+*   **Change detection**: Strategic use of `ChangeDetectorRef` to ensure the DOM
+    remains synchronized with high-frequency asynchronous API responses.
+*   **Staggered loading**: Implementing subscription-based data fetching to
+    maintain a fluid user experience during network latency.
 
 ---
 
-## Project Structure
+## Project structure
 
 ```text
 ├── backend-app/  # Spring Boot REST API source
@@ -56,28 +71,28 @@ The system follows a modern client-server paradigm, ensuring a strict separation
 
 ---
 
-## Deployment & Setup
+## Deployment and setup
 
 ### Prerequisites
 *   Java 17 (OpenJDK)
 *   Maven 3.8+
-*   Node.js 18+ & Angular CLI
+*   Node.js 18+ and Angular CLI
 
-### 1. Backend Initialization
+### 1. Backend initialization
 ```bash
 cd backend-app
 mvn spring-boot:run
 ```
-*   **API Endpoint**: `http://localhost:8080/api/products`
-*   **Database Console**: `http://localhost:8080/h2-console`
+*   **API endpoint**: `http://localhost:8080/api/products`
+*   **Database console**: `http://localhost:8080/h2-console`
 
-### 2. Frontend Initialization
+### 2. Frontend initialization
 ```bash
 cd angular-app
 npm install
 ng serve
 ```
-*   **Application Gateway**: `http://localhost:4200`
+*   **Application gateway**: `http://localhost:4200`
 
-Authored by Youssef Fellah.  
+Authored by Youssef Fellah.
 Developed for the Engineering Cycle - Mundiapolis University.

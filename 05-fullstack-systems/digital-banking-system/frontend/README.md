@@ -1,139 +1,116 @@
-# Digital Banking Frontend
+# Digital banking frontend
 
-> A modern, responsive, and secure user interface developed with **Angular 17+**. This frontend client provides comprehensive management of customers, bank accounts, and financial operations by communicating seamlessly with the Spring Boot backend REST API.
+This modern, responsive, and secure user interface is developed with Angular 17.
+The frontend client provides comprehensive management of customers, bank
+accounts, and financial operations through seamless communication with the
+Spring Boot backend REST API.
 
-## Table of Contents
+## Key features
 
-* [Key Features](https://www.google.com/search?q=%23-key-features)
-* [System Architecture](https://www.google.com/search?q=%23%EF%B8%8F-system-architecture)
-* [Technical Analysis](https://www.google.com/search?q=%23-technical-analysis)
-* [Application Structure](https://www.google.com/search?q=%23-application-structure)
-* [Installation & Setup](https://www.google.com/search?q=%23-installation--setup)
-* [Technology Stack](https://www.google.com/search?q=%23%EF%B8%8F-technology-stack)
-* [Credits](https://www.google.com/search?q=%23-credits)
+- **Authentication and security:** Secure login workflow via JWT, strict
+  role-based access control (RBAC) for Admin and User roles, and protected
+  routing using Angular route guards.
+- **Administrative dashboard:** A comprehensive overview featuring key
+  performance indicators (KPIs) such as total clients, accounts, and assets,
+  along with interactive charts for account distribution.
+- **Customer management:** Real-time search capabilities and full CRUD
+  (Create, Read, Update, Delete) operations for client profiles.
+- **Account management:** Native support for current accounts with overdraft
+  handling and savings accounts with interest rate management.
+- **Financial operations:** Dedicated interfaces for consulting paginated
+  transaction histories and executing secure account-to-account transfers.
 
-## Key Features
+## System architecture
 
-* **Authentication & Security:** Secure login workflow via **JWT**, strict Role-Based Access Control (Admin/User), and protected routing using Angular Route Guards.
-* **Administrative Dashboard:** A comprehensive overview featuring Key Performance Indicators (Total clients, accounts, total assets) and interactive charts detailing account distribution and balances.
-* **Customer Management:** Real-time search capabilities alongside full CRUD (Create, Read, Update, Delete) operations for client profiles.
-* **Account Management:** Native interface support for **Current Accounts** (handling overdrafts) and **Saving Accounts** (handling interest rates).
-* **Financial Operations:** Dedicated interfaces for consulting paginated transaction histories and executing secure account-to-account transfers.
+The project adopts a modern Angular architecture prioritizing modularity,
+maintainability, and performance.
 
-## System Architecture
+### Directory structure
 
-The project adopts a **Modern Angular Architecture**, heavily prioritizing modularity, ease of maintenance, and rendering performance.
+- `src/app/admin-dashboard`: Dashboard UI and chart components.
+- `src/app/services`: API communication for authentication, accounts, and
+  customers.
+- `src/app/model`: TypeScript interfaces and types (DTOs).
+- `src/app/interceptor`: HTTP interceptor for injecting JWT bearer tokens.
+- `src/app/customers`: Customer management interfaces.
+- `src/app/accounts`: Account management interfaces.
+- `src/app/operations`: Financial transaction interfaces.
+- `src/app/login`: Authentication user interface.
 
-### Directory Structure
+## Technical analysis
 
-```text
-src/app
-├── admin-dashboard # Dashboard UI and Chart components
-├── services        # API communication (Auth, Accounts, Customers)
-├── model           # TypeScript Interfaces and Types (DTOs)
-├── interceptor     # HTTP Interceptor for injecting JWT Bearer tokens
-├── customers       # Customer management interfaces
-├── accounts        # Account management interfaces
-├── operations      # Financial transaction interfaces
-└── login           # Authentication UI
+### Interactive dashboard
 
-```
+The administrator dashboard uses Chart.js to transform raw banking data into
+visual intelligence. It includes KPI cards for rapid insights and doughnut
+charts to visualize the distribution of account types.
 
-## Technical Analysis
+### Client-side security
 
-### Interactive Dashboard (Chart.js)
+The user interface adapts dynamically based on roles decoded from the JWT
+payload. The dashboard navigation is restricted to users with the ADMIN
+authority, and destructive actions are hidden from non-administrative users.
 
-The administrator dashboard leverages **Chart.js** to transform raw banking data into visual intelligence. It features:
+### Standalone components
 
-* **KPI Cards:** Rapid insights into core metrics.
-* **Doughnut Charts:** Visualizing the proportional distribution of account types (Current vs. Savings).
-* **Bar Charts:** Comparing total financial assets locked within different account categories.
+The architecture exclusively uses Angular 17 standalone components. By
+removing traditional `NgModule` wrappers, the codebase is simplified,
+benefiting from optimized lazy-loading and faster bootstrap times.
 
-### Client-Side Role-Based Security
+### Reactive forms
 
-The user interface dynamically adapts based on the roles extracted and decoded directly from the JWT payload:
+User input and data collection are managed through reactive forms. This
+ensures robust, synchronous data validation decoupled from the HTML template,
+making the logic highly testable.
 
-* The **Dashboard** navigation link is strictly rendered only for users possessing the `ADMIN` authority.
-* Destructive actions (like the **Delete** or **Edit** buttons on customer profiles) are structurally hidden from non-administrative users.
+## Installation and setup
 
-### Standalone Components
+### Prerequisites
 
-The architecture exclusively utilizes Angular 17 **Standalone Components**. By completely removing traditional `NgModule` wrappers, the codebase is significantly simplified, and the application benefits from highly optimized lazy-loading and faster bootstrap times.
-
-### Reactive Forms
-
-Data collection and user input are managed entirely via **Reactive Forms**. This paradigm ensures robust, synchronous data validation that is completely decoupled from the HTML template, making the logic highly testable.
-
-## Application Structure
-
-### Authentication (`/login`)
-
-* **Description:** Secure login form designed to authenticate credentials and securely store the returned JWT in the browser's local storage.
-
-### Admin Dashboard (`/admin`)
-
-* **Access:** Strictly reserved for Administrators.
-* **Functions:** Global statistical visualization of the bank's operational health.
-
-### Customers (`/customers`)
-
-* **Functions:** Paginated list of clients, live search filtering, and management actions (CRUD).
-
-### Accounts & Operations (`/accounts`)
-
-* **Functions:** Direct account consultation, live balance rendering, and historical operation tracking.
-
-## Installation & Setup
-
-### Prerequisites (Fedora 43)
-
-Ensure your local development environment is configured with the required Node runtime:
+Ensure the local development environment includes the Node.js runtime. On
+Fedora, use the following command:
 
 ```bash
-# Install Node.js and NPM
 sudo dnf install nodejs npm
-
 ```
 
-*Note: Ensure the Digital Banking Backend is actively running on port `8085` before launching the frontend.*
+Note: The digital banking backend must be running on port 8085 before
+launching the frontend.
 
-### 1. Install Dependencies
+### 1. Install dependencies
 
 Clone the repository and install the required Angular packages:
 
 ```bash
 npm install
-
 ```
 
-### 2. Launch the Development Server
+### 2. Launch the development server
 
 ```bash
 ng serve
-
 ```
 
-The application will compile and be instantly accessible at `http://localhost:4200/`.
+The application is accessible at `http://localhost:4200/`.
 
-## Technology Stack
+## Technology stack
 
-| Category | Technology | Purpose |
-| --- | --- | --- |
-| **Core Framework** | Angular 17+ | Frontend SPA architecture |
-| **Language** | TypeScript 5.0 | Strict typing and business logic |
-| **UI/UX Design** | Bootstrap 5 | Component styling and responsive grid |
-| **Data Visualization** | Chart.js | Rendering interactive dashboard graphics |
-| **Data Handling** | RxJS | Reactive programming and asynchronous streams |
-| **Build Tools** | Angular CLI / Vite | Development server and production bundling |
+- **Core framework:** Angular 17+
+- **Language:** TypeScript 5.0
+- **UI design:** Bootstrap 5
+- **Data visualization:** Chart.js
+- **Data handling:** RxJS
+- **Build tools:** Angular CLI and Vite
 
 ## Testing
 
-To execute the suite of unit tests:
+Execute the unit test suite using the following command:
 
 ```bash
 ng test
-
 ```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+## Credits
+
+Developed by Youssef Fellah for the Engineering Cycle at Mundiapolis
+University.

@@ -1,19 +1,27 @@
-# Spring MVC Security & JPA Laboratory
+# Spring MVC security and JPA laboratory
 
-A comprehensive exploration of the Spring Boot ecosystem, focused on building a secure, multi-tier web application for product lifecycle management. This project serves as a technical deep-dive into Spring Security's authorization engine and Spring Data JPA's persistence layer.
+Bottom Line Up Front: This project provides a comprehensive exploration of the
+Spring Boot ecosystem, focused on building a secure, multi-tier web application
+for product lifecycle management. It serves as a technical deep-dive into
+Spring Security's authorization engine and Spring Data JPA's persistence layer.
 
-## Project Architecture
+## Project architecture
 
-The application implements a classic MVC (Model-View-Controller) architecture with a clear separation of concerns:
+The application implements a classic MVC (Model-View-Controller) architecture
+with a clear separation of concerns:
 
-1.  **View Tier**: Server-side rendering using **Thymeleaf** and **Bootstrap 5** for dynamic, responsive interfaces.
-2.  **Controller Tier**: Spring MVC REST-style controllers handling request mapping and data flow.
-3.  **Service/Persistence Tier**: **Spring Data JPA** managing relational data mapping to an H2 in-memory database.
-4.  **Security Tier**: **Spring Security** filter chain managing session-based authentication and role-based access.
+1.  **View tier**: Server-side rendering using Thymeleaf and Bootstrap 5 for
+    dynamic, responsive interfaces.
+2.  **Controller tier**: Spring MVC REST-style controllers handling request
+    mapping and data flow.
+3.  **Service/persistence tier**: Spring Data JPA managing relational data
+    mapping to an H2 in-memory database.
+4.  **Security tier**: Spring Security filter chain managing session-based
+    authentication and role-based access.
 
 ---
 
-## Technical Stack
+## Technical stack
 
 *   **Framework**: Spring Boot 3
 *   **Security**: Spring Security (Role-Based Access Control)
@@ -25,7 +33,7 @@ The application implements a classic MVC (Model-View-Controller) architecture wi
 
 ---
 
-## Interface Showcase
+## Interface showcase
 
 | Login Portal | Product Management |
 | --- | --- |
@@ -37,27 +45,34 @@ The application implements a classic MVC (Model-View-Controller) architecture wi
 
 ---
 
-## Core Implementations
+## Core implementations
 
-### 1. Robust Security Configuration
-*   **Stateless vs. Session**: Implements secure session management for server-side rendered templates.
-*   **RBAC (Role-Based Access Control)**: 
+### 1. Robust security configuration
+*   **Stateless vs. session**: Implements secure session management for
+    server-side rendered templates.
+*   **RBAC (Role-based access control)**:
     *   `USER`: Authorized for read-only catalog access.
     *   `ADMIN`: Full administrative privileges for CRUD operations.
-*   **Endpoint Protection**: Granular request matching using `HttpSecurity` configurations.
+*   **Endpoint protection**: Granular request matching using `HttpSecurity`
+    configurations.
 
-### 2. Relational Data Mapping (JPA)
-*   **Bean Validation**: Integration of JSR-303/JSR-380 (`@NotEmpty`, `@Size`, `@Min`) at the entity level to ensure data integrity.
-*   **Pagination & Sorting**: High-performance catalog browsing implemented via Spring Data's `PagingAndSortingRepository`.
-*   **Automated Schema Generation**: Leveraging Hibernate's DDL-auto features for rapid prototyping.
+### 2. Relational data mapping (JPA)
+*   **Bean validation**: Integration of JSR-303/JSR-380 (`@NotEmpty`, `@Size`,
+    `@Min`) at the entity level to ensure data integrity.
+*   **Pagination and sorting**: High-performance catalog browsing implemented
+    via Spring Data's `PagingAndSortingRepository`.
+*   **Automated schema generation**: Leveraging Hibernate's DDL-auto features
+    for rapid prototyping.
 
-### 3. Dynamic UI Rendering
-*   **Thymeleaf Fragments**: Modular UI design using layout dialects for consistent header/footer management.
-*   **Reactive Templates**: Dynamic path resolution using Thymeleaf's `@` syntax to prevent broken asset links across nested routes.
+### 3. Dynamic UI rendering
+*   **Thymeleaf fragments**: Modular UI design using layout dialects for
+    consistent header and footer management.
+*   **Reactive templates**: Dynamic path resolution using Thymeleaf's `@`
+    syntax to prevent broken asset links across nested routes.
 
 ---
 
-## Project Structure
+## Project structure
 
 ```text
 ├── src/main/java/com/youssef/springweb/
@@ -73,13 +88,13 @@ The application implements a classic MVC (Model-View-Controller) architecture wi
 
 ---
 
-## Deployment & Setup
+## Deployment and setup
 
 ### Prerequisites
 *   Java 17 (OpenJDK)
 *   Maven 3.8+
 
-### Launch Sequence
+### Launch sequence
 1.  **Clone the repository**:
     ```bash
     git clone git@github.com:yss-ef/mvc-security-jpa-lab.git
@@ -88,9 +103,9 @@ The application implements a classic MVC (Model-View-Controller) architecture wi
     ```bash
     mvn spring-boot:run
     ```
-3.  **Access the System**:
+3.  **Access the system**:
     *   **App**: `http://localhost:8080`
-    *   **H2 Console**: `http://localhost:8080/h2-console`
+    *   **H2 console**: `http://localhost:8080/h2-console`
 
-Authored by Youssef Fellah.  
+Authored by Youssef Fellah.
 Developed for the Engineering Cycle - Mundiapolis University.

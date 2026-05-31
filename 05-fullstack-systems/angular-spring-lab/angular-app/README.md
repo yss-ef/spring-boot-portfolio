@@ -1,28 +1,35 @@
-# Application Frontend (Angular)
+# Angular frontend application
 
-Ce document détaille l'implémentation de l'application cliente, développée avec Angular. Elle constitue la partie frontend du projet full-stack de gestion de produits.
+This document details the implementation of the client-side application
+developed with Angular. This application serves as the frontend for a
+full-stack product management project.
 
-## 1. Rôle de l'Application
+## Application role
 
-L'application Angular fournit l'interface utilisateur (UI) pour interagir avec le système. Elle permet de visualiser la liste des produits et de les supprimer. Toutes les données sont récupérées et modifiées via des appels à une API REST fournie par le backend Spring Boot.
+The Angular application provides the user interface for interacting with the
+system. It enables users to view a list of products and perform deletions.
+The application retrieves and modifies data through calls to a REST API
+provided by the Spring Boot backend.
 
-## 2. Technologies Utilisées
+## Technical stack
 
-*   **Framework** : Angular
-*   **Communication HTTP** : `HttpClientModule` pour les appels à l'API REST.
-*   **Style** : Bootstrap et Bootstrap Icons pour l'interface utilisateur.
-*   **Gestion des dépendances** : npm
+- **Framework:** Angular
+- **Communication:** `HttpClientModule` for REST API calls.
+- **Styling:** Bootstrap and Bootstrap Icons.
+- **Dependency management:** npm
 
-## 3. Détails de l'Implémentation
+## Implementation details
 
-L'architecture frontend est modulaire, basée sur des composants et des services.
+The frontend architecture is modular, utilizing components and services for
+separation of concerns.
 
-### Service de Données (`ProductService.ts`)
+### Data service
 
-Ce service centralise la communication avec l'API backend. Il expose des méthodes pour chaque opération (récupérer, supprimer les produits), rendant les composants indépendants de la logique d'accès aux données.
+The `ProductService` centralizes communication with the backend API. It exposes
+methods for retrieving and deleting products, making components independent of
+data access logic.
 
 ```typescript
-// src/app/services/productService.ts
 @Injectable({
   providedIn: 'root',
 })
@@ -39,12 +46,12 @@ export class ProductService {
 }
 ```
 
-### Composant d'Affichage (`products.ts`)
+### Display component
 
-Le composant principal pour l'affichage et la gestion des produits. Il utilise le `ProductService` pour récupérer les données et gérer les actions de l'utilisateur.
+The main component for product management uses the `ProductService` to fetch
+data and handle user actions.
 
 ```typescript
-// src/app/products/products.ts
 @Component({ /* ... */ })
 export class Products implements OnInit {
   products: any = [] ;
@@ -62,7 +69,7 @@ export class Products implements OnInit {
     this.productService.getAllProducts().subscribe({
       next: resp => {
         this.products = resp;
-        this.cd.detectChanges(); // Forcer la mise à jour de la vue
+        this.cd.detectChanges();
       },
       error: err => console.log(err)
     });
@@ -71,7 +78,7 @@ export class Products implements OnInit {
   handleDelete(p: any) {
     if (confirm("Are you sure you want to delete this product?")) {
       this.productService.deleteProduct(p).subscribe({
-        next: () => this.getAllProducts(), // Recharger la liste
+        next: () => this.getAllProducts(),
         error: err => console.log(err)
       });
     }
@@ -79,12 +86,12 @@ export class Products implements OnInit {
 }
 ```
 
-### Template (`products.html`)
+### Template
 
-La vue utilise la syntaxe moderne d'Angular (`@for`, `@if`) pour afficher la liste des produits et les boutons d'action.
+The view uses Angular's modern syntax, such as `@for` and `@if`, to display the
+product list and action buttons.
 
 ```html
-<!-- src/app/products/products.html -->
 <table class="table">
   <thead>
     <tr>
@@ -117,19 +124,25 @@ La vue utilise la syntaxe moderne d'Angular (`@for`, `@if`) pour afficher la lis
 </table>
 ```
 
-## 4. Pour commencer
+## Getting started
 
-1.  **Installer les dépendances :**
-    ```bash
-    npm install
-    ```
-2.  **Lancer le serveur de développement :**
-    ```bash
-    ng serve
-    ```
-3.  Ouvrez votre navigateur et accédez à `http://localhost:4200/`.
+### 1. Install dependencies
 
-**Note :** Assurez-vous que le serveur backend est en cours d'exécution sur `http://localhost:8080`.
+```bash
+npm install
+```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+### 2. Launch the development server
+
+```bash
+ng serve
+```
+
+Access the application at `http://localhost:4200/`.
+
+Note: Ensure the backend server is running at `http://localhost:8080`.
+
+## Credits
+
+Developed by Youssef Fellah for the Engineering Cycle at Mundiapolis
+University.

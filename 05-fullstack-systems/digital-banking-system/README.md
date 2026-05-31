@@ -1,108 +1,81 @@
-# Digital Banking Platform
+# Digital banking platform
 
-A high-performance, full-stack financial system featuring a robust Spring Boot backend and a modern Angular frontend. This platform implements secure transaction management, role-based access control, and automated account processing.
+This high-performance, full-stack financial system features a Spring Boot
+backend and an Angular frontend. The platform implements secure transaction
+management, role-based access control, and automated account processing.
 
-## System Architecture
+## System architecture
 
-The platform follows a decoupled Multi-Tier Architecture designed for scalability and security:
+The platform follows a decoupled multi-tier architecture designed for
+scalability and security.
 
-1.  **Presentation Tier**: Angular Single Page Application (SPA).
-2.  **Application Tier**: Spring Boot RESTful API with stateless authentication.
-3.  **Data Tier**: Relational persistence using MySQL and Spring Data JPA.
+- **Presentation tier:** Angular single-page application (SPA).
+- **Application tier:** Spring Boot RESTful API with stateless authentication.
+- **Data tier:** Relational persistence using MySQL and Spring Data JPA.
 
-### Authentication Flow (Stateless JWT)
-
-```mermaid
-sequenceDiagram
-    participant User as Angular Client
-    participant API as Spring Boot API
-    participant DB as MySQL Database
-
-    User->>API: POST /login (Credentials)
-    API->>DB: Verify User & Roles
-    DB-->>API: User Data
-    API->>API: Generate Signed JWT
-    API-->>User: Bearer Token
-    Note over User,API: Subsequent Requests
-    User->>API: GET /accounts (Header: Authorization Bearer JWT)
-    API->>API: Validate Signature & Expiration
-    API-->>User: Financial Data
-```
-
----
-
-## Technical Stack
+## Technical stack
 
 ### Backend
-*   **Engine**: Java 17 / Spring Boot 3
-*   **Security**: Spring Security, JWT (Stateless Auth), OAuth2 Resource Server
-*   **Persistence**: Spring Data JPA, Hibernate, MySQL
-*   **Build Tool**: Maven
+
+- **Engine:** Java 17 and Spring Boot 3
+- **Security:** Spring Security, JWT (stateless authentication), and OAuth2
+  resource server
+- **Persistence:** Spring Data JPA, Hibernate, and MySQL
+- **Build tool:** Maven
 
 ### Frontend
-*   **Framework**: Angular 17+
-*   **Styling**: Bootstrap 5 / SCSS
-*   **Logic**: TypeScript, RxJS (Reactive Programming)
-*   **Icons**: Bootstrap Icons
 
----
+- **Framework:** Angular 17+
+- **Styling:** Bootstrap 5 and SCSS
+- **Logic:** TypeScript and RxJS
+- **Icons:** Bootstrap Icons
 
-## Interface Showcase
+## System features
 
-| Authentication & Home | Customer Management |
-| --- | --- |
-| <img src="./screenshots/login.png" width="400" alt="Login Page"><br><img src="./screenshots/home.png" width="400" alt="Home Page"> | <img src="./screenshots/customers.png" width="400" alt="Customers List"><br><img src="./screenshots/customers-add.png" width="400" alt="Add Customer"> |
+### 1. Security and identity management
 
-| Account Overview & Creation | Financial Operations |
-| --- | --- |
-| <img src="./screenshots/accounts.png" width="400" alt="Accounts Overview"><br><img src="./screenshots/accounts-add-cur.png" width="400" alt="New Current Account"><br><img src="./screenshots/accounts-add-sav.png" width="400" alt="New Saving Account"> | <img src="./screenshots/transfer.png" width="400" alt="Money Transfer"> |
+- Stateless authentication using JSON Web Tokens (JWT).
+- Role-based access control (RBAC) with ADMIN and USER permissions.
+- Secure password hashing and endpoint protection via Spring Security.
 
----
+### 2. Financial modeling
 
-## System Features
+- **Current accounts:** Management of overdraft limits for daily operations.
+- **Savings accounts:** Automated interest rate calculation and application.
+- **Account relationships:** Linking multiple accounts to unique customer
+  profiles.
 
-### 1. Security & Identity Management
-*   Stateless authentication using JSON Web Tokens (JWT).
-*   Role-Based Access Control (RBAC): ADMIN and USER permissions.
-*   Secure password hashing and endpoint protection via Spring Security.
+### 3. Banking operations
 
-### 2. Financial Modeling
-*   **Current Accounts**: Management of overdraft limits for daily operations.
-*   **Savings Accounts**: Automated interest rate calculation and application.
-*   **Account Relationships**: Linking multiple accounts to unique customer profiles.
+- **Debit and credit:** Real-time balance updates for cash withdrawals and
+  deposits.
+- **Transfers:** Atomic account-to-account money movement.
+- **Transaction integrity:** Leveraging Spring transaction management to
+  ensure data consistency during complex operations.
 
-### 3. Banking Operations
-*   **Debit/Credit**: Real-time balance updates for cash withdrawals and deposits.
-*   **Transfers**: Atomic account-to-account money movement.
-*   **Transaction Integrity**: Leveraging Spring Transaction Management (@Transactional) to ensure data consistency during complex operations.
+### 4. Data management
 
-### 4. Data Management
-*   Paginated transaction history for high-performance data retrieval.
-*   Dynamic customer search and management (CRUD operations).
-*   Responsive dashboards for real-time account oversight.
+- Paginated transaction history for high-performance data retrieval.
+- Dynamic customer search and management through CRUD operations.
+- Responsive dashboards for real-time account oversight.
 
----
+## Project structure
 
-## Project Structure
+- `backend/`: Spring Boot application source code.
+- `frontend/`: Angular application source code.
+- `screenshots/`: UI/UX documentation.
 
-```text
-├── backend/    # Spring Boot application source
-├── frontend/   # Angular application source
-├── screenshots/ # UI/UX documentation
-└── README.md   # System documentation
-```
-
----
-
-## Deployment & Setup
+## Deployment and setup
 
 ### Prerequisites
-*   Java 17 (OpenJDK)
-*   Maven 3.8+
-*   Node.js 18+ & Angular CLI
-*   MySQL Server
 
-### 1. Backend Initialization
+- Java 17 (OpenJDK)
+- Maven 3.8+
+- Node.js 18+ and Angular CLI
+- MySQL server
+
+### 1. Backend initialization
+
 1. Create the database: `CREATE DATABASE digital_banking_db;`
 2. Configure credentials in `backend/src/main/resources/application.properties`.
 3. Run the server:
@@ -111,7 +84,8 @@ sequenceDiagram
    mvn spring-boot:run
    ```
 
-### 2. Frontend Initialization
+### 2. Frontend initialization
+
 1. Install dependencies:
    ```bash
    cd frontend
@@ -122,5 +96,7 @@ sequenceDiagram
    ng serve
    ```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+## Credits
+
+Developed by Youssef Fellah for the Engineering Cycle at Mundiapolis
+University.

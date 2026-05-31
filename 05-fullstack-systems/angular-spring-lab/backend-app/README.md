@@ -1,31 +1,36 @@
-# Application Backend avec RESTController (Spring Boot)
+# Spring Boot REST backend
 
-Ce document détaille l'implémentation de l'API REST, développée avec Spring Boot. Elle constitue la partie backend du projet full-stack de gestion de produits.
+This document details the implementation of a REST API developed with Spring
+Boot. This application serves as the backend for a full-stack product
+management project.
 
-## 1. Rôle de l'Application
+## Application role
 
-Le backend expose une API REST qui gère la logique métier et la persistance des données pour l'entité `Product`. Il sert de source de vérité pour l'application frontend (Angular) et gère toutes les opérations CRUD.
+The backend exposes a REST API that manages business logic and data persistence
+for the `Product` entity. It acts as the source of truth for the Angular
+frontend application and handles all CRUD operations.
 
-## 2. Technologies Utilisées
+## Technical stack
 
-*   **Framework** : Spring Boot
-*   **Accès aux données** : Spring Data JPA
-*   **API** : Spring Web
-*   **Base de données** : H2 (en mémoire)
-*   **Utilitaires** : Lombok pour la réduction du code boilerplate.
-*   **Build Tool** : Maven
+- **Framework:** Spring Boot
+- **Data access:** Spring Data JPA
+- **API:** Spring Web
+- **Database:** H2 (in-memory)
+- **Utilities:** Lombok
+- **Build tool:** Maven
 
-## 3. Détails de l'Implémentation
+## Implementation details
 
-L'application suit une architecture en couches classique (Contrôleur, Service, Repository).
+The application follows a standard layered architecture, including controllers,
+services, and repositories.
 
-### Couche de Persistance (JPA)
+### Persistence layer
 
-**Entité `Product.java`**
-Représente un produit dans la base de données. Les annotations de validation (`@NotEmpty`, `@Min`) garantissent l'intégrité des données au niveau de l'application.
+The `Product` entity represents a product in the database. Validation
+annotations such as `@NotEmpty` and `@Min` ensure data integrity at the
+application level.
 
 ```java
-// src/main/java/com/youssef/backendapp/entities/Product.java
 @Entity
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter
 public class Product {
@@ -39,22 +44,16 @@ public class Product {
 }
 ```
 
-**Repository `ProductRepository.java`**
-Interface Spring Data JPA pour un accès simplifié à la base de données, fournissant les méthodes CRUD sans implémentation manuelle.
+The `ProductRepository` interface uses Spring Data JPA to provide CRUD methods
+without manual implementation.
+
+### Web layer
+
+The `ProductRestAPI` controller exposes REST endpoints for product operations.
+The `@CrossOrigin("*")` annotation is used to authorize requests from the
+Angular client.
 
 ```java
-// src/main/java/com/youssef/backendapp/repositories/ProductRepository.java
-public interface ProductRepository extends JpaRepository<Product,Long> {
-}
-```
-
-### Couche Web (API REST)
-
-**Contrôleur `ProductRestAPI.java`**
-Expose les endpoints REST pour les opérations sur les produits. L'annotation `@CrossOrigin("*")` est essentielle pour autoriser les requêtes provenant du client Angular.
-
-```java
-// src/main/java/com/youssef/backendapp/web/ProductRestAPI.java
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api")
@@ -74,43 +73,41 @@ public class ProductRestAPI {
 }
 ```
 
-### Initialisation des Données
+### Data initialization
 
-Au démarrage, un `CommandLineRunner` insère un jeu de données de test dans la base de données H2, ce qui est pratique pour le développement et les démonstrations.
+At startup, a `CommandLineRunner` inserts test data into the H2 database to
+facilitate development and demonstrations.
 
-```java
-// src/main/java/com/youssef/backendapp/BackendAppApplication.java
-@Bean
-CommandLineRunner init(ProductService productService) {
-    return args -> {
-        productService.addProduct(new Product(null, "ordinateur", 5000, true ));
-        productService.addProduct(new Product(null, "telephone", 2500, true ));
-        // ...
-    };
-}
-```
+## Database configuration
 
-## 4. Configuration de la Base de Données
-
-Le projet utilise une base de données H2 en mémoire, configurée dans `application.properties`.
+The project uses an in-memory H2 database configured in the
+`application.properties` file.
 
 ```properties
-# src/main/resources/application.properties
 spring.datasource.url=jdbc:h2:mem:product-db
 spring.h2.console.enabled=true
 spring.jpa.hibernate.ddl-auto=create
 ```
-La console H2 est disponible à l'adresse `http://localhost:8080/h2-console` pour l'inspection de la base de données.
 
-## 5. Pour commencer
+The H2 console is available at `http://localhost:8080/h2-console` for database
+inspection.
 
-1.  **Lancer l'application** :
-    *   Via un IDE : exécutez la méthode `main` de la classe `BackendAppApplication`.
-    *   Via Maven :
-        ```bash
-        mvn spring-boot:run
-        ```
-2.  L'API sera disponible sur `http://localhost:8080`.
+## Getting started
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+### 1. Launch the application
+
+You can run the application through an IDE by executing the `main` method in
+the `BackendAppApplication` class or using Maven:
+
+```bash
+mvn spring-boot:run
+```
+
+### 2. Access the API
+
+The API is available at `http://localhost:8080`.
+
+## Credits
+
+Developed by Youssef Fellah for the Engineering Cycle at Mundiapolis
+University.

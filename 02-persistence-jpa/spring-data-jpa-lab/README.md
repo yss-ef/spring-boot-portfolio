@@ -1,48 +1,70 @@
-# Spring Data JPA: Advanced Persistence & ORM
+# Spring Data JPA: advanced persistence and ORM
 
-A technical deep-dive into the Spring Data JPA ecosystem, focusing on Object-Relational Mapping (ORM), JPQL query optimization, and the management of relational database lifecycles. This project demonstrates the implementation of a robust persistence layer, transitioning from in-memory prototyping to production-grade MySQL environments.
+Bottom Line Up Front: This project provides a technical deep-dive into the Spring
+Data JPA ecosystem, focusing on Object-Relational Mapping (ORM), JPQL query
+optimization, and relational database lifecycle management. It demonstrates
+the implementation of a robust persistence layer, transitioning from in-memory
+prototyping to production-grade MySQL environments.
 
-## Technical Architecture
+## Technical architecture
 
-The application implements a streamlined data access architecture designed for high-performance retrieval and automated schema management:
+The application implements a streamlined data access architecture designed for
+high-performance retrieval and automated schema management:
 
-1.  **Persistence Layer**: Utilizing **Spring Data JPA** and **Hibernate** to bridge the gap between Java object models and relational database schemas.
-2.  **Repository Layer**: Implementing the Repository Pattern through `JpaRepository` interfaces, enabling zero-boilerplate CRUD operations.
-3.  **Service Layer**: Exposing the persistence logic through RESTful endpoints using **Spring Web**.
-4.  **Database Integration**: Dynamic orchestration of database connectivity via `application.properties` for both H2 and MySQL.
+1.  **Persistence layer**: Utilizing Spring Data JPA and Hibernate to bridge
+    the gap between Java object models and relational database schemas.
+2.  **Repository layer**: Implementing the Repository Pattern through
+    `JpaRepository` interfaces, enabling zero-boilerplate CRUD operations.
+3.  **Service layer**: Exposing the persistence logic through RESTful endpoints
+    using Spring Web.
+4.  **Database integration**: Dynamic orchestration of database connectivity
+    via `application.properties` for both H2 and MySQL.
 
 ---
 
-## Technical Stack
+## Technical stack
 
 *   **Framework**: Spring Boot 3
 *   **Persistence**: Spring Data JPA / Hibernate (ORM)
 *   **Database**: H2 In-Memory (Prototyping) / MySQL (Production)
-*   **Query Language**: JPQL (Java Persistence Query Language) / Method Name Derivation
+*   **Query Language**: JPQL (Java Persistence Query Language) / Method Name
+    Derivation
 *   **Build Tool**: Maven
 *   **Productivity**: Lombok
 
 ---
 
-## Core Implementations
+## Core implementations
 
-### 1. Advanced Query Orchestration
-*   **Method Name Derivation**: Leveraging Spring Data's parser to generate complex SQL queries from method signatures (e.g., `findByNameContains`).
-*   **JPQL Integration**: Utilizing the `@Query` annotation for custom object-oriented queries, allowing for precise data extraction without depending on native SQL syntax.
-*   **Named Parameters**: Secure parameter binding using `@Param` to prevent SQL injection vulnerabilities.
+### 1. Advanced query orchestration
+*   **Method name derivation**: Leveraging Spring Data's parser to generate
+    complex SQL queries from method signatures (for example,
+    `findByNameContains`).
+*   **JPQL integration**: Utilizing the `@Query` annotation for custom
+    object-oriented queries, allowing for precise data extraction without
+    depending on native SQL syntax.
+*   **Named parameters**: Secure parameter binding using `@Param` to prevent
+    SQL injection vulnerabilities.
 
-### 2. Automated Schema Management
-*   **DDL-Auto Orchestration**: Using Hibernate's lifecycle management (`update`, `create-drop`) to automate table creation and schema synchronization based on Java `@Entity` definitions.
-*   **Identity Management**: Implementing `GenerationType.IDENTITY` to delegate primary key generation to the underlying database's auto-increment engine.
-*   **Relational Mapping**: Optimized mapping of Java types (e.g., `Long` vs `long`) to handle nullability and database constraints effectively.
+### 2. Automated schema management
+*   **DDL-auto orchestration**: Using Hibernate's lifecycle management
+    (`update`, `create-drop`) to automate table creation and schema
+    synchronization based on Java `@Entity` definitions.
+*   **Identity management**: Implementing `GenerationType.IDENTITY` to delegate
+    primary key generation to the underlying database's auto-increment engine.
+*   **Relational mapping**: Optimized mapping of Java types (for example,
+    `Long` vs `long`) to handle nullability and database constraints
+    effectively.
 
-### 3. RESTful Data Exposition
-*   **JSON Serialization**: Automated conversion of JPA entities to JSON format via Jackson.
-*   **Stateless Controllers**: Implementation of `@RestController` to provide high-performance data streams to client applications.
+### 3. RESTful data exposition
+*   **JSON serialization**: Automated conversion of JPA entities to JSON format
+    via Jackson.
+*   **Stateless controllers**: Implementation of `@RestController` to provide
+    high-performance data streams to client applications.
 
 ---
 
-## Project Structure
+## Project structure
 
 ```text
 ├── src/main/java/ma/youssef/springdata/
@@ -56,24 +78,24 @@ The application implements a streamlined data access architecture designed for h
 
 ---
 
-## Deployment & Setup
+## Deployment and setup
 
 ### Prerequisites
 *   Java 17 (OpenJDK)
 *   Maven 3.8+
 *   MySQL Server (for production profiles)
 
-### Launch Sequence
-1.  **Database Setup**:
+### Launch sequence
+1.  **Database setup**:
     ```sql
     CREATE DATABASE eb_db;
     ```
-2.  **Environment Configuration**:
+2.  **Environment configuration**:
     Update `application.properties` with your database credentials.
 3.  **Execution**:
     ```bash
     mvn spring-boot:run
     ```
 
-Authored by Youssef Fellah.  
+Authored by Youssef Fellah.
 Developed for the Engineering Cycle - Mundiapolis University.
